@@ -5,3 +5,4 @@ run/
 .idea/
 node_modules/
 __pycache__/
+run-audit/

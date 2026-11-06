@@ -32,3 +32,12 @@ tasks.register('integrationModJar', Jar) {
  archiveFileName = 'shirokai-pass-test-harness.jar'
  destinationDirectory = layout.buildDirectory.dir('integration')
 }
+
+// Disposable server used exclusively by the regression/dupe controller.
+loom.runs {
+ auditServer {
+  server()
+  runDir 'run-audit'
+  vmArg '-Dshirokai.audit=true'
+ }
+}
