@@ -2,13 +2,13 @@
 
 Mod **server-side** para Minecraft **1.21.1**, Fabric e Java **21**. O cliente usa os menus de baú vanilla e não precisa instalar o mod. XP funciona sem NPCs, EasyNPC, Shirokai Trainers ou Cobblemon. A entrega de Pokémon exige Cobblemon no servidor; a versão alvo é **1.8.3**.
 
-**Estado da versão 0.2.0:** pacote inicial para testes; compilado, com testes de regressão da versão ampliada ainda pendentes. Não confunda compilação com validação completa no jogo.
+**Estado:** as validações de cada versão estão em `docs/VALIDACAO.md`. Releases de testes são marcadas como pré-release.
 
 Este repositório estava vazio. A especificação disponível está em [docs/REQUISITOS.md](docs/REQUISITOS.md); a especificação anterior citada nesse arquivo não foi fornecida. Consulte [docs/VALIDACAO.md](docs/VALIDACAO.md) para os limites de validação.
 
 ## Compilar e instalar
 
-Com JDK 21: `./gradlew build`. O JAR distribuível fica em `build/libs/shirokai-pass-0.2.0.jar` (não use o `sources`). Substitua o JAR antigo em `mods/` (não mantenha duas versões juntas) num servidor Fabric 1.21.1 com Fabric API. Faça backup do mundo antes de atualizar.
+Com JDK 21: `./gradlew build`. O JAR distribuível fica em `build/libs/shirokai-pass-0.3.0.jar` (não use o `sources`). Substitua o JAR antigo em `mods/` (não mantenha duas versões juntas) num servidor Fabric 1.21.1 com Fabric API. Faça backup do mundo antes de atualizar.
 
 Na primeira inicialização são criados `config/shirokaipass.json` e, após a primeira alteração, `<mundo>/shirokaipass/state.json`. Não existe temporada automática. Crie uma pelo console:
 
@@ -25,7 +25,31 @@ passeadmin season create primeira 90d 7d
 - `/passe perfil`, `/passe premium`, `/passe historico`, `/passe info`, `/passe pendentes`.
 - `/passe resgatartudo`: reserva todas as recompensas elegíveis da temporada atual.
 
-No histórico, clique em uma temporada para abrir seus prêmios e resgatar durante o período extra. Premium é individual por temporada. Reduzir XP ou desativar Premium não desfaz resgates já registrados. Inventário cheio mantém prêmios prontos na fila; o botão de pendências ou o próximo login tenta novamente.
+No histórico, clique em uma temporada para abrir seus prêmios e resgatar durante o período extra. O Premium permanente (`true`) é individual por temporada. A assinatura temporária é por UUID e continua válida ao trocar de temporada. Reduzir XP ou desativar Premium não desfaz resgates já registrados. Inventário cheio mantém prêmios prontos na fila; o botão de pendências ou o próximo login tenta novamente.
+
+## Premium mensal automático
+
+No console da loja ou do servidor:
+
+```text
+passeadmin premium Jogador 30 dias
+passeadmin premium Jogador 1 mes
+passeadmin premium Jogador status
+```
+
+Dentro do jogo, use `/` antes do comando. Uma renovação soma o período ao prazo restante; se expirou, o novo período começa agora. Um mês representa **30 dias**. Também são aceitos `horas` e `minutos`. O prazo é por UUID, é salvo imediatamente, continua offline e após reinício e acompanha as novas temporadas. Não é necessário desativar manualmente: menus, placeholders e resgates verificam a validade real, e o menu aberto é atualizado ao vencer.
+
+Para a loja repetir notificações sem conceder dias duas vezes, use um ID único de pedido:
+
+```text
+passeadmin premium Jogador 30 dias loja/pedido-12345
+```
+
+O mesmo ID com os mesmos parâmetros não renova novamente; parâmetros diferentes são rejeitados. Sem ID, cada execução representa uma nova concessão e soma o prazo. Um pagamento repetido após remoção ou expiração também não reativa a assinatura. O comando não processa cobranças: a loja deve chamar o comando a cada compra/renovação aprovada.
+
+`/passeadmin premium Jogador true` continua concedendo acesso permanente **na temporada atual**. Uma concessão temporária substitui esse acesso permanente da temporada atual por uma validade. `/passeadmin premium Jogador false` revoga a assinatura e os acessos permanentes armazenados. Os resgates anteriores são preservados. A assinatura ativa permite a trilha Premium das temporadas ainda dentro do prazo de resgate e nas quais o jogador já cumpriu os níveis.
+
+Quem executa precisa de `shirokaipass.admin.premium` ou da permissão global; o destinatário não precisa de OP. Nomes offline já conhecidos e UUID explícito são aceitos. As datas de resposta usam o horário de Brasília.
 
 ## XP universal
 

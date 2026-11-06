@@ -186,6 +186,7 @@ public final class Menus {
     }
 
     private ItemStack head(Season s, Progress p) {
+      boolean premiumActive = mod.service.hasPremium(s == null ? null : s.id, owner.getUuid());
       int lv = s == null ? 0 : level(s, p.xp);
       long floor = s == null ? 0 : threshold(lv, s.baseXp, s.incrementXp);
       long needed = s == null || lv == 100 ? 0 : threshold(lv + 1, s.baseXp, s.incrementXp) - floor;
@@ -203,7 +204,13 @@ public final class Menus {
               "XP do nível: " + (p.xp - floor) + " / " + needed,
               "Próximo nível: faltam " + Math.max(0, needed - (p.xp - floor)) + " XP",
               "Progresso: " + percent + "%",
-              "Premium: " + (p.premium ? "Ativo" : "Inativo"),
+              "Premium: " + (premiumActive ? "Ativo" : "Inativo"),
+              "Validade: "
+                  + (p.premium
+                      ? "Permanente nesta temporada"
+                      : premiumActive
+                          ? remaining(mod.service.premiumExpiresAt(owner.getUuid()))
+                          : "—"),
               "Temporada: " + (s == null ? "—" : s.name),
               "Restante: " + (s == null ? "—" : remaining(s.end)));
       h.set(DataComponentTypes.PROFILE, new ProfileComponent(owner.getGameProfile()));
@@ -223,6 +230,7 @@ public final class Menus {
       State state = mod.service.snapshot();
       Season s = state.seasons.get(season == null ? state.active : season);
       Progress p = s == null ? new Progress() : mod.service.progress(s.id, owner.getUuid());
+      boolean premiumActive = mod.service.hasPremium(s == null ? null : s.id, owner.getUuid());
       if (!view.equals("home"))
         button(49, "minecraft:arrow", "VOLTAR AO MENU", () -> go("home", 0, null));
       switch (view) {
@@ -273,7 +281,7 @@ public final class Menus {
                                   && s.claiming(System.currentTimeMillis())
                                   && !p.claimed.contains(e.getKey())
                                   && level(s, p.xp) >= e.getValue().level
-                                  && (!e.getValue().premium || p.premium))
+                                  && (!e.getValue().premium || premiumActive))
                       .count();
           long pending =
               state.deliveries.values().stream()
@@ -316,7 +324,13 @@ public final class Menus {
                     "minecraft:gold_ingot",
                     "✦ Premium",
                     Formatting.GOLD,
-                    "Status: " + (p.premium ? "Ativo" : "Inativo"),
+                    "Status: " + (premiumActive ? "Ativo" : "Inativo"),
+                    "Validade: "
+                        + (p.premium
+                            ? "Permanente nesta temporada"
+                            : premiumActive
+                                ? remaining(mod.service.premiumExpiresAt(owner.getUuid()))
+                                : "—"),
                     mod.config.premiumInfo),
                 null);
         case "info" ->
@@ -417,7 +431,7 @@ public final class Menus {
                   eligible =
                       r.enabled
                           && level(s, p.xp) >= lv
-                          && (!premium || p.premium)
+                          && (!premium || premiumActive)
                           && s.claiming(System.currentTimeMillis());
               List<String> lore = new ArrayList<>();
               lore.add(

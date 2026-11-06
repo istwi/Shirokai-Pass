@@ -38,7 +38,19 @@ public final class Store {
           || state.deliveries == null
           || state.transactions == null
           || state.names == null
-          || state.events == null) throw new IllegalStateException("Estado inválido");
+          || state.events == null
+          || state.premiumUntil == null
+          || state.premiumTransactions == null) throw new IllegalStateException("Estado inválido");
+      for (var entry : state.premiumUntil.entrySet()) {
+        java.util.UUID.fromString(entry.getKey());
+        if (entry.getValue() == null || entry.getValue() < 0)
+          throw new IllegalStateException("Validade Premium inválida");
+      }
+      for (PremiumReceipt receipt : state.premiumTransactions.values()) {
+        java.util.UUID.fromString(receipt.player);
+        if (receipt.duration <= 0 || receipt.expires < 0)
+          throw new IllegalStateException("Transação Premium inválida");
+      }
       for (Season s : state.seasons.values()) {
         s.cap();
         for (Reward r : s.rewards.values()) r.validate();

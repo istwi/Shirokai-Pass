@@ -27,6 +27,7 @@ public final class ShirokaiPass implements ModInitializer {
   private MinecraftServer server;
   private final Map<UUID, Notice> notices = new HashMap<>();
   private int ticks;
+  private final NavigableMap<Long, Set<UUID>> premiumDeadlines = new TreeMap<>();
 
   private record Notice(long xp, double factor, int before, int after) {}
 
@@ -77,6 +78,17 @@ public final class ShirokaiPass implements ModInitializer {
                             .resolve("shirokaipass/state.json")),
                     System::currentTimeMillis);
             service.recover();
+            premiumDeadlines.clear();
+            service
+                .snapshot()
+                .premiumUntil
+                .forEach(
+                    (id, until) -> {
+                      if (until > System.currentTimeMillis())
+                        premiumDeadlines
+                            .computeIfAbsent(until, k -> new HashSet<>())
+                            .add(UUID.fromString(id));
+                    });
           } catch (Exception e) {
             throw new IllegalStateException(
                 "Shirokai Pass não pode abrir o estado com segurança", e);
@@ -86,6 +98,7 @@ public final class ShirokaiPass implements ModInitializer {
     ServerLifecycleEvents.SERVER_STOPPED.register(
         s -> {
           notices.clear();
+          premiumDeadlines.clear();
           TextInput.clear();
           server = null;
         });
@@ -101,6 +114,19 @@ public final class ShirokaiPass implements ModInitializer {
     ServerTickEvents.END_SERVER_TICK.register(
         s -> {
           if (++ticks % 20 == 0) {
+            long now = System.currentTimeMillis();
+            while (!premiumDeadlines.isEmpty() && premiumDeadlines.firstKey() <= now) {
+              var expired = premiumDeadlines.pollFirstEntry();
+              for (UUID id : expired.getValue())
+                if (service.premiumExpiresAt(id) == expired.getKey()) {
+                  ServerPlayerEntity online = s.getPlayerManager().getPlayer(id);
+                  if (online != null) {
+                    Menus.refresh(online);
+                    if (!service.hasPremium(id))
+                      online.sendMessage(Text.literal("✦ A validade do seu Premium terminou."), true);
+                  }
+                }
+            }
             var batch = new HashMap<>(notices);
             notices.clear();
             batch.forEach(
@@ -165,7 +191,14 @@ public final class ShirokaiPass implements ModInitializer {
         .replace("{level}", s == null ? "0" : Integer.toString(level(s, p.xp)))
         .replace("{xp}", Long.toString(p.xp))
         .replace("{season}", s == null ? "—" : s.name)
-        .replace("{premium}", p.premium ? "Ativo" : "Inativo");
+        .replace(
+            "{premium}", service.hasPremium(s == null ? null : s.id, id) ? "Ativo" : "Inativo");
+  }
+
+  public void trackPremium(UUID id) {
+    long until = service.premiumExpiresAt(id);
+    if (until > System.currentTimeMillis())
+      premiumDeadlines.computeIfAbsent(until, k -> new HashSet<>()).add(id);
   }
 
   public static boolean permission(ServerCommandSource source, String node, int fallback) {

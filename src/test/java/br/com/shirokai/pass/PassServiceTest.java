@@ -240,4 +240,97 @@ class PassServiceTest {
     assertEquals(1, service.claim(player, "s1", List.of("free:1"), new Random()).size());
     assertThrows(IllegalArgumentException.class, () -> service.end("s1"));
   }
+
+  @Test
+  void timedPremiumExpiresExactlyAtDeadlineAndBlocksClaims() {
+    service.add(player, 100, null, false);
+    long end = service.grantPremium(player, 1000, null);
+    assertTrue(service.hasPremium("s1", player));
+    now.set(end);
+    assertFalse(service.hasPremium("s1", player));
+    assertTrue(service.claim(player, "s1", List.of("premium:1"), new Random()).isEmpty());
+  }
+
+  @Test
+  void timedPremiumUnlocksPremiumReward() {
+    service.add(player, 100, null, false);
+    service.grantPremium(player, 1000, null);
+    assertEquals(1, service.claim(player, "s1", List.of("premium:1"), new Random()).size());
+  }
+
+  @Test
+  void renewalAddsToRemainingDaysAndRestartsFromNowAfterExpiry() {
+    long first = service.grantPremium(player, 1000, null);
+    now.addAndGet(300);
+    assertEquals(first + 1000, service.grantPremium(player, 1000, null));
+    now.addAndGet(5000);
+    assertEquals(now.get() + 1000, service.grantPremium(player, 1000, null));
+  }
+
+  @Test
+  void paidPremiumSurvivesOfflineRestartAndSeasonChange() throws Exception {
+    long until = service.grantPremium(player, 50000, "purchase/1");
+    now.addAndGet(10000);
+    service.create("s2", 10000, 1000, new Config());
+    service = new PassService(store, now::get);
+    assertTrue(service.hasPremium("s2", player));
+    assertEquals(until, service.premiumExpiresAt(player));
+  }
+
+  @Test
+  void paymentRetryDoesNotExtendAndCannotResurrectRevokedSubscription() {
+    long until = service.grantPremium(player, 5000, "order:123");
+    now.addAndGet(100);
+    assertEquals(until, service.grantPremium(player, 5000, "order:123"));
+    assertThrows(
+        IllegalArgumentException.class, () -> service.grantPremium(player, 4000, "order:123"));
+    assertThrows(
+        IllegalArgumentException.class,
+        () -> service.grantPremium(UUID.randomUUID(), 5000, "order:123"));
+    service.revokePremium(player);
+    service.grantPremium(player, 5000, "order:123");
+    assertFalse(service.hasPremium("s1", player));
+  }
+
+  @Test
+  void timedGrantReplacesLegacyPermanentStatusAndFalseRevokesAll() {
+    service.premium("s1", player, true);
+    long until = service.grantPremium(player, 1000, null);
+    now.set(until);
+    assertFalse(service.hasPremium("s1", player));
+    service.premium("s1", player, true);
+    assertTrue(service.hasPremium("s1", player));
+    service.revokePremium(player);
+    assertFalse(service.hasPremium("s1", player));
+  }
+
+  @Test
+  void subscriptionsCanBeGrantedAndRevokedBeforeAnySeason() throws Exception {
+    PassService empty = new PassService(new Store(dir.resolve("empty.json")), now::get);
+    empty.grantPremium(player, 1000, null);
+    assertTrue(empty.hasPremium(null, player));
+    empty.revokePremium(player);
+    assertFalse(empty.hasPremium(null, player));
+  }
+
+  @Test
+  void rejectsInvalidPremiumDurationsAndOverflowWithoutChangingAccess() {
+    assertThrows(IllegalArgumentException.class, () -> service.grantPremium(player, 0, null));
+    assertThrows(IllegalArgumentException.class, () -> service.grantPremium(player, -1, null));
+    assertThrows(
+        ArithmeticException.class, () -> service.grantPremium(player, Long.MAX_VALUE, null));
+    assertEquals(0, service.premiumExpiresAt(player));
+  }
+
+  @Test
+  void oldStateWithoutSubscriptionFieldsStillLoads() throws Exception {
+    var json =
+        com.google.gson.JsonParser.parseString(Files.readString(dir.resolve("state.json")))
+            .getAsJsonObject();
+    json.remove("premiumUntil");
+    json.remove("premiumTransactions");
+    Files.writeString(dir.resolve("state.json"), json.toString());
+    PassService old = new PassService(store, now::get);
+    assertFalse(old.hasPremium("s1", player));
+  }
 }

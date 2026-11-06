@@ -184,6 +184,63 @@ public final class PassService {
         });
   }
 
+  private boolean hasPremium(State state, String season, UUID id) {
+    Progress p = state.players.get(playerKey(season, id));
+    return (p != null && p.premium)
+        || state.premiumUntil.getOrDefault(id.toString(), 0L) > clock.getAsLong();
+  }
+
+  public synchronized boolean hasPremium(String season, UUID id) {
+    return hasPremium(state, season, id);
+  }
+
+  public synchronized boolean hasPremium(UUID id) {
+    return hasPremium(state, state.active, id);
+  }
+
+  public synchronized long premiumExpiresAt(UUID id) {
+    return state.premiumUntil.getOrDefault(id.toString(), 0L);
+  }
+
+  /**
+   * Account subscription, renewed from its remaining expiry, independent of the selected season.
+   */
+  public synchronized long grantPremium(UUID id, long duration, String operation) {
+    Objects.requireNonNull(id);
+    if (duration <= 0) throw new IllegalArgumentException("Duração deve ser positiva");
+    if (operation != null && !operation.matches("[A-Za-z0-9_.:/-]{1,128}"))
+      throw new IllegalArgumentException("Transação inválida");
+    PremiumReceipt existing = operation == null ? null : state.premiumTransactions.get(operation);
+    if (existing != null) {
+      if (!existing.player.equals(id.toString()) || existing.duration != duration)
+        throw new IllegalArgumentException("Transação Premium já usada com outros parâmetros");
+      return existing.expires;
+    }
+    long until = Math.addExact(Math.max(clock.getAsLong(), premiumExpiresAt(id)), duration);
+    return change(
+        s -> {
+          s.premiumUntil.put(id.toString(), until);
+          if (s.active != null) player(s, s.active, id).premium = false;
+          if (operation != null) {
+            PremiumReceipt receipt = new PremiumReceipt();
+            receipt.player = id.toString();
+            receipt.duration = duration;
+            receipt.expires = until;
+            s.premiumTransactions.put(operation, receipt);
+          }
+          return until;
+        });
+  }
+
+  public synchronized void revokePremium(UUID id) {
+    edit(
+        s -> {
+          s.premiumUntil.remove(id.toString());
+          for (var entry : s.players.entrySet())
+            if (entry.getKey().endsWith("/" + id)) entry.getValue().premium = false;
+        });
+  }
+
   public synchronized void startEvent(double multiplier, long duration) {
     if (!Double.isFinite(multiplier) || multiplier < 1 || multiplier > 100 || duration <= 0)
       throw new IllegalArgumentException("Evento inválido");
@@ -222,7 +279,7 @@ public final class PassService {
                 || !r.enabled
                 || p.claimed.contains(key)
                 || level(season, p.xp) < r.level
-                || r.premium && !p.premium) continue;
+                || r.premium && !hasPremium(s, seasonId, id)) continue;
             r.validate();
             Delivery d = new Delivery();
             d.id = UUID.randomUUID().toString();

@@ -51,6 +51,8 @@ public final class Model {
     public Map<String, Receipt> transactions = new HashMap<>();
     public Map<String, Delivery> deliveries = new LinkedHashMap<>();
     public List<XpEvent> events = new ArrayList<>();
+    public Map<String, Long> premiumUntil = new HashMap<>();
+    public Map<String, PremiumReceipt> premiumTransactions = new HashMap<>();
   }
 
   public static class Season {
@@ -162,6 +164,18 @@ public final class Model {
     public String player, season;
     public long amount, applied;
     public boolean bypass;
+  }
+
+  public static class PremiumReceipt {
+    public String player;
+    public long duration, expires;
+  }
+
+  public static String premiumDate(long timestamp) {
+    return java.time.format.DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm")
+            .withZone(java.time.ZoneId.of("America/Sao_Paulo"))
+            .format(java.time.Instant.ofEpochMilli(timestamp))
+        + " (Brasília)";
   }
 
   public static class Delivery {

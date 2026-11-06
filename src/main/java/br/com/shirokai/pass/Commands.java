@@ -247,13 +247,62 @@ public final class Commands {
                                         c,
                                         x -> {
                                           UUID id = player(c, mod);
-                                          mod.service.premium(
-                                              Menus.current(mod, null).id,
-                                              id,
-                                              BoolArgumentType.getBool(c, "enabled"));
+                                          boolean enabled = BoolArgumentType.getBool(c, "enabled");
+                                          if (enabled)
+                                            mod.service.premium(
+                                                Menus.current(mod, null).id, id, true);
+                                          else mod.service.revokePremium(id);
+                                          mod.trackPremium(id);
                                           refresh(mod, id);
-                                          say(c, "Premium atualizado");
-                                        })))));
+                                          say(
+                                              c,
+                                              enabled
+                                                  ? "Premium ativo nesta temporada"
+                                                  : "Premium removido");
+                                        })))
+                    .then(
+                        literal("status")
+                            .executes(
+                                c ->
+                                    run(
+                                        c,
+                                        x -> {
+                                          UUID id = player(c, mod);
+                                          State state = mod.service.snapshot();
+                                          long until = mod.service.premiumExpiresAt(id);
+                                          boolean permanent =
+                                              state.active != null
+                                                  && mod.service.progress(state.active, id).premium;
+                                          say(
+                                              c,
+                                              permanent
+                                                  ? "Premium permanente nesta temporada"
+                                                  : mod.service.hasPremium(state.active, id)
+                                                      ? "Premium até " + premiumDate(until)
+                                                      : "Premium inativo");
+                                        })))
+                    .then(
+                        argument("duration", IntegerArgumentType.integer(1, 36500))
+                            .executes(c -> premiumTimed(c, mod, "dias", null))
+                            .then(
+                                argument("unit", StringArgumentType.word())
+                                    .suggests(
+                                        (c, builder) -> {
+                                          for (String unit :
+                                              List.of("dias", "horas", "minutos", "meses"))
+                                            builder.suggest(unit);
+                                          return builder.buildFuture();
+                                        })
+                                    .executes(c -> premiumTimed(c, mod, str(c, "unit"), null))
+                                    .then(
+                                        argument("transaction", StringArgumentType.greedyString())
+                                            .executes(
+                                                c ->
+                                                    premiumTimed(
+                                                        c,
+                                                        mod,
+                                                        str(c, "unit"),
+                                                        str(c, "transaction"))))))));
     root.then(
         literal("event")
             .then(
@@ -481,6 +530,41 @@ public final class Commands {
         admin("gui", "rewards")
             .executes(c -> run(c, x -> AdminGui.dashboard(mod, c.getSource().getPlayerOrThrow()))));
     d.register(root);
+  }
+
+  private static int premiumTimed(
+      CommandContext<ServerCommandSource> c, ShirokaiPass mod, String unit, String transaction) {
+    return run(
+        c,
+        x -> {
+          long duration = premiumDuration(IntegerArgumentType.getInteger(c, "duration"), unit);
+          UUID id = player(c, mod);
+          long until = mod.service.grantPremium(id, duration, transaction);
+          mod.trackPremium(id);
+          refresh(mod, id);
+          say(c, "Premium válido até " + premiumDate(until));
+          ShirokaiPass.LOG.info(
+              "Premium player={} duration={} expires={} transaction={}",
+              id,
+              duration,
+              until,
+              transaction);
+        });
+  }
+
+  static long premiumDuration(int amount, String unit) {
+    if (amount <= 0) throw new IllegalArgumentException("Duração deve ser positiva");
+    long factor =
+        switch (unit.toLowerCase(java.util.Locale.ROOT)) {
+          case "dia", "dias", "d", "day", "days" -> 86400000L;
+          case "hora", "horas", "h" -> 3600000L;
+          case "minuto", "minutos", "m" -> 60000L;
+          case "mes", "meses" -> 30L * 86400000;
+          default ->
+              throw new IllegalArgumentException(
+                  "Unidade: dias, horas, minutos ou meses (30 dias)");
+        };
+    return Math.multiplyExact(amount, factor);
   }
 
   private static int award(
