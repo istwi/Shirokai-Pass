@@ -1,0 +1,1 @@
+{"schemaVersion":1,"id":"shirokaipass_test","version":"1.0.0","name":"Shirokai Pass development harness","environment":"server","entrypoints":{"main":["br.com.shirokai.pass.IntegrationHarness"]},"depends":{"shirokaipass":"*"}}

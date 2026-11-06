@@ -1,0 +1,34 @@
+plugins { id 'fabric-loom' version '1.9.2' }
+version = '0.2.0'
+group = 'br.com.shirokai'
+base { archivesName = 'shirokai-pass' }
+repositories { mavenCentral() }
+dependencies {
+ minecraft 'com.mojang:minecraft:1.21.1'
+ mappings 'net.fabricmc:yarn:1.21.1+build.3:v2'
+ modImplementation 'net.fabricmc:fabric-loader:0.16.10'
+ modImplementation 'net.fabricmc.fabric-api:fabric-api:0.116.1+1.21.1'
+ modImplementation('me.lucko:fabric-permissions-api:0.3.3') { transitive = false }
+ include('me.lucko:fabric-permissions-api:0.3.3') { transitive = false }
+ testImplementation platform('org.junit:junit-bom:5.11.4')
+ testImplementation 'org.junit.jupiter:junit-jupiter'
+ testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+}
+java { toolchain { languageVersion = JavaLanguageVersion.of(21) }; withSourcesJar() }
+processResources { inputs.property 'version', project.version; filesMatching('fabric.mod.json') { expand version: project.version } }
+test { useJUnitPlatform() }
+loom { accessWidenerPath = file('src/main/resources/shirokaipass.accesswidener'); runs { server { server(); runDir 'run' } } }
+
+// Explicitly invoked development harness; never included in the distributable mod.
+sourceSets {
+ integration {
+  compileClasspath += sourceSets.main.output + sourceSets.main.compileClasspath
+  runtimeClasspath += output + compileClasspath
+ }
+}
+tasks.register('integrationModJar', Jar) {
+ dependsOn tasks.named('integrationClasses')
+ from sourceSets.integration.output
+ archiveFileName = 'shirokai-pass-test-harness.jar'
+ destinationDirectory = layout.buildDirectory.dir('integration')
+}

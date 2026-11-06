@@ -1,0 +1,23 @@
+{
+  "schemaVersion": 1,
+  "id": "shirokaipass",
+  "version": "${version}",
+  "name": "Shirokai Pass",
+  "description": "Passe de temporadas com XP universal e menus server-side.",
+  "environment": "server",
+  "entrypoints": {
+    "main": [
+      "br.com.shirokai.pass.ShirokaiPass"
+    ]
+  },
+  "depends": {
+    "fabricloader": ">=0.16.10",
+    "minecraft": "1.21.1",
+    "java": ">=21",
+    "fabric-api": "*"
+  },
+  "suggests": {
+    "cobblemon": "1.8.3"
+  },
+  "accessWidener": "shirokaipass.accesswidener"
+}

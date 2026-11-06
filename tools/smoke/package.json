@@ -1,0 +1,1 @@
+{"name":"shirokai-pass-smoke","private":true,"version":"1.0.0","dependencies":{"minecraft-protocol":"1.62.0"},"scripts":{"test":"node smoke.cjs"}}

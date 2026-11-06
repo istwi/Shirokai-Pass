@@ -1,0 +1,81 @@
+{
+  "unit": {
+    "tests": 18,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "cases": [
+      "reducingXpDoesNotClearClaims()",
+      "offlineAwardPersistsOnRestart()",
+      "duplicateSurvivesSeasonBoundary()",
+      "failedDiskWriteBlocksFurtherMutations()",
+      "seasonsKeepPermanentHistory()",
+      "corruptStateFailsClosed()",
+      "concurrentRetriesAwardOnlyOnce()",
+      "progressiveCurveAndCap()",
+      "graceAllowsClaimButNotEarning()",
+      "onlyAddGetsMultiplier()",
+      "incompleteOrNegativeStateFailsClosed()",
+      "randomChoiceStoredAndRecoveredWithoutReroll()",
+      "eventExpiresAndHistoryRemains()",
+      "duplicateCannotBeReusedWithDifferentParameters()",
+      "claimsFreeAndPremiumOnce()",
+      "returnedDeliveryCannotMutateStoredState()",
+      "atomicMutationRollsBackOnValidationFailure()",
+      "validatesNegativeZeroAndOverflow()"
+    ]
+  },
+  "vanillaProtocolSmoke": {
+    "passed": 13,
+    "results": [
+      "Home: 54-slot vanilla container, skull, profile and buttons",
+      "Non-OP administrative XP denied",
+      "XP and level refresh while menu stays open",
+      "Burst grants produce one actionbar level summary",
+      "Direct rewards command opens current-level page",
+      "All 15 pages, last page contains only levels 99 and 100",
+      "Individual claim preserves page",
+      "Repeated click keeps reward claimed",
+      "Arrow returns to pass home",
+      "Detailed profile reflects claim",
+      "Season history",
+      "Claim all awards all six free levels, premium stays locked",
+      "Pending deliveries menu"
+    ]
+  },
+  "extendedSmoke": {
+    "passed": 8,
+    "results": [
+      "Full server restart preserves XP, claims and premium",
+      "RCON authenticated retry after restart deduplicates",
+      "Direct rewards opens page 4 for level 25",
+      "Premium reward delivers items plus a console command",
+      "Weighted random reward persists exactly one delivered choice",
+      "Missing Cobblemon queues Pokemon reward without duplicate delivery",
+      "Full inventory keeps item reward READY without loss",
+      "Pending item delivered once after freeing inventory; Pokemon remains pending"
+    ]
+  },
+  "otherFabricModHarness": {
+    "passed": 10,
+    "results": [
+      "Other-mod authorized command source",
+      "External command respects 2x",
+      "Duplicate command processed safely",
+      "Namespaced operation id deduplicated",
+      "OP2 cannot bypass multiplier",
+      "Unauthorized external source rejected",
+      "Authorized namespaced bypass",
+      "Bypass awards original amount",
+      "API shares multiplier and progression",
+      "API duplicate is idempotent on server thread"
+    ]
+  },
+  "rcon": "Authenticated grant, retry deduplication, set without multiplier, and offline name query passed",
+  "dedicatedServerRestart": "Preserved XP, claims, Premium and receipts",
+  "notValidated": [
+    "Real Pokemon delivery with Cobblemon 1.8.3",
+    "External permission provider installation",
+    "Visual review in the official Minecraft client"
+  ]
+}
