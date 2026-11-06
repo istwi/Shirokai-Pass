@@ -1,11 +1,11 @@
-# Teste final — Shirokai Pass 0.2.0
+# Teste final — Shirokai Pass 0.3.0
 
 Este é o roteiro da etapa final solicitada. A compilação não substitui estes testes. Use um servidor e um mundo de teste; não reutilize inventários de produção. O relatório da versão 0.1.0 é histórico e não atesta os novos menus.
 
 ## Preparar
 
 - Java 21; Minecraft 1.21.1; Fabric Loader 0.16.10 ou compatível; Fabric API 0.116.1+1.21.1 ou compatível.
-- `shirokai-pass-0.2.0.jar` em `mods/`. A Fabric Permissions API já está embutida; não é necessário outro JAR dessa biblioteca.
+- `shirokai-pass-0.3.0.jar` em `mods/`. A Fabric Permissions API já está embutida; não é necessário outro JAR dessa biblioteca.
 - Cobblemon **1.8.3**, com as dependências oficiais, para a rodada de entrega Pokémon.
 - LuckPerms Fabric compatível para a rodada de permissões.
 - Um administrador, um jogador sem OP e um segundo administrador para testar conflitos. Cliente Minecraft sem Shirokai Pass; servidor público usa autenticação online. Modo offline é exclusivo dos testes locais em loopback.
@@ -50,3 +50,12 @@ Este é o roteiro da etapa final solicitada. A compilação não substitui estes
 Marque cada caso como aprovado, reprovado ou não executado, com as versões dos mods. Se falhar, guarde o log e o estado do mundo de teste sem credenciais. Não declare Cobblemon/LuckPerms ou a revisão visual aprovados antes de executar as respectivas rodadas.
 
 Automação existente: `./gradlew test build`, `./gradlew integrationModJar` e os scripts em `tools/smoke/`. Os dois novos casos do núcleo cobrem recompensas inicialmente desativadas e encerramento antecipado com preservação do período extra; a suíte completa será executada na etapa final.
+
+## Assinatura Premium mensal
+
+- Execute `/passeadmin premium Jogador 30 dias loja/pedido-1`; consultar `status` deve mostrar a validade em Brasília.
+- Repetir o pedido não acrescenta dias. Um pedido novo soma 30 dias ao restante. Um mês representa 30 dias.
+- Conceda enquanto o jogador estiver offline, reinicie e confira o prazo. Troque de temporada sem perder os dias restantes.
+- Em um mundo de teste, conceda um minuto e deixe o menu aberto: expirar deve atualizar a interface e bloquear novos resgates Premium, inclusive sob cliques rápidos.
+- Repetir um pedido após expiração ou revogação não pode reativar a assinatura. `false` deve revogar a assinatura e os acessos permanentes.
+- `true` mantém acesso permanente na temporada atual; uma concessão temporária nessa temporada deve substituir esse acesso por uma validade.

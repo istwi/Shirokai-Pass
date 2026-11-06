@@ -1,0 +1,222 @@
+{
+  "version": "0.3.0",
+  "sourceCommit": "988a9e88b3130235234a87fd5070f0a7e0c1e304",
+  "unit": {
+    "passed": 29,
+    "failed": 0,
+    "skipped": 0,
+    "cases": [
+      "reducingXpDoesNotClearClaims()",
+      "offlineAwardPersistsOnRestart()",
+      "rejectsInvalidPremiumDurationsAndOverflowWithoutChangingAccess()",
+      "paymentRetryDoesNotExtendAndCannotResurrectRevokedSubscription()",
+      "duplicateSurvivesSeasonBoundary()",
+      "oldStateWithoutSubscriptionFieldsStillLoads()",
+      "earlyEndPreservesGraceAndHistory()",
+      "failedDiskWriteBlocksFurtherMutations()",
+      "timedPremiumUnlocksPremiumReward()",
+      "timedGrantReplacesLegacyPermanentStatusAndFalseRevokesAll()",
+      "timedPremiumExpiresExactlyAtDeadlineAndBlocksClaims()",
+      "seasonsKeepPermanentHistory()",
+      "renewalAddsToRemainingDaysAndRestartsFromNowAfterExpiry()",
+      "corruptStateFailsClosed()",
+      "concurrentRetriesAwardOnlyOnce()",
+      "progressiveCurveAndCap()",
+      "graceAllowsClaimButNotEarning()",
+      "paidPremiumSurvivesOfflineRestartAndSeasonChange()",
+      "onlyAddGetsMultiplier()",
+      "incompleteOrNegativeStateFailsClosed()",
+      "randomChoiceStoredAndRecoveredWithoutReroll()",
+      "newSeasonRewardsRequireActivation()",
+      "eventExpiresAndHistoryRemains()",
+      "duplicateCannotBeReusedWithDifferentParameters()",
+      "claimsFreeAndPremiumOnce()",
+      "returnedDeliveryCannotMutateStoredState()",
+      "subscriptionsCanBeGrantedAndRevokedBeforeAnySeason()",
+      "atomicMutationRollsBackOnValidationFailure()",
+      "validatesNegativeZeroAndOverflow()"
+    ]
+  },
+  "functional": {
+    "passed": 26,
+    "phases": [
+      {
+        "phase": "rapid",
+        "passed": 6,
+        "results": [
+          {
+            "name": "150 cliques rápidos no mesmo prêmio",
+            "status": "passed",
+            "detail": "1 recibo, 1 diamante"
+          },
+          {
+            "name": "100 cliques rápidos em resgatar tudo",
+            "status": "passed",
+            "detail": "3 recompensas únicas; sorteio e comando executados 1 vez; 687ms"
+          },
+          {
+            "name": "Shift, tecla numérica, clone, drop, arrastar, double-click e slots forjados",
+            "status": "passed",
+            "detail": "inventário idêntico; nenhum ícone movido"
+          },
+          {
+            "name": "Administração por jogador sem OP",
+            "status": "passed",
+            "detail": "XP não alterada"
+          },
+          {
+            "name": "Retorno após spam de cliques",
+            "status": "passed",
+            "detail": "menu inicial do passe"
+          },
+          {
+            "name": "XP offline por nome conhecido e transação repetida",
+            "status": "passed",
+            "detail": "+100 uma vez; 1100 XP persistidos"
+          }
+        ]
+      },
+      {
+        "phase": "restart",
+        "passed": 2,
+        "results": [
+          {
+            "name": "Reinício normal + recibos + inventário",
+            "status": "passed",
+            "detail": "1100 XP, 3 resgates, 1 diamante; nenhum novo prêmio após repetir clique"
+          },
+          {
+            "name": "Inventário cheio + 30 cliques",
+            "status": "passed",
+            "detail": "1 reserva READY, nenhum diamante entregue"
+          }
+        ]
+      },
+      {
+        "phase": "crash",
+        "passed": 2,
+        "results": [
+          {
+            "name": "Pendência preservada após reinício e entregue uma vez",
+            "status": "passed",
+            "detail": "2 diamantes após liberar inventário"
+          },
+          {
+            "name": "Interrupção controlada durante entrega",
+            "status": "passed",
+            "detail": "arquivo DELIVERING confirmado antes do SIGKILL"
+          }
+        ]
+      },
+      {
+        "phase": "recovery",
+        "passed": 1,
+        "results": [
+          {
+            "name": "Recuperação após SIGKILL + repetição de cliques",
+            "status": "passed",
+            "detail": "REVIEW preservado; 2 diamantes antes/depois; sem reentrega automática"
+          }
+        ]
+      },
+      {
+        "phase": "premium_setup",
+        "passed": 3,
+        "results": [
+          {
+            "name": "Compra mensal e renovação com ID de pedido",
+            "status": "passed",
+            "detail": "30 dias + 30 dias; replay não concede dias extras"
+          },
+          {
+            "name": "Jogador comum não concede Premium",
+            "status": "passed",
+            "detail": "assinatura inalterada"
+          },
+          {
+            "name": "Premium concedido por nome offline",
+            "status": "passed",
+            "detail": "validade persistida antes do reinício"
+          }
+        ]
+      },
+      {
+        "phase": "premium_expire",
+        "passed": 5,
+        "results": [
+          {
+            "name": "Premium offline preservado após reinício",
+            "status": "passed",
+            "detail": "perfil e prazo ativos sem nova concessão"
+          },
+          {
+            "name": "Assinatura temporária permite resgate Premium",
+            "status": "passed",
+            "detail": "um prêmio entregue"
+          },
+          {
+            "name": "Expiração automática + 50 cliques no prêmio",
+            "status": "passed",
+            "detail": "menu aberto atualizado; segundo prêmio bloqueado sem desativação manual"
+          },
+          {
+            "name": "Replay após vencimento",
+            "status": "passed",
+            "detail": "pedido antigo não reativa assinatura"
+          },
+          {
+            "name": "Compatibilidade true/false e mês de 30 dias",
+            "status": "passed",
+            "detail": "remoção revoga assinatura e acesso permanente"
+          }
+        ]
+      },
+      {
+        "phase": "admin",
+        "passed": 7,
+        "results": [
+          {
+            "name": "Editor usa rascunho sem alterar prêmio antes da confirmação",
+            "status": "passed",
+            "detail": "quantidade 2 no rascunho, 1 no arquivo"
+          },
+          {
+            "name": "Bigorna e cancelamento não vazam ícones",
+            "status": "passed",
+            "detail": "zero papéis/corantes no inventário"
+          },
+          {
+            "name": "50 cliques na confirmação do editor",
+            "status": "passed",
+            "detail": "configuração salva uma vez; nenhum item concedido"
+          },
+          {
+            "name": "Prévia administrativa sob cliques rápidos",
+            "status": "passed",
+            "detail": "nenhum resgate ou item"
+          },
+          {
+            "name": "Conteúdo longo permanece privado",
+            "status": "passed",
+            "detail": "outro jogador não recebe o texto"
+          },
+          {
+            "name": "Dois administradores editam o mesmo prêmio",
+            "status": "passed",
+            "detail": "segundo salvamento recusado; primeira edição preservada"
+          },
+          {
+            "name": "Edição gráfica em lote com confirmação",
+            "status": "passed",
+            "detail": "somente níveis 10–12 alterados"
+          }
+        ]
+      }
+    ]
+  },
+  "notExecuted": [
+    "Entrega real de Pokémon com Cobblemon 1.8.3",
+    "Provedor externo LuckPerms",
+    "Revisão visual no cliente oficial e resource packs"
+  ]
+}
