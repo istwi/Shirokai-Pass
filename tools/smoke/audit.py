@@ -68,15 +68,20 @@ def phase(name):
     print((RESULTS/(name+'.json')).read_text(),flush=True)
 
 try:
-    start(1);phase('rapid');stop()
-    start(2);phase('restart');stop()
-    start(3);phase('crash')
-    checkpoint=json.loads((WORLD/'audit-checkpoint.json').read_text())
-    if checkpoint['pid'] <= 1: raise ValueError('Unsafe test PID')
-    os.kill(checkpoint['pid'],signal.SIGKILL)
-    server.wait(timeout=35);log.close();server=None
-    start(4);phase('recovery');stop()
-    reports=[json.loads((RESULTS/(name+'.json')).read_text()) for name in ('rapid','restart','crash','recovery')]
+    names = ('premium_setup','premium_expire') if len(sys.argv)>1 and sys.argv[1]=='premium' else ('rapid','restart','crash','recovery')
+    if names[0]=='premium_setup':
+        start(1);phase('premium_setup');stop()
+        start(2);phase('premium_expire');stop()
+    else:
+        start(1);phase('rapid');stop()
+        start(2);phase('restart');stop()
+        start(3);phase('crash')
+        checkpoint=json.loads((WORLD/'audit-checkpoint.json').read_text())
+        if checkpoint['pid'] <= 1: raise ValueError('Unsafe test PID')
+        os.kill(checkpoint['pid'],signal.SIGKILL)
+        server.wait(timeout=35);log.close();server=None
+        start(4);phase('recovery');stop()
+    reports=[json.loads((RESULTS/(name+'.json')).read_text()) for name in names]
     summary={'passed':sum(x['passed'] for x in reports),'phases':reports,'world':WORLD.name}
     (RESULTS/'summary.json').write_text(json.dumps(summary,ensure_ascii=False,indent=2)+'\n')
     print('AUDIT SUCCESS:',summary['passed'],'checks;',RESULTS,flush=True)

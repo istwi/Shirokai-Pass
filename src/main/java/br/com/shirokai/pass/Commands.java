@@ -539,10 +539,17 @@ public final class Commands {
         x -> {
           long duration = premiumDuration(IntegerArgumentType.getInteger(c, "duration"), unit);
           UUID id = player(c, mod);
+          boolean replay =
+              transaction != null
+                  && mod.service.snapshot().premiumTransactions.containsKey(transaction);
           long until = mod.service.grantPremium(id, duration, transaction);
           mod.trackPremium(id);
           refresh(mod, id);
-          say(c, "Premium válido até " + premiumDate(until));
+          say(
+              c,
+              replay
+                  ? "Pedido já processado; validade não alterada."
+                  : "Premium válido até " + premiumDate(until));
           ShirokaiPass.LOG.info(
               "Premium player={} duration={} expires={} transaction={}",
               id,

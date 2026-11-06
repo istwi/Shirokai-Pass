@@ -25,6 +25,7 @@ async function connect(username){
  client.on('set_slot',p=>{if(p.windowId===c.window){c.state=p.stateId;c.slots[p.slot]=p.item;}});
  client.on('system_chat',p=>c.chats.push(text(p.content)));
  c.name=slot=>text(c.slots[slot]?.components?.find(x=>x.type==='custom_name')?.data);
+ c.lore=slot=>(c.slots[slot]?.components?.find(x=>x.type==='lore')?.data||[]).map(text);
  c.command=async command=>{client.write('chat_command',{command});await pause(200);};
  c.click=(slot,mode=0,mouseButton=0,forged=false)=>client.write('window_click',{windowId:c.window,stateId:c.state,slot,mode,mouseButton,changedSlots:forged?[{location:54,item:{itemCount:64,itemId:require('minecraft-data')('1.21.1').itemsByName.diamond.id,addedComponentCount:0,removedComponentCount:0,components:[],removeComponents:[]}}]:[],cursorItem:{itemCount:0}});
  c.quit=async()=>{client.end();await wait(()=>c.closed,'disconnect');};
@@ -56,6 +57,28 @@ const item=(value,count=1)=>({type:'item',value:'minecraft:'+value,count,weight:
   await c.quit();await other.quit();
   rcon('passeadmin xp add DupeTester 100 audit/offline-1');rcon('passeadmin xp add DupeTester 100 audit/offline-1');assert.equal(profile('DupeTester').xp,1100);
   record('XP offline por nome conhecido e transação repetida','+100 uma vez; 1100 XP persistidos');
+ } else if(phase==='premium_setup'){
+  c=await connect('DupeTester');other=await connect('ObserverTester');
+  rcon('passeadmin season create audit 30d 7d');rcon('passeadmin xp set DupeTester 225');
+  for(const level of [1,2])rcon('passeadmin rewards set audit '+level+' true '+JSON.stringify({enabled:true,mode:'fixed',choices:[item('gold_ingot')]}));
+  const begin=Date.now();assert.match(rcon('passeadmin premium DupeTester 30 dias loja/month-1'),/Premium válido até/);
+  const first=state().premiumUntil[id('DupeTester')];assert.ok(first>=begin+30*86400000&&first<=Date.now()+30*86400000);
+  assert.match(rcon('passeadmin premium DupeTester 30 dias loja/month-1'),/já processado/);assert.equal(state().premiumUntil[id('DupeTester')],first);
+  rcon('passeadmin premium DupeTester 30 dias loja/month-2');assert.equal(state().premiumUntil[id('DupeTester')],first+30*86400000);
+  record('Compra mensal e renovação com ID de pedido','30 dias + 30 dias; replay não concede dias extras');
+  await other.command('passeadmin premium DupeTester 30 dias');assert.equal(state().premiumUntil[id('DupeTester')],first+30*86400000);record('Jogador comum não concede Premium','assinatura inalterada');
+  await c.quit();await other.quit();rcon('passeadmin premium DupeTester false');rcon('passeadmin premium DupeTester 1 minuto loja/short');
+  assert.ok(state().premiumUntil[id('DupeTester')]>Date.now());record('Premium concedido por nome offline','validade persistida antes do reinício');
+ } else if(phase==='premium_expire'){
+  const until=state().premiumUntil[id('DupeTester')];assert.ok(until>Date.now(),'restart took longer than the one-minute test subscription');
+  c=await connect('DupeTester');await c.command('passe');await wait(()=>c.lore(13).includes('Premium: Ativo'),'premium profile after restart');record('Premium offline preservado após reinício','perfil e prazo ativos sem nova concessão');
+  await c.command('passe recompensas');await wait(()=>c.lore(28)[0]==='Disponível','premium available');c.click(28);await wait(()=>deliveries('DupeTester','premium:1')[0]?.status==='DONE','premium claim');assert.equal(count('DupeTester','gold_ingot'),1);record('Assinatura temporária permite resgate Premium','um prêmio entregue');
+  await wait(()=>Date.now()>=until+1500,'automatic expiry',75000);await wait(()=>c.lore(29)[0]==='Bloqueada','open menu refreshed at expiry');
+  for(let i=0;i<50;i++)c.click(29);await pause(400);assert.equal(deliveries('DupeTester','premium:2').length,0);assert.equal(count('DupeTester','gold_ingot'),1);assert.match(rcon('passeadmin premium DupeTester status'),/inativo/);
+  record('Expiração automática + 50 cliques no prêmio','menu aberto atualizado; segundo prêmio bloqueado sem desativação manual');
+  assert.match(rcon('passeadmin premium DupeTester 1 minuto loja/short'),/já processado/);assert.equal(state().premiumUntil[id('DupeTester')],until);record('Replay após vencimento','pedido antigo não reativa assinatura');
+  const begin=Date.now();rcon('passeadmin premium DupeTester 1 mes');assert.ok(state().premiumUntil[id('DupeTester')]>=begin+30*86400000);
+  rcon('passeadmin premium DupeTester true');rcon('passeadmin premium DupeTester false');assert.match(rcon('passeadmin premium DupeTester status'),/inativo/);assert.equal(state().premiumUntil[id('DupeTester')],undefined);record('Compatibilidade true/false e mês de 30 dias','remoção revoga assinatura e acesso permanente');await c.quit();
  } else if(phase==='restart'){
   assert.equal(profile('DupeTester').xp,1100);assert.equal(profile('DupeTester').claimed.length,3);
   assert.match(rcon('passeadmin xp add DupeTester 100 audit/offline-1'),/já processada/);assert.equal(profile('DupeTester').xp,1100);
