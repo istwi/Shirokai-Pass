@@ -1,0 +1,87 @@
+"""Start disposable Fabric servers; run hostile-click/offline/restart/SIGKILL regressions.
+Requires JDK21, Node, npm ci in tools/smoke, and ./gradlew integrationModJar.
+"""
+import json
+import os
+from pathlib import Path
+import secrets
+import shutil
+import signal
+import socket
+import subprocess
+import time
+import sys
+import rcon as wire
+
+ROOT = Path(__file__).resolve().parents[2]
+RUN = ROOT / 'run-audit'
+RUN.mkdir(exist_ok=True)
+WORLD = RUN / ('world-' + time.strftime('%Y%m%d-%H%M%S'))
+RESULTS = RUN / ('results-' + WORLD.name)
+RESULTS.mkdir()
+PASSWORD = secrets.token_urlsafe(24)
+ENV = dict(os.environ, MC_PORT='25585', MC_RCON_PORT='25595', MC_RCON_PASSWORD=PASSWORD, MC_WORLD=str(WORLD), MC_RESULTS=str(RESULTS))
+(RUN / 'mods').mkdir(exist_ok=True)
+shutil.copy2(ROOT / 'build/integration/shirokai-pass-test-harness.jar', RUN / 'mods/shirokai-pass-test-harness.jar')
+(RUN / 'eula.txt').write_text('eula=true\n')
+(RUN / 'server.properties').write_text('online-mode=false\nserver-ip=127.0.0.1\nserver-port=25585\nenable-rcon=true\nrcon.port=25595\nrcon.password=' + PASSWORD + '\nlevel-name=' + WORLD.name + '\nview-distance=2\nsimulation-distance=2\ndifficulty=peaceful\nspawn-protection=0\nlevel-type=minecraft:flat\ngenerate-structures=false\nmax-tick-time=120000\n')
+os.chmod(RUN / 'server.properties', 0o600)
+server = None
+log = None
+
+def command(text):
+    with socket.create_connection(('127.0.0.1',25595),timeout=10) as conn:
+        wire.send(conn,1,3,PASSWORD)
+        while True:
+            request, kind, _ = wire.receive(conn)
+            if request == -1: raise PermissionError('Local test RCON rejected')
+            if kind == 2: break
+        wire.send(conn,2,2,text)
+        return wire.receive(conn)[2]
+
+def start(number):
+    global server,log
+    filename=RUN / ('audit-session-'+str(number)+'.log')
+    log=filename.open('w')
+    server=subprocess.Popen([str(ROOT/'gradlew'),'runAuditServer','--console=plain','--no-daemon'],cwd=ROOT,stdin=subprocess.PIPE,stdout=log,stderr=subprocess.STDOUT,env=ENV)
+    deadline=time.monotonic()+180
+    while time.monotonic()<deadline:
+        if server.poll() is not None: raise RuntimeError('Server exited; see '+str(filename))
+        if 'Shirokai Pass iniciado:' in filename.read_text(errors='replace'):
+            try: command('list');print('SERVER READY',number,flush=True);return
+            except (OSError,ConnectionError): pass
+        time.sleep(0.2)
+    raise TimeoutError('Server readiness: '+str(filename))
+
+def stop():
+    global server
+    command('stop')
+    server.wait(timeout=45)
+    log.close()
+    server=None
+
+def phase(name):
+    print('PHASE',name,flush=True)
+    with (RESULTS/(name+'.log')).open('w') as output:
+        completed=subprocess.run(['node',str(ROOT/'tools/smoke/audit.cjs'),name],cwd=ROOT,env=ENV,stdout=output,stderr=subprocess.STDOUT,timeout=100)
+    if completed.returncode: raise RuntimeError('Failed phase '+name+'; see '+str(RESULTS/(name+'.log')))
+    print((RESULTS/(name+'.json')).read_text(),flush=True)
+
+try:
+    start(1);phase('rapid');stop()
+    start(2);phase('restart');stop()
+    start(3);phase('crash')
+    checkpoint=json.loads((WORLD/'audit-checkpoint.json').read_text())
+    if checkpoint['pid'] <= 1: raise ValueError('Unsafe test PID')
+    os.kill(checkpoint['pid'],signal.SIGKILL)
+    server.wait(timeout=35);log.close();server=None
+    start(4);phase('recovery');stop()
+    reports=[json.loads((RESULTS/(name+'.json')).read_text()) for name in ('rapid','restart','crash','recovery')]
+    summary={'passed':sum(x['passed'] for x in reports),'phases':reports,'world':WORLD.name}
+    (RESULTS/'summary.json').write_text(json.dumps(summary,ensure_ascii=False,indent=2)+'\n')
+    print('AUDIT SUCCESS:',summary['passed'],'checks;',RESULTS,flush=True)
+finally:
+    if server and server.poll() is None:
+        try: command('stop');server.wait(timeout=40)
+        except Exception:
+            server.terminate()
