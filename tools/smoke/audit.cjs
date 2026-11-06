@@ -57,6 +57,25 @@ const item=(value,count=1)=>({type:'item',value:'minecraft:'+value,count,weight:
   await c.quit();await other.quit();
   rcon('passeadmin xp add DupeTester 100 audit/offline-1');rcon('passeadmin xp add DupeTester 100 audit/offline-1');assert.equal(profile('DupeTester').xp,1100);
   record('XP offline por nome conhecido e transação repetida','+100 uma vez; 1100 XP persistidos');
+ } else if(phase==='admin'){
+  c=await connect('AdminTester');other=await connect('ObserverTester');rcon('op AdminTester');rcon('passeadmin season create audit 30d 7d');
+  const goEditor=async client=>{await client.command('passeadmin editor');await wait(()=>client.name(10)==='Grátis • 1','editor grid');};
+  const save=async client=>{client.click(50);await wait(()=>client.name(30)==='Salvar alterações','confirm');client.click(30);await wait(()=>client.name(10)==='Grátis • 1','saved grid');};
+  const input=async(client,slot,value)=>{client.click(slot);await wait(()=>client.name(1)==='Salvar valor','anvil input');client.client.write('name_item',{name:value});await pause(100);client.click(1);await pause(200);};
+  await goEditor(c);c.click(10);await wait(()=>c.name(4).startsWith('Modo:'),'reward draft');c.click(10);await wait(()=>c.name(22)==='Quantidade: 1','choice');
+  await input(c,22,'2');await wait(()=>c.name(22)==='Quantidade: 2','quantity saved into draft');assert.equal(state().seasons.audit.rewards['free:1'].choices[0].count,1);
+  record('Editor usa rascunho sem alterar prêmio antes da confirmação','quantidade 2 no rascunho, 1 no arquivo');
+  c.click(22);await wait(()=>c.name(1)==='Salvar valor','anvil reopen');const old=c.window;c.client.write('close_window',{windowId:old});await wait(()=>c.window!==old&&c.name(22)==='Quantidade: 2','Escape returns to draft');
+  assert.equal(count('AdminTester','paper'),0);assert.equal(count('AdminTester','lime_dye'),0);record('Bigorna e cancelamento não vazam ícones','zero papéis/corantes no inventário');
+  c.click(49);await wait(()=>c.name(48).startsWith('Recompensa:'),'back to draft');c.click(48);await pause(120);c.click(50);await wait(()=>c.name(30)==='Salvar alterações','confirmation');for(let i=0;i<50;i++)c.click(30);await wait(()=>c.name(10)==='Grátis • 1','save spam');
+  assert.equal(state().seasons.audit.rewards['free:1'].choices[0].count,2);assert.equal(state().seasons.audit.rewards['free:1'].enabled,true);assert.equal(count('AdminTester','diamond'),0);
+  record('50 cliques na confirmação do editor','configuração salva uma vez; nenhum item concedido');
+  rcon('passeadmin xp set AdminTester 1000');await c.command('passeadmin preview');await wait(()=>c.name(10)==='Grátis • 1','preview');for(let i=0;i<40;i++){c.click(10);c.click(51);}await pause(400);assert.equal(deliveries('AdminTester').length,0);assert.equal(count('AdminTester','diamond'),0);record('Prévia administrativa sob cliques rápidos','nenhum resgate ou item');
+  await goEditor(c);c.click(12);await wait(()=>c.name(4).startsWith('Modo:'),'third draft');c.click(10);await wait(()=>c.name(13)==='Tipo: item','choice type');c.click(13);await wait(()=>c.name(13)==='Tipo: command','command type');c.click(29);await pause(100);c.client.chat('give {player} minecraft:emerald 3');await wait(()=>c.name(13)==='Tipo: command','private chat returns');assert.ok(!other.chats.some(m=>m.includes('give {player} minecraft:emerald 3')));record('Conteúdo longo permanece privado','outro jogador não recebe o texto');
+  rcon('op ObserverTester');await goEditor(c);c.click(10);await wait(()=>c.name(4).startsWith('Modo:'),'admin A draft');await goEditor(other);other.click(10);await wait(()=>other.name(4).startsWith('Modo:'),'admin B draft');
+  c.click(48);await pause(100);await save(c);other.click(50);await wait(()=>other.name(30)==='Salvar alterações','admin B confirm');other.click(30);await wait(()=>other.chats.some(m=>m.includes('Outro administrador')),'conflict refused');assert.equal(state().seasons.audit.rewards['free:1'].enabled,false);record('Dois administradores editam o mesmo prêmio','segundo salvamento recusado; primeira edição preservada');
+  await goEditor(c);c.click(12);await wait(()=>c.name(4).startsWith('Modo:'),'bulk draft');c.click(48);await pause(100);c.click(47);await wait(()=>c.name(20).startsWith('Do nível:'),'range');await input(c,20,'10');await wait(()=>c.name(20)==='Do nível: 10','from');await input(c,24,'12');await wait(()=>c.name(24)==='Até o nível: 12','to');c.click(49);await pause(120);await save(c);
+  for(const level of [10,11,12])assert.equal(state().seasons.audit.rewards['free:'+level].enabled,true);for(const level of [9,13])assert.equal(state().seasons.audit.rewards['free:'+level].enabled,false);record('Edição gráfica em lote com confirmação','somente níveis 10–12 alterados');await c.quit();await other.quit();
  } else if(phase==='premium_setup'){
   c=await connect('DupeTester');other=await connect('ObserverTester');
   rcon('passeadmin season create audit 30d 7d');rcon('passeadmin xp set DupeTester 225');

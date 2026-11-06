@@ -68,8 +68,11 @@ def phase(name):
     print((RESULTS/(name+'.json')).read_text(),flush=True)
 
 try:
-    names = ('premium_setup','premium_expire') if len(sys.argv)>1 and sys.argv[1]=='premium' else ('rapid','restart','crash','recovery')
-    if names[0]=='premium_setup':
+    mode=sys.argv[1] if len(sys.argv)>1 else 'dupe'
+    names = ('admin',) if mode=='admin' else ('premium_setup','premium_expire') if mode=='premium' else ('rapid','restart','crash','recovery')
+    if mode=='admin':
+        start(1);phase('admin');stop()
+    elif names[0]=='premium_setup':
         start(1);phase('premium_setup');stop()
         start(2);phase('premium_expire');stop()
     else:
