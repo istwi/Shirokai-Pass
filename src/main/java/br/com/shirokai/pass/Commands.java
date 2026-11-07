@@ -88,7 +88,7 @@ public final class Commands {
                         c,
                         x ->
                             Menus.open(
-                                mod, c.getSource().getPlayerOrThrow(), "home", 0, null, false)));
+                                mod, c.getSource().getPlayerOrThrow(), "home", -1, null, false)));
     for (String[] page :
         new String[][] {
           {"recompensas", "rewards"},

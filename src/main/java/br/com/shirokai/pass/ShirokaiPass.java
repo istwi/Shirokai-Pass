@@ -132,6 +132,9 @@ public final class ShirokaiPass implements ModInitializer {
               if (now >= nextStorageRetry) recoverStorage();
               if (!service.available()) return;
             }
+            for (ServerPlayerEntity player : s.getPlayerManager().getPlayerList())
+              if (player.currentScreenHandler instanceof Menus.Menu)
+                LoginGuard.run(() -> Menus.refresh(player), this::logStorageFailure);
             while (!premiumDeadlines.isEmpty() && premiumDeadlines.firstKey() <= now) {
               var expired = premiumDeadlines.pollFirstEntry();
               for (UUID id : expired.getValue())

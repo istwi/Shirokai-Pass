@@ -5,7 +5,6 @@ import static br.com.shirokai.pass.Model.*;
 import java.util.*;
 import net.minecraft.component.DataComponentTypes;
 import net.minecraft.component.type.LoreComponent;
-import net.minecraft.component.type.ProfileComponent;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.SimpleInventory;
@@ -36,20 +35,18 @@ public final class Menus {
       String season,
       boolean preview) {
     TextInput.clear(p.getUuid());
-    Season s = null;
-    try {
-      s = current(mod, season);
-    } catch (IllegalArgumentException ignored) {
+    if (page < 0) {
+      page = 0;
+      if (!view.equals("history") && !view.equals("pending")) {
+        try {
+          Season s = current(mod, season);
+          page =
+              Math.min(
+                  11, (Math.max(1, level(s, mod.service.progress(s.id, p.getUuid()).xp)) - 1) / 9);
+        } catch (IllegalArgumentException ignored) {
+        }
+      }
     }
-    if (page < 0)
-      page =
-          s == null
-              ? 0
-              : Math.min(
-                  14,
-                  Math.max(
-                      0,
-                      (Math.max(1, level(s, mod.service.progress(s.id, p.getUuid()).xp)) - 1) / 7));
     final int initial = page;
     p.openHandledScreen(
         new SimpleNamedScreenHandlerFactory(
@@ -71,11 +68,18 @@ public final class Menus {
         identifier != null && Registries.ITEM.containsId(identifier)
             ? Registries.ITEM.get(identifier)
             : Items.PAPER;
-    ItemStack stack = new ItemStack(item);
+    return decorate(new ItemStack(item), name, color, Arrays.asList(lore));
+  }
+
+  private static ItemStack decorate(
+      ItemStack stack, String name, Formatting color, List<String> lore) {
     stack.set(
         DataComponentTypes.CUSTOM_NAME,
         Text.literal(name).formatted(color).styled(s -> s.withItalic(false)));
     List<Text> lines = new ArrayList<>();
+    // Preserve configured item lore/components in the display copy, never in the stored reward.
+    LoreComponent original = stack.get(DataComponentTypes.LORE);
+    if (original != null) lines.addAll(original.lines());
     for (String line : lore)
       lines.add(Text.literal(line).formatted(Formatting.GRAY).styled(s -> s.withItalic(false)));
     stack.set(DataComponentTypes.LORE, new LoreComponent(lines));
@@ -100,7 +104,7 @@ public final class Menus {
         int page,
         String season,
         boolean preview) {
-      this(sync, inventory, mod, owner, view, page, season, preview, new SimpleInventory(54));
+      this(sync, inventory, mod, owner, view, page, season, preview, new SimpleInventory(36));
     }
 
     private Menu(
@@ -113,7 +117,7 @@ public final class Menus {
         String season,
         boolean preview,
         SimpleInventory contents) {
-      super(ScreenHandlerType.GENERIC_9X6, sync, inventory, contents, 6);
+      super(ScreenHandlerType.GENERIC_9X4, sync, inventory, contents, 4);
       this.mod = mod;
       this.owner = owner;
       this.view = view;
@@ -148,15 +152,16 @@ public final class Menus {
       }
       try {
         action.run();
-        if (owner.currentScreenHandler == this) {
-          render();
-          syncState();
-        }
       } catch (Exception e) {
         owner.sendMessage(
             Text.literal(e.getMessage() == null ? "Operação indisponível" : e.getMessage())
                 .formatted(Formatting.RED),
             true);
+      } finally {
+        if (owner.currentScreenHandler == this) {
+          render();
+          syncState();
+        }
       }
     }
 
@@ -171,50 +176,8 @@ public final class Menus {
       this.season = season;
     }
 
-    private void button(int slot, String item, String label, Runnable action, String... lore) {
-      put(slot, icon(item, label, Formatting.AQUA, lore), action);
-    }
-
-    private void mainButton(int slot, String name, String label, String target) {
-      put(
-          slot,
-          icon(
-              mod.config.icons.getOrDefault(name, "minecraft:paper"),
-              label,
-              name.equals("premium") ? Formatting.GOLD : Formatting.AQUA),
-          () -> go(target, 0, null));
-    }
-
-    private ItemStack head(Season s, Progress p) {
-      boolean premiumActive = mod.service.hasPremium(s == null ? null : s.id, owner.getUuid());
-      int lv = s == null ? 0 : level(s, p.xp);
-      long floor = s == null ? 0 : threshold(lv, s.baseXp, s.incrementXp);
-      long needed = s == null || lv == 100 ? 0 : threshold(lv + 1, s.baseXp, s.incrementXp) - floor;
-      String percent =
-          needed == 0
-              ? (lv == 100 ? "100" : "0")
-              : String.format(Locale.ROOT, "%.1f", 100.0 * (p.xp - floor) / needed);
-      ItemStack h =
-          icon(
-              "minecraft:player_head",
-              owner.getGameProfile().getName(),
-              Formatting.AQUA,
-              "Nível: " + lv + " / 100",
-              "XP total: " + p.xp,
-              "XP do nível: " + (p.xp - floor) + " / " + needed,
-              "Próximo nível: faltam " + Math.max(0, needed - (p.xp - floor)) + " XP",
-              "Progresso: " + percent + "%",
-              "Premium: " + (premiumActive ? "Ativo" : "Inativo"),
-              "Validade: "
-                  + (p.premium
-                      ? "Permanente nesta temporada"
-                      : premiumActive
-                          ? remaining(mod.service.premiumExpiresAt(owner.getUuid()))
-                          : "—"),
-              "Temporada: " + (s == null ? "—" : s.name),
-              "Restante: " + (s == null ? "—" : remaining(s.end)));
-      h.set(DataComponentTypes.PROFILE, new ProfileComponent(owner.getGameProfile()));
-      return h;
+    private void button(int slot, String label, Runnable action) {
+      put(slot, icon("minecraft:arrow", label, Formatting.AQUA), action);
     }
 
     private static String remaining(long deadline) {
@@ -222,284 +185,235 @@ public final class Menus {
       return sec / 86400 + "d " + sec % 86400 / 3600 + "h " + sec % 3600 / 60 + "m";
     }
 
+    private ItemStack information(Season s, Progress p, boolean premiumActive) {
+      int lv = s == null ? 0 : level(s, p.xp);
+      long floor = s == null ? 0 : threshold(lv, s.baseXp, s.incrementXp);
+      long needed = s == null || lv == 100 ? 0 : threshold(lv + 1, s.baseXp, s.incrementXp) - floor;
+      List<String> lore = new ArrayList<>();
+      lore.add("Temporada: " + (s == null ? "Aguardando início" : s.name));
+      lore.add("Nível: " + lv + " / 100");
+      lore.add(
+          lv == 100 ? "XP: " + p.xp + " • Nível máximo" : "XP: " + (p.xp - floor) + " / " + needed);
+      lore.add("Premium: " + (premiumActive ? "Ativo" : "Inativo"));
+      if (premiumActive && !p.premium)
+        lore.add("Premium restante: " + remaining(mod.service.premiumExpiresAt(owner.getUuid())));
+      if (s != null) {
+        long now = System.currentTimeMillis();
+        lore.add(
+            now < s.end
+                ? "Temporada restante: " + remaining(s.end)
+                : now < s.graceEnd
+                    ? "Resgate extra: " + remaining(s.graceEnd)
+                    : "Temporada encerrada");
+      }
+      lore.add("Página " + (page + 1) + " / 12");
+      if (preview)
+        lore.add(view.equals("editor") ? "Edição de recompensas" : "Prévia • sem resgates");
+      if (view.equals("premium")) lore.add(mod.config.premiumInfo);
+      if (view.equals("info")) lore.add(mod.config.rules);
+      return icon(
+          "minecraft:book", "Informações do passe", Formatting.AQUA, lore.toArray(String[]::new));
+    }
+
+    private boolean available(Season s, Progress p, Reward r, boolean premiumActive) {
+      return r != null
+          && r.enabled
+          && !p.claimed.contains(key(r.level, r.premium))
+          && level(s, p.xp) >= r.level
+          && (!r.premium || premiumActive)
+          && s.claiming(System.currentTimeMillis());
+    }
+
+    private ItemStack rewardIcon(Season s, Progress p, Reward r, boolean premiumActive) {
+      boolean claimed = p.claimed.contains(key(r.level, r.premium));
+      boolean eligible = available(s, p, r, premiumActive);
+      List<String> lore = new ArrayList<>();
+      lore.add(
+          !r.enabled
+              ? "Não configurada"
+              : claimed ? "Resgatada" : eligible ? "Disponível" : "Bloqueada");
+      if (r.premium && !premiumActive) lore.add("Requer passe Premium");
+      if (!s.claiming(System.currentTimeMillis())) lore.add("Prazo de resgate encerrado");
+      long total = r.choices.stream().mapToLong(c -> c.weight).sum();
+      ItemStack display = ItemStack.EMPTY;
+      for (int i = 0; i < r.choices.size(); i++) {
+        if (i >= 4 && !display.isEmpty()) break;
+        Choice c = r.choices.get(i);
+        String label;
+        if (c.type.equals("item")) {
+          try {
+            ItemStack item = RewardItems.stack(mod.server(), c.value, 1);
+            label = shortText(item.getName().getString()) + " ×" + c.count;
+            if (display.isEmpty()) {
+              item.setCount(Math.min(c.count, item.getMaxCount()));
+              display = item;
+            }
+          } catch (IllegalArgumentException e) {
+            label = "Item indisponível";
+          }
+        } else
+          label =
+              c.type.equals("pokemon") ? "Pokémon: " + shortText(c.value) : "Comando do servidor";
+        if (i < 4)
+          lore.add(
+              label
+                  + (r.mode.equals("random") && total > 0
+                      ? String.format(Locale.ROOT, " (%.1f%%)", 100.0 * c.weight / total)
+                      : ""));
+      }
+      if (r.choices.size() > 4) lore.add("+" + (r.choices.size() - 4) + " prêmios");
+      if (display.isEmpty()) {
+        boolean pokemon = r.choices.stream().anyMatch(c -> c.type.equals("pokemon"));
+        display = icon(pokemon ? "cobblemon:poke_ball" : "minecraft:paper", "", Formatting.AQUA);
+      }
+      if (view.equals("editor")) lore.add("Clique para editar");
+      else if (preview) lore.add("Prévia • sem resgates");
+      else if (eligible) lore.add("Clique para resgatar");
+      return decorate(
+          display,
+          (r.premium ? "Premium" : "Grátis") + " • " + r.level,
+          claimed
+              ? Formatting.GREEN
+              : eligible ? Formatting.YELLOW : r.premium ? Formatting.GOLD : Formatting.AQUA,
+          lore);
+    }
+
+    private static String shortText(String text) {
+      return text.length() <= 48 ? text : text.substring(0, 45) + "…";
+    }
+
     void render() {
       actions.clear();
       contents.clear();
-      for (int i = 0; i < 54; i++)
-        contents.setStack(i, icon("minecraft:gray_stained_glass_pane", " ", Formatting.DARK_GRAY));
       State state = mod.service.snapshot();
       Season s = state.seasons.get(season == null ? state.active : season);
       Progress p = s == null ? new Progress() : mod.service.progress(s.id, owner.getUuid());
       boolean premiumActive = mod.service.hasPremium(s == null ? null : s.id, owner.getUuid());
-      if (!view.equals("home"))
-        button(49, "minecraft:arrow", "VOLTAR AO MENU", () -> go("home", 0, null));
-      switch (view) {
-        case "home" -> {
-          put(13, head(s, p), null);
-          mainButton(28, "rewards", "✦ Recompensas", "rewards");
-          actions.put(
-              28,
+      if (view.equals("history")) {
+        history(state);
+        return;
+      }
+      if (view.equals("pending")) {
+        pending(state);
+        return;
+      }
+      page = Math.min(11, Math.max(0, page));
+      put(
+          31,
+          information(s, p, premiumActive),
+          view.equals("editor") ? () -> AdminGui.dashboard(mod, owner) : null);
+      navigation(s == null ? 0 : 11);
+      if (s == null) return;
+      for (int col = 0; col < 9; col++) {
+        int lv = page * 9 + col + 1;
+        if (lv > 100) continue;
+        boolean claimable = false;
+        for (boolean premium : new boolean[] {false, true}) {
+          String key = key(lv, premium);
+          Reward r = s.rewards.get(key);
+          if (r == null) continue;
+          claimable |= available(s, p, r, premiumActive);
+          put(
+              (premium ? 9 : 0) + col,
+              rewardIcon(s, p, r, premiumActive),
               () -> {
-                int current =
-                    s == null
-                        ? 0
-                        : Math.min(14, Math.max(0, (Math.max(1, level(s, p.xp)) - 1) / 7));
-                go("rewards", current, null);
+                if (view.equals("editor")) {
+                  if (!ShirokaiPass.permission(
+                          owner.getCommandSource(), "shirokaipass.admin.rewards", 2)
+                      && !ShirokaiPass.permission(
+                          owner.getCommandSource(), "shirokaipass.admin", 2))
+                    throw new IllegalArgumentException("Sem permissão");
+                  AdminGui.editReward(mod, owner, s.id, key, page);
+                } else if (!preview) mod.claim(owner, s.id, List.of(key));
               });
-          mainButton(30, "profile", "✦ Perfil", "profile");
-          mainButton(32, "premium", "✦ Premium", "premium");
-          mainButton(34, "history", "✦ Histórico", "history");
-          button(
-              39,
-              mod.config.icons.getOrDefault("claim", "minecraft:lime_dye"),
-              "✦ Resgatar tudo",
-              () -> {
-                if (s != null && !preview) mod.claim(owner, s.id, s.rewards.keySet());
-              });
-          mainButton(41, "info", "✦ Informações", "info");
-          mainButton(43, "pending", "✦ Entregas pendentes", "pending");
-          if (java.util.List.of(
-                  "rewards", "seasons", "events", "announcements", "premium", "preview")
-              .stream()
-              .anyMatch(n -> AdminGui.allowed(owner, n)))
-            button(
-                48, "minecraft:comparator", "Administração", () -> AdminGui.dashboard(mod, owner));
-          if (s == null)
-            put(22, icon("minecraft:clock", "Aguardando temporada", Formatting.GRAY), null);
         }
-        case "profile" -> {
-          put(13, head(s, p), null);
-          long free = p.claimed.stream().filter(k -> k.startsWith("free:")).count(),
-              premium = p.claimed.size() - free;
-          long available =
-              s == null
-                  ? 0
-                  : s.rewards.entrySet().stream()
-                      .filter(
-                          e ->
-                              e.getValue().enabled
-                                  && s.claiming(System.currentTimeMillis())
-                                  && !p.claimed.contains(e.getKey())
-                                  && level(s, p.xp) >= e.getValue().level
-                                  && (!e.getValue().premium || premiumActive))
-                      .count();
-          long pending =
-              state.deliveries.values().stream()
-                  .filter(d -> d.player.equals(owner.getUuidAsString()) && !d.status.equals("DONE"))
-                  .count();
-          int best = 0, participation = 0;
-          for (Season past : state.seasons.values()) {
-            Progress previous = state.players.get(playerKey(past.id, owner.getUuid()));
-            if (previous != null) {
-              participation++;
-              if (s == null || !past.id.equals(s.id))
-                best = Math.max(best, level(past, previous.xp));
-            }
-          }
-          put(
-              30,
-              icon(
-                  "minecraft:chest",
-                  "Recompensas",
-                  Formatting.GREEN,
-                  "Grátis resgatadas: " + free,
-                  "Premium resgatadas: " + premium,
-                  "Disponíveis: " + available,
-                  "Pendentes: " + pending),
-              null);
-          put(
-              32,
-              icon(
-                  "minecraft:book",
-                  "Histórico",
-                  Formatting.AQUA,
-                  "Temporadas participadas: " + participation,
-                  "Maior nível anterior: " + best),
-              null);
-        }
-        case "premium" ->
-            put(
-                22,
-                icon(
-                    "minecraft:gold_ingot",
-                    "✦ Premium",
-                    Formatting.GOLD,
-                    "Status: " + (premiumActive ? "Ativo" : "Inativo"),
-                    "Validade: "
-                        + (p.premium
-                            ? "Permanente nesta temporada"
-                            : premiumActive
-                                ? remaining(mod.service.premiumExpiresAt(owner.getUuid()))
-                                : "—"),
-                    mod.config.premiumInfo),
-                null);
-        case "info" ->
-            put(
-                22,
-                icon(
-                    "minecraft:paper",
-                    "Como funciona",
-                    Formatting.AQUA,
-                    mod.config.rules,
-                    "100 níveis • XP progressiva",
-                    "Bônus de XP atual: " + mod.service.multiplier() + "x",
-                    "Resgate extra: " + (s == null ? "—" : remaining(s.graceEnd))),
-                null);
-        case "history" -> {
-          List<Season> past = new ArrayList<>(state.seasons.values());
-          Collections.reverse(past);
-          int max = Math.max(0, (past.size() - 1) / 28);
-          page = Math.min(max, Math.max(0, page));
-          for (int i = 0; i < 28 && page * 28 + i < past.size(); i++) {
-            Season previous = past.get(page * 28 + i);
-            Progress old = mod.service.progress(previous.id, owner.getUuid());
-            int slot = (i / 7 + 1) * 9 + 1 + i % 7;
-            button(
-                slot,
-                "minecraft:book",
-                previous.name,
-                () ->
-                    go(
-                        "rewards",
-                        Math.min(14, Math.max(0, (Math.max(1, level(previous, old.xp)) - 1) / 7)),
-                        previous.id),
-                "Nível: " + level(previous, old.xp),
-                "XP: " + old.xp,
-                "Resgate: "
-                    + (previous.claiming(System.currentTimeMillis())
-                        ? remaining(previous.graceEnd)
-                        : "Encerrado"));
-          }
-          nav(max);
-        }
-        case "pending" -> {
-          List<Delivery> list =
-              state.deliveries.values().stream()
-                  .filter(d -> d.player.equals(owner.getUuidAsString()) && !d.status.equals("DONE"))
-                  .toList();
-          int max = Math.max(0, (list.size() - 1) / 28);
-          page = Math.min(max, Math.max(0, page));
-          for (int i = 0; i < 28 && page * 28 + i < list.size(); i++) {
-            Delivery delivery = list.get(page * 28 + i);
-            put(
-                (i / 7 + 1) * 9 + 1 + i % 7,
-                icon(
-                    "minecraft:hopper",
-                    delivery.reward,
-                    Formatting.GOLD,
-                    delivery.season,
-                    "Estado: " + delivery.status,
-                    "ID: " + delivery.id,
-                    delivery.error),
-                null);
-          }
-          button(
-              48,
-              "minecraft:lime_dye",
-              "Tentar entregas prontas",
-              () -> mod.deliver(owner),
-              "Libere espaço no inventário.",
-              "Entregas em revisão exigem a equipe.");
-          nav(max);
-        }
-        case "rewards", "editor" -> {
-          if (s == null) {
-            put(22, icon("minecraft:clock", "Aguardando temporada", Formatting.GRAY), null);
-            break;
-          }
-          page = Math.min(14, Math.max(0, page));
-          put(
-              4,
-              icon(
-                  "minecraft:experience_bottle",
-                  s.name + " • " + (page + 1) + " / 15",
-                  Formatting.AQUA,
-                  preview ? "Prévia: resgates desativados" : "Nível atual: " + level(s, p.xp)),
-              null);
-          for (int col = 0; col < 7; col++) {
-            int lv = page * 7 + col + 1;
-            if (lv > 100) continue;
-            put(
-                19 + col,
-                icon("minecraft:cyan_stained_glass_pane", "Nível " + lv, Formatting.AQUA),
-                null);
-            for (boolean premium : new boolean[] {false, true}) {
-              String key = key(lv, premium);
-              Reward r = s.rewards.get(key);
-              if (r == null) continue;
-              boolean claimed = p.claimed.contains(key),
-                  eligible =
-                      r.enabled
-                          && level(s, p.xp) >= lv
-                          && (!premium || premiumActive)
-                          && s.claiming(System.currentTimeMillis());
-              List<String> lore = new ArrayList<>();
-              lore.add(
-                  !r.enabled
-                      ? "Não configurada"
-                      : claimed ? "Resgatada" : eligible ? "Disponível" : "Bloqueada");
-              long total = r.choices.stream().mapToLong(c -> c.weight).sum();
-              for (Choice c : r.choices)
-                lore.add(
-                    c.type
-                        + ": "
-                        + c.value
-                        + " ×"
-                        + c.count
-                        + (r.mode.equals("random")
-                            ? String.format(Locale.ROOT, " (%.2f%%)", 100.0 * c.weight / total)
-                            : ""));
-              if (view.equals("editor")) lore.add("Clique para editar");
-              int slot = (premium ? 28 : 10) + col;
-              Formatting color =
-                  claimed
-                      ? Formatting.GRAY
-                      : eligible ? Formatting.GREEN : premium ? Formatting.GOLD : Formatting.AQUA;
-              put(
-                  slot,
-                  icon(
-                      claimed
-                          ? "minecraft:gray_dye"
-                          : eligible
-                              ? "minecraft:lime_dye"
-                              : premium ? "minecraft:gold_ingot" : "minecraft:chest",
-                      (premium ? "Premium" : "Grátis") + " • " + lv,
-                      color,
-                      lore.toArray(String[]::new)),
-                  () -> {
-                    if (view.equals("editor")) {
-                      if (!ShirokaiPass.permission(
-                              owner.getCommandSource(), "shirokaipass.admin.rewards", 2)
-                          && !ShirokaiPass.permission(
-                              owner.getCommandSource(), "shirokaipass.admin", 2))
-                        throw new IllegalArgumentException("Sem permissão");
-                      AdminGui.editReward(mod, owner, s.id, key, page);
-                    } else if (!preview) mod.claim(owner, s.id, List.of(key));
-                  });
-            }
-          }
-          nav(14);
-          button(
-              47,
-              "minecraft:compass",
-              "Ir ao nível atual",
-              () -> page = Math.min(14, Math.max(0, (Math.max(1, level(s, p.xp)) - 1) / 7)));
-          if (!preview)
-            button(
-                51,
-                "minecraft:lime_dye",
-                "Resgatar tudo",
-                () -> mod.claim(owner, s.id, s.rewards.keySet()));
-        }
-        default -> throw new IllegalArgumentException("Menu desconhecido");
+        int current = level(s, p.xp);
+        String color =
+            claimable ? "yellow" : lv <= current ? "lime" : lv == current + 1 ? "orange" : "gray";
+        String status =
+            claimable
+                ? "Recompensa disponível"
+                : lv <= current ? "Concluído" : lv == current + 1 ? "Em progresso" : "Bloqueado";
+        put(
+            18 + col,
+            icon(
+                "minecraft:" + color + "_stained_glass_pane",
+                "Nível " + lv,
+                Formatting.WHITE,
+                status),
+            null);
       }
     }
 
-    private void nav(int max) {
-      button(45, "minecraft:spectral_arrow", "Primeira página", () -> page = 0);
-      button(46, "minecraft:arrow", "Página anterior", () -> page = Math.max(0, page - 1));
-      button(52, "minecraft:arrow", "Próxima página", () -> page = Math.min(max, page + 1));
-      button(53, "minecraft:spectral_arrow", "Última página", () -> page = max);
+    private void history(State state) {
+      List<Season> past = new ArrayList<>(state.seasons.values());
+      Collections.reverse(past);
+      int max = Math.max(0, (past.size() - 1) / 27);
+      page = Math.min(max, Math.max(0, page));
+      for (int i = 0; i < 27 && page * 27 + i < past.size(); i++) {
+        Season previous = past.get(page * 27 + i);
+        Progress old = mod.service.progress(previous.id, owner.getUuid());
+        put(
+            i,
+            icon(
+                "minecraft:book",
+                previous.name,
+                Formatting.AQUA,
+                "Nível: " + level(previous, old.xp),
+                "Resgate: "
+                    + (previous.claiming(System.currentTimeMillis())
+                        ? remaining(previous.graceEnd)
+                        : "Encerrado")),
+            () ->
+                go(
+                    "rewards",
+                    Math.min(11, (Math.max(1, level(previous, old.xp)) - 1) / 9),
+                    previous.id));
+      }
+      put(
+          31,
+          icon("minecraft:book", "Histórico", Formatting.AQUA, "Clique para voltar ao passe"),
+          () -> go("home", 0, null));
+      navigation(max);
+    }
+
+    private void pending(State state) {
+      List<Delivery> list =
+          state.deliveries.values().stream()
+              .filter(d -> d.player.equals(owner.getUuidAsString()) && !d.status.equals("DONE"))
+              .toList();
+      int max = Math.max(0, (list.size() - 1) / 27);
+      page = Math.min(max, Math.max(0, page));
+      for (int i = 0; i < 27 && page * 27 + i < list.size(); i++) {
+        Delivery d = list.get(page * 27 + i);
+        put(
+            i,
+            icon(
+                "minecraft:hopper",
+                d.reward,
+                Formatting.GOLD,
+                d.season,
+                "Estado: " + d.status,
+                d.status.equals("REVIEW")
+                    ? "Peça revisão à equipe"
+                    : "Libere espaço no inventário"),
+            null);
+      }
+      put(
+          31,
+          icon(
+              "minecraft:book",
+              "Entregas pendentes",
+              Formatting.AQUA,
+              "Clique para tentar entregas prontas",
+              "Entregas em revisão exigem a equipe"),
+          () -> mod.deliver(owner));
+      navigation(max);
+    }
+
+    private void navigation(int max) {
+      button(27, "Página anterior", () -> page = Math.max(0, page - 1));
+      button(35, "Próxima página", () -> page = Math.min(max, page + 1));
     }
   }
 }

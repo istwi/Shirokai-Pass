@@ -87,8 +87,11 @@ def phase(name):
 
 try:
     mode=sys.argv[1] if len(sys.argv)>1 else 'dupe'
-    names = ('permissions','permissions_restart') if mode=='permissions' else ('fallback',) if mode=='fallback' else ('storage','storage_corrupt') if mode=='storage' else ('admin',) if mode=='admin' else ('premium_setup','premium_expire') if mode=='premium' else ('rapid','restart','crash','recovery')
-    if mode=='permissions':
+    names = ('gui','gui_restart') if mode=='gui' else ('permissions','permissions_restart') if mode=='permissions' else ('fallback',) if mode=='fallback' else ('storage','storage_corrupt') if mode=='storage' else ('admin',) if mode=='admin' else ('premium_setup','premium_expire') if mode=='premium' else ('rapid','restart','crash','recovery')
+    if mode=='gui':
+        start(1);phase('gui');stop()
+        start(2);phase('gui_restart');stop()
+    elif mode=='permissions':
         start(1);phase('permissions');stop()
         start(2);phase('permissions_restart');stop()
     elif mode=='fallback':
