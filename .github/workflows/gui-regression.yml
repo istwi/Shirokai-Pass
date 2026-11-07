@@ -1,0 +1,35 @@
+name: Minimal pass GUI regression
+on:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  gui:
+    runs-on: ubuntu-latest
+    env:
+      NODE_PATH: ${{ github.workspace }}/tools/smoke/node_modules
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Build, unit test and inspect compatible permissions bundle
+        run: ./gradlew test build integrationModJar --no-daemon
+      - name: Install protocol client
+        run: npm ci --prefix tools/smoke
+      - name: Exercise 36-slot GUI, direct claims, hostile clicks and restart
+        run: python3 tools/smoke/audit.py gui
+      - name: Preserve executed outcomes
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: minimal-gui-results
+          path: |
+            run-audit/results-*/summary.json
+            build/test-results/test/

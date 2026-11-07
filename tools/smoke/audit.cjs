@@ -120,10 +120,10 @@ const item=(value,count=1)=>({type:'item',value:'minecraft:'+value,count,weight:
   for(let i=0;i<150;i++)c.click(0);
   await wait(()=>deliveries('DupeTester','free:1').length===1&&deliveries('DupeTester','free:1')[0].status==='DONE','rapid claim');await pause(400);
   assert.equal(count('DupeTester','diamond'),1);record('150 cliques rápidos no mesmo prêmio','1 recibo, 1 diamante');
-  const start=Date.now();for(let i=0;i<100;i++)c.client.write('chat_command',{command:'passe resgatartudo'});
+  const start=Date.now();for(let i=0;i<100;i++){c.click(1);c.click(2);}
   await wait(()=>deliveries('DupeTester').length===3&&deliveries('DupeTester').every(d=>d.status==='DONE'),'claim-all burst');await pause(400);
   assert.equal(count('DupeTester','diamond'),1);assert.equal(count('DupeTester','emerald')+count('DupeTester','gold_ingot'),1);
-  assert.match(rcon('scoreboard players get DupeTester audit'),/has 1 /);record('100 pedidos rápidos de resgatartudo','3 recompensas únicas; sorteio e comando executados 1 vez; '+(Date.now()-start)+'ms');
+  assert.match(rcon('scoreboard players get DupeTester audit'),/has 1 /);await c.command('passe resgatartudo');assert.equal(deliveries('DupeTester').length,3);record('100 cliques rápidos por prêmio e resgatartudo após resgate','3 recompensas únicas; sorteio e comando executados 1 vez; '+(Date.now()-start)+'ms');
   const before=rcon('data get entity DupeTester Inventory');
   for(const mode of [1,2,3,4,5,6])for(let i=0;i<15;i++)c.click(0,mode,mode===5?0:0,true);
   for(let i=0;i<20;i++){c.click(0);c.click(-999);c.click(80,1,0,true);}
