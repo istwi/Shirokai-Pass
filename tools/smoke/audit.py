@@ -47,7 +47,7 @@ def start(number):
     deadline=time.monotonic()+180
     while time.monotonic()<deadline:
         if server.poll() is not None: raise RuntimeError('Server exited; see '+str(filename))
-        if 'Shirokai Pass iniciado:' in filename.read_text(errors='replace'):
+        if 'Shirokai Pass iniciado' in filename.read_text(errors='replace'):
             try: command('list');print('SERVER READY',number,flush=True);return
             except (OSError,ConnectionError): pass
         time.sleep(0.2)
@@ -69,8 +69,14 @@ def phase(name):
 
 try:
     mode=sys.argv[1] if len(sys.argv)>1 else 'dupe'
-    names = ('admin',) if mode=='admin' else ('premium_setup','premium_expire') if mode=='premium' else ('rapid','restart','crash','recovery')
-    if mode=='admin':
+    names = ('storage','storage_corrupt') if mode=='storage' else ('admin',) if mode=='admin' else ('premium_setup','premium_expire') if mode=='premium' else ('rapid','restart','crash','recovery')
+    if mode=='storage':
+        start(1);phase('storage');stop()
+        data=WORLD/'shirokaipass/state.json'
+        shutil.copy2(data,data.with_name('state.json.startup-saved'))
+        data.write_text('broken-storage-fixture')
+        start(2);phase('storage_corrupt');stop()
+    elif mode=='admin':
         start(1);phase('admin');stop()
     elif names[0]=='premium_setup':
         start(1);phase('premium_setup');stop()
@@ -84,6 +90,10 @@ try:
         os.kill(checkpoint['pid'],signal.SIGKILL)
         server.wait(timeout=35);log.close();server=None
         start(4);phase('recovery');stop()
+    if mode=='storage':
+        for filename in RUN.glob('audit-session-*.log'):
+            text=filename.read_text(errors='replace')
+            if "Couldn't place player in world" in text or "Invalid player data" in text: raise AssertionError('Storage fault escaped into player placement: '+str(filename))
     reports=[json.loads((RESULTS/(name+'.json')).read_text()) for name in names]
     summary={'passed':sum(x['passed'] for x in reports),'phases':reports,'world':WORLD.name}
     (RESULTS/'summary.json').write_text(json.dumps(summary,ensure_ascii=False,indent=2)+'\n')
