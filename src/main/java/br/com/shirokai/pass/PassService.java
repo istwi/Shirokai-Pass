@@ -76,14 +76,15 @@ public final class PassService {
 
   /** Reload only a known committed/attempted snapshot, then prove that it is writable. */
   public synchronized void resume() throws IOException {
-    if (available()) return;
+    boolean wasAvailable = available();
+    if (wasAvailable) recoveryCandidates.add(Store.JSON.toJsonTree(state));
     try {
       State candidate = store.load();
       if (state != null && !recoveryCandidates.contains(Store.JSON.toJsonTree(candidate)))
         throw new IOException(
             "Dados do disco diferem dos estados confirmados/tentados. Nada será sobrescrito: "
                 + store.path());
-      markInterrupted(candidate);
+      if (!wasAvailable) markInterrupted(candidate);
       recoveryCandidates.add(Store.JSON.toJsonTree(candidate));
       store.save(candidate); // A real durable write, not an exists()/isWritable() guess.
       state = candidate;

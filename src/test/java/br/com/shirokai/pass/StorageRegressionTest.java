@@ -346,4 +346,17 @@ class StorageRegressionTest {
     assertEquals(100, service.progress("s", id).xp);
     assertTrue(service.add(id, 100, "order", false).duplicate());
   }
+
+  @Test
+  void healthyRecoveryStillPerformsRealWriteProbe() throws Exception {
+    FaultIO io = new FaultIO();
+    PassService service = prepared(new Store(path(), io), new AtomicLong(100000));
+    assertTrue(service.available());
+    io.denyReplace = true;
+    assertThrows(IOException.class, service::resume);
+    assertFalse(service.available());
+    io.denyReplace = false;
+    service.resume();
+    assertTrue(service.available());
+  }
 }

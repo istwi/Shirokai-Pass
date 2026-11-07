@@ -21,6 +21,26 @@ jobs:
       - name: Compile and test native filesystem behavior
         shell: bash
         run: ./gradlew test build --no-daemon
+      - name: Read JUnit outcomes
+        id: junit
+        if: always()
+        shell: bash
+        run: |
+          python - <<'PYTHON'
+          import os, pathlib, xml.etree.ElementTree as ET
+          suites = [ET.parse(p).getroot() for p in pathlib.Path('build/test-results/test').glob('TEST-*.xml')]
+          total = sum(int(s.get('tests', 0)) for s in suites)
+          skipped = sum(int(s.get('skipped', 0)) for s in suites)
+          failed = sum(int(s.get('failures', 0)) + int(s.get('errors', 0)) for s in suites)
+          with open(os.environ['GITHUB_OUTPUT'], 'a') as output:
+              output.write(f'passed={total-skipped-failed}\nskipped={skipped}\nfailed={failed}\n')
+          if not suites:
+              raise SystemExit('No JUnit results were executed')
+          PYTHON
+      - name: "JUnit ${{ steps.junit.outputs.passed }} passed, ${{ steps.junit.outputs.skipped }} skipped, ${{ steps.junit.outputs.failed }} failed"
+        if: always()
+        shell: bash
+        run: echo "Native JDK21 filesystem test outcomes recorded above."
       - name: Preserve exact outcomes including platform skips
         if: always()
         uses: actions/upload-artifact@v4
