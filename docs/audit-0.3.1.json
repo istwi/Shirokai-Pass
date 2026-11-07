@@ -1,0 +1,513 @@
+{
+  "version": "0.3.1",
+  "sourceCommit": "e6cb2ff687c7eb926115210acbb887da422a89b3",
+  "nativeCI": {
+    "run": "https://github.com/istwi/Shirokai-Pass/actions/runs/42316417927",
+    "linux": {
+      "passed": 48,
+      "skipped": 0,
+      "failed": 0
+    },
+    "windows": {
+      "passed": 47,
+      "skipped": 1,
+      "failed": 0,
+      "skipReason": "POSIX write-permission test does not apply to Windows; native file save/replacement and injected failures executed"
+    }
+  },
+  "functional": {
+    "passed": 33,
+    "suites": [
+      {
+        "passed": 7,
+        "phases": [
+          {
+            "phase": "storage",
+            "passed": 5,
+            "results": [
+              {
+                "name": "Login com armazenamento normal",
+                "status": "passed",
+                "detail": "jogador permanece no mundo"
+              },
+              {
+                "name": "Login com arquivo de estado substituído por diretório",
+                "status": "passed",
+                "detail": "jogador conectado; passe bloqueado, sem Invalid player data"
+              },
+              {
+                "name": "Resgates durante falha",
+                "status": "passed",
+                "detail": "20 cliques negados; nenhum item e backup intacto"
+              },
+              {
+                "name": "XP durante falha",
+                "status": "passed",
+                "detail": "sem falso sucesso ou alteração do snapshot confirmado"
+              },
+              {
+                "name": "Recuperação sem reiniciar",
+                "status": "passed",
+                "detail": "100 XP preservidos; nome do jogador novo salvo; 1 prêmio após reparo"
+              }
+            ]
+          },
+          {
+            "phase": "storage_corrupt",
+            "passed": 2,
+            "results": [
+              {
+                "name": "Login após reinício com JSON corrompido",
+                "status": "passed",
+                "detail": "servidor e login ativos; arquivo corrompido não sobrescrito"
+              },
+              {
+                "name": "Reparo após falha de leitura e reinício",
+                "status": "passed",
+                "detail": "XP, inventário e recibo preservados; nenhum novo prêmio"
+              }
+            ]
+          }
+        ],
+        "world": "world-20261107-000537"
+      },
+      {
+        "passed": 11,
+        "phases": [
+          {
+            "phase": "rapid",
+            "passed": 6,
+            "results": [
+              {
+                "name": "150 cliques rápidos no mesmo prêmio",
+                "status": "passed",
+                "detail": "1 recibo, 1 diamante"
+              },
+              {
+                "name": "100 cliques rápidos em resgatar tudo",
+                "status": "passed",
+                "detail": "3 recompensas únicas; sorteio e comando executados 1 vez; 717ms"
+              },
+              {
+                "name": "Shift, tecla numérica, clone, drop, arrastar, double-click e slots forjados",
+                "status": "passed",
+                "detail": "inventário idêntico; nenhum ícone movido"
+              },
+              {
+                "name": "Administração por jogador sem OP",
+                "status": "passed",
+                "detail": "XP não alterada"
+              },
+              {
+                "name": "Retorno após spam de cliques",
+                "status": "passed",
+                "detail": "menu inicial do passe"
+              },
+              {
+                "name": "XP offline por nome conhecido e transação repetida",
+                "status": "passed",
+                "detail": "+100 uma vez; 1100 XP persistidos"
+              }
+            ]
+          },
+          {
+            "phase": "restart",
+            "passed": 2,
+            "results": [
+              {
+                "name": "Reinício normal + recibos + inventário",
+                "status": "passed",
+                "detail": "1100 XP, 3 resgates, 1 diamante; nenhum novo prêmio após repetir clique"
+              },
+              {
+                "name": "Inventário cheio + 30 cliques",
+                "status": "passed",
+                "detail": "1 reserva READY, nenhum diamante entregue"
+              }
+            ]
+          },
+          {
+            "phase": "crash",
+            "passed": 2,
+            "results": [
+              {
+                "name": "Pendência preservada após reinício e entregue uma vez",
+                "status": "passed",
+                "detail": "2 diamantes após liberar inventário"
+              },
+              {
+                "name": "Interrupção controlada durante entrega",
+                "status": "passed",
+                "detail": "arquivo DELIVERING confirmado antes do SIGKILL"
+              }
+            ]
+          },
+          {
+            "phase": "recovery",
+            "passed": 1,
+            "results": [
+              {
+                "name": "Recuperação após SIGKILL + repetição de cliques",
+                "status": "passed",
+                "detail": "REVIEW preservado; 2 diamantes antes/depois; sem reentrega automática"
+              }
+            ]
+          }
+        ],
+        "world": "world-20261107-000709"
+      },
+      {
+        "passed": 8,
+        "phases": [
+          {
+            "phase": "premium_setup",
+            "passed": 3,
+            "results": [
+              {
+                "name": "Compra mensal e renovação com ID de pedido",
+                "status": "passed",
+                "detail": "30 dias + 30 dias; replay não concede dias extras"
+              },
+              {
+                "name": "Jogador comum não concede Premium",
+                "status": "passed",
+                "detail": "assinatura inalterada"
+              },
+              {
+                "name": "Premium concedido por nome offline",
+                "status": "passed",
+                "detail": "validade persistida antes do reinício"
+              }
+            ]
+          },
+          {
+            "phase": "premium_expire",
+            "passed": 5,
+            "results": [
+              {
+                "name": "Premium offline preservado após reinício",
+                "status": "passed",
+                "detail": "perfil e prazo ativos sem nova concessão"
+              },
+              {
+                "name": "Assinatura temporária permite resgate Premium",
+                "status": "passed",
+                "detail": "um prêmio entregue"
+              },
+              {
+                "name": "Expiração automática + 50 cliques no prêmio",
+                "status": "passed",
+                "detail": "menu aberto atualizado; segundo prêmio bloqueado sem desativação manual"
+              },
+              {
+                "name": "Replay após vencimento",
+                "status": "passed",
+                "detail": "pedido antigo não reativa assinatura"
+              },
+              {
+                "name": "Compatibilidade true/false e mês de 30 dias",
+                "status": "passed",
+                "detail": "remoção revoga assinatura e acesso permanente"
+              }
+            ]
+          }
+        ],
+        "world": "world-20261107-001055"
+      },
+      {
+        "passed": 7,
+        "phases": [
+          {
+            "phase": "admin",
+            "passed": 7,
+            "results": [
+              {
+                "name": "Editor usa rascunho sem alterar prêmio antes da confirmação",
+                "status": "passed",
+                "detail": "quantidade 2 no rascunho, 1 no arquivo"
+              },
+              {
+                "name": "Bigorna e cancelamento não vazam ícones",
+                "status": "passed",
+                "detail": "zero papéis/corantes no inventário"
+              },
+              {
+                "name": "50 cliques na confirmação do editor",
+                "status": "passed",
+                "detail": "configuração salva uma vez; nenhum item concedido"
+              },
+              {
+                "name": "Prévia administrativa sob cliques rápidos",
+                "status": "passed",
+                "detail": "nenhum resgate ou item"
+              },
+              {
+                "name": "Conteúdo longo permanece privado",
+                "status": "passed",
+                "detail": "outro jogador não recebe o texto"
+              },
+              {
+                "name": "Dois administradores editam o mesmo prêmio",
+                "status": "passed",
+                "detail": "segundo salvamento recusado; primeira edição preservada"
+              },
+              {
+                "name": "Edição gráfica em lote com confirmação",
+                "status": "passed",
+                "detail": "somente níveis 10–12 alterados"
+              }
+            ]
+          }
+        ],
+        "world": "world-20261107-001220"
+      }
+    ]
+  },
+  "localUnit": {
+    "passed": 48,
+    "failed": 0,
+    "skipped": 0,
+    "cases": [
+      {
+        "class": "br.com.shirokai.pass.PassServiceTest",
+        "name": "reducingXpDoesNotClearClaims()",
+        "status": "passed"
+      },
+      {
+        "class": "br.com.shirokai.pass.PassServiceTest",
+        "name": "offlineAwardPersistsOnRestart()",
+        "status": "passed"
+      },
+      {
+        "class": "br.com.shirokai.pass.PassServiceTest",
+        "name": "rejectsInvalidPremiumDurationsAndOverflowWithoutChangingAccess()",
+        "status": "passed"
+      },
+      {
+        "class": "br.com.shirokai.pass.PassServiceTest",
+        "name": "paymentRetryDoesNotExtendAndCannotResurrectRevokedSubscription()",
+        "status": "passed"
+      },
+      {
+        "class": "br.com.shirokai.pass.PassServiceTest",
+        "name": "duplicateSurvivesSeasonBoundary()",
+        "status": "passed"
+      },
+      {
+        "class": "br.com.shirokai.pass.PassServiceTest",
+        "name": "oldStateWithoutSubscriptionFieldsStillLoads()",
+        "status": "passed"
+      },
+      {
+        "class": "br.com.shirokai.pass.PassServiceTest",
+        "name": "earlyEndPreservesGraceAndHistory()",
+        "status": "passed"
+      },
+      {
+        "class": "br.com.shirokai.pass.PassServiceTest",
+        "name": "failedDiskWriteBlocksFurtherMutations()",
+        "status": "passed"
+      },
+      {
+        "class": "br.com.shirokai.pass.PassServiceTest",
+        "name": "timedPremiumUnlocksPremiumReward()",
+        "status": "passed"
+      },
+      {
+        "class": "br.com.shirokai.pass.PassServiceTest",
+        "name": "timedGrantReplacesLegacyPermanentStatusAndFalseRevokesAll()",
+        "status": "passed"
+      },
+      {
+        "class": "br.com.shirokai.pass.PassServiceTest",
+        "name": "timedPremiumExpiresExactlyAtDeadlineAndBlocksClaims()",
+        "status": "passed"
+      },
+      {
+        "class": "br.com.shirokai.pass.PassServiceTest",
+        "name": "seasonsKeepPermanentHistory()",
+        "status": "passed"
+      },
+      {
+        "class": "br.com.shirokai.pass.PassServiceTest",
+        "name": "renewalAddsToRemainingDaysAndRestartsFromNowAfterExpiry()",
+        "status": "passed"
+      },
+      {
+        "class": "br.com.shirokai.pass.PassServiceTest",
+        "name": "corruptStateFailsClosed()",
+        "status": "passed"
+      },
+      {
+        "class": "br.com.shirokai.pass.PassServiceTest",
+        "name": "concurrentRetriesAwardOnlyOnce()",
+        "status": "passed"
+      },
+      {
+        "class": "br.com.shirokai.pass.PassServiceTest",
+        "name": "progressiveCurveAndCap()",
+        "status": "passed"
+      },
+      {
+        "class": "br.com.shirokai.pass.PassServiceTest",
+        "name": "graceAllowsClaimButNotEarning()",
+        "status": "passed"
+      },
+      {
+        "class": "br.com.shirokai.pass.PassServiceTest",
+        "name": "paidPremiumSurvivesOfflineRestartAndSeasonChange()",
+        "status": "passed"
+      },
+      {
+        "class": "br.com.shirokai.pass.PassServiceTest",
+        "name": "onlyAddGetsMultiplier()",
+        "status": "passed"
+      },
+      {
+        "class": "br.com.shirokai.pass.PassServiceTest",
+        "name": "incompleteOrNegativeStateFailsClosed()",
+        "status": "passed"
+      },
+      {
+        "class": "br.com.shirokai.pass.PassServiceTest",
+        "name": "randomChoiceStoredAndRecoveredWithoutReroll()",
+        "status": "passed"
+      },
+      {
+        "class": "br.com.shirokai.pass.PassServiceTest",
+        "name": "newSeasonRewardsRequireActivation()",
+        "status": "passed"
+      },
+      {
+        "class": "br.com.shirokai.pass.PassServiceTest",
+        "name": "eventExpiresAndHistoryRemains()",
+        "status": "passed"
+      },
+      {
+        "class": "br.com.shirokai.pass.PassServiceTest",
+        "name": "duplicateCannotBeReusedWithDifferentParameters()",
+        "status": "passed"
+      },
+      {
+        "class": "br.com.shirokai.pass.PassServiceTest",
+        "name": "claimsFreeAndPremiumOnce()",
+        "status": "passed"
+      },
+      {
+        "class": "br.com.shirokai.pass.PassServiceTest",
+        "name": "returnedDeliveryCannotMutateStoredState()",
+        "status": "passed"
+      },
+      {
+        "class": "br.com.shirokai.pass.PassServiceTest",
+        "name": "subscriptionsCanBeGrantedAndRevokedBeforeAnySeason()",
+        "status": "passed"
+      },
+      {
+        "class": "br.com.shirokai.pass.PassServiceTest",
+        "name": "atomicMutationRollsBackOnValidationFailure()",
+        "status": "passed"
+      },
+      {
+        "class": "br.com.shirokai.pass.PassServiceTest",
+        "name": "validatesNegativeZeroAndOverflow()",
+        "status": "passed"
+      },
+      {
+        "class": "br.com.shirokai.pass.StorageRegressionTest",
+        "name": "createsMissingDirectoriesAndRoundTrips()",
+        "status": "passed"
+      },
+      {
+        "class": "br.com.shirokai.pass.StorageRegressionTest",
+        "name": "loginBoundaryAbsorbsPersistenceFailureAndSkipsAllDeliveryEffects()",
+        "status": "passed"
+      },
+      {
+        "class": "br.com.shirokai.pass.StorageRegressionTest",
+        "name": "healthyRecoveryStillPerformsRealWriteProbe()",
+        "status": "passed"
+      },
+      {
+        "class": "br.com.shirokai.pass.StorageRegressionTest",
+        "name": "renameCommittedThenFailedDoesNotDoubleApplyReceiptOnRecovery()",
+        "status": "passed"
+      },
+      {
+        "class": "br.com.shirokai.pass.StorageRegressionTest",
+        "name": "restartAfterFailedSaveLoadsCommittedProgressAndReceipts()",
+        "status": "passed"
+      },
+      {
+        "class": "br.com.shirokai.pass.StorageRegressionTest",
+        "name": "fallbackJournalRecoversInterruptedCopyWithoutRollback()",
+        "status": "passed"
+      },
+      {
+        "class": "br.com.shirokai.pass.StorageRegressionTest",
+        "name": "normalFallbackWithoutAtomicRenamePersists()",
+        "status": "passed"
+      },
+      {
+        "class": "br.com.shirokai.pass.StorageRegressionTest",
+        "name": "failureBeforeRenameKeepsOldDataAndBlocksMutation()",
+        "status": "passed"
+      },
+      {
+        "class": "br.com.shirokai.pass.StorageRegressionTest",
+        "name": "missingPreviouslyCreatedDataNeverBecomesEmptyOnRestart()",
+        "status": "passed"
+      },
+      {
+        "class": "br.com.shirokai.pass.StorageRegressionTest",
+        "name": "rejectsFileInPlaceOfDirectoryWithoutDeletingIt()",
+        "status": "passed"
+      },
+      {
+        "class": "br.com.shirokai.pass.StorageRegressionTest",
+        "name": "unsupportedDirectorySyncDoesNotFailAnAlreadyCommittedSave()",
+        "status": "passed"
+      },
+      {
+        "class": "br.com.shirokai.pass.StorageRegressionTest",
+        "name": "unknownJournalIsNotDeletedOrUsedToOverwriteValidData()",
+        "status": "passed"
+      },
+      {
+        "class": "br.com.shirokai.pass.StorageRegressionTest",
+        "name": "recoveryRefusesAValidButUnexpectedRollbackOrExternalEdit()",
+        "status": "passed"
+      },
+      {
+        "class": "br.com.shirokai.pass.StorageRegressionTest",
+        "name": "rejectsDirectoryInPlaceOfStateFileWithoutDeletingIt()",
+        "status": "passed"
+      },
+      {
+        "class": "br.com.shirokai.pass.StorageRegressionTest",
+        "name": "uncheckedProviderFailureAfterRenameAlsoBlocksUntilReload()",
+        "status": "passed"
+      },
+      {
+        "class": "br.com.shirokai.pass.StorageRegressionTest",
+        "name": "failedInitialLoadStillProvidesGuardedFacadeAndRecoversWithoutRestart()",
+        "status": "passed"
+      },
+      {
+        "class": "br.com.shirokai.pass.StorageRegressionTest",
+        "name": "recoveryMarksUncertainDeliveryReviewAndNeverGrantsAgain()",
+        "status": "passed"
+      },
+      {
+        "class": "br.com.shirokai.pass.StorageRegressionTest",
+        "name": "actualWritePermissionDenialPreservesPriorFile()",
+        "status": "passed"
+      },
+      {
+        "class": "br.com.shirokai.pass.StorageRegressionTest",
+        "name": "normalWriteWorksOnWindowsWithoutOpeningDirectoryChannels()",
+        "status": "passed"
+      }
+    ]
+  }
+}

@@ -1,3 +1,7 @@
+# Validação atual — 0.3.1
+
+A correção de login/persistência está documentada em [LOGIN-FIX-0.3.1.md](LOGIN-FIX-0.3.1.md), com 48 testes Linux, 47 Windows + 1 caso POSIX não aplicável, e 33 verificações funcionais. Para reproduzir as falhas de login, execute `python3 tools/smoke/audit.py storage` depois de compilar `integrationModJar`.
+
 # Validação — versão 0.3.0
 
 O código e cada alteração desta rodada foram enviados à branch `main`. Os resultados executados, caso a caso, estão em [AUDITORIA-0.3.0.md](AUDITORIA-0.3.0.md) e no JSON correspondente. Os testes antigos foram preservados em `VALIDACAO-v0.2.0.md` e `test-results-v0.1.0.json`.

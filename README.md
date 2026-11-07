@@ -6,9 +6,26 @@ Mod **server-side** para Minecraft **1.21.1**, Fabric e Java **21**. O cliente u
 
 Este repositório estava vazio. A especificação disponível está em [docs/REQUISITOS.md](docs/REQUISITOS.md); a especificação anterior citada nesse arquivo não foi fornecida. Consulte [docs/VALIDACAO.md](docs/VALIDACAO.md) para os limites de validação.
 
+## Correção de login no Windows (0.3.1)
+
+A versão 0.3.0 tentava abrir o diretório de dados com `FileChannel` após gravar o JSON, operação não suportada pelo provedor Windows. A 0.3.1 mantém o `fsync` do arquivo e a substituição segura, sem abrir diretórios como canais no Windows. Os arquivos existentes continuam em `<mundo>/shirokaipass/state.json`; não é preciso apagar ou recriar o progresso.
+
+Se houver uma falha real de acesso, disco ou arquivo bloqueado, o jogador continua entrando e jogando; as alterações/entregas do passe ficam bloqueadas até uma recuperação validada. Após corrigir o problema do sistema de arquivos, use no console:
+
+```text
+passeadmin storage status
+passeadmin storage recover
+```
+
+Dentro do jogo, adicione `/`. Exigem `shirokaipass.admin` (fallback OP 2). Há nova tentativa automática a cada 30 segundos; `recover` força a tentativa imediata. O comando só confirma recuperação após reler um estado válido e efetuar uma gravação real. `/passeadmin reload` também tenta recuperar caso o passe esteja indisponível.
+
+Não apague os auxiliares `state.json.created` e `state.json.pending`. O primeiro impede que dados desaparecidos sejam tratados como uma temporada vazia; o segundo é um journal de recuperação, quando a substituição atômica não é suportada. Faça backup da pasta do passe junto com o mundo e os dados dos jogadores. Em uma entrega com resultado incerto, `REVIEW` exige conferência/compensação manual e não é repetido automaticamente.
+
+[Causa, arquivos e resultados dos testes](docs/LOGIN-FIX-0.3.1.md).
+
 ## Compilar e instalar
 
-Com JDK 21: `./gradlew build`. O JAR distribuível fica em `build/libs/shirokai-pass-0.3.0.jar` (não use o `sources`). Substitua o JAR antigo em `mods/` (não mantenha duas versões juntas) num servidor Fabric 1.21.1 com Fabric API. Faça backup do mundo antes de atualizar.
+Com JDK 21: `./gradlew build`. O JAR distribuível fica em `build/libs/shirokai-pass-0.3.1.jar` (não use o `sources`). Substitua o JAR antigo em `mods/` (não mantenha duas versões juntas) num servidor Fabric 1.21.1 com Fabric API. Faça backup do mundo antes de atualizar.
 
 Na primeira inicialização são criados `config/shirokaipass.json` e, após a primeira alteração, `<mundo>/shirokaipass/state.json`. Não existe temporada automática. Crie uma pelo console:
 
