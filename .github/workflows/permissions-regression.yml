@@ -1,0 +1,40 @@
+name: Minecraft 1.21.1 permission compatibility
+on:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  luckperms:
+    runs-on: ubuntu-latest
+    env:
+      NODE_PATH: ${{ github.workspace }}/tools/smoke/node_modules
+      MC_LUCKPERMS_JAR: ${{ github.workspace }}/run-audit/fixture-libs/LuckPerms-Fabric-5.4.140.jar
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Compile, unit test and inspect the distributable
+        run: ./gradlew test build integrationModJar --no-daemon
+      - name: Install protocol client
+        run: npm ci --prefix tools/smoke
+      - name: Fetch checksum-pinned official LuckPerms 5.4.140
+        run: python3 tools/smoke/prepare-luckperms.py
+      - name: Real LuckPerms player login and permission checks
+        run: python3 tools/smoke/audit.py permissions
+      - name: Without provider, retain native OP and common player defaults
+        run: python3 tools/smoke/audit.py fallback
+      - name: Preserve executed outcomes
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: permission-compatibility-results
+          path: |
+            run-audit/results-*/summary.json
+            build/test-results/test/
