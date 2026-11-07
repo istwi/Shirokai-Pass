@@ -19,6 +19,12 @@ RUN.mkdir(exist_ok=True)
 WORLD = RUN / ('world-' + time.strftime('%Y%m%d-%H%M%S'))
 RESULTS = RUN / ('results-' + WORLD.name)
 RESULTS.mkdir()
+# Operator lists belong to the server directory, not the selected world. Preserve
+# the prior fixture and reset it so a previous admin test cannot grant test users OP.
+operators=RUN/'ops.json'
+if operators.exists():
+    shutil.copy2(operators,RESULTS/'ops-before.json')
+operators.write_text('[]\n')
 PASSWORD = secrets.token_urlsafe(24)
 ENV = dict(os.environ, MC_PORT='25585', MC_RCON_PORT='25595', MC_RCON_PASSWORD=PASSWORD, MC_WORLD=str(WORLD), MC_RESULTS=str(RESULTS))
 (RUN / 'mods').mkdir(exist_ok=True)
