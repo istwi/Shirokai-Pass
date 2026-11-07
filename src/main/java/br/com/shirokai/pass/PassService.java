@@ -113,7 +113,7 @@ public final class PassService {
     try {
       store.save(next);
       state = next;
-    } catch (IOException e) {
+    } catch (IOException | RuntimeException e) {
       recoveryCandidates.add(Store.JSON.toJsonTree(next));
       block(e);
       throw new IllegalStateException(

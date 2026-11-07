@@ -139,8 +139,8 @@ final class AtomicFiles {
       if (!currentHash.equals(journal.checksum()) && !currentHash.equals(journal.previous())) {
         boolean validJson;
         try {
-          JsonParser.parseString(new String(current, StandardCharsets.UTF_8));
-          validJson = true;
+          validJson =
+              JsonParser.parseString(new String(current, StandardCharsets.UTF_8)).isJsonObject();
         } catch (RuntimeException invalid) {
           validJson = false;
         }

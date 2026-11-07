@@ -322,4 +322,28 @@ class StorageRegressionTest {
     long expiry = restarted.premiumExpiresAt(id);
     assertEquals(expiry, restarted.grantPremium(id, 1000, "order"));
   }
+
+  @Test
+  void uncheckedProviderFailureAfterRenameAlsoBlocksUntilReload() throws Exception {
+    AtomicBoolean failing = new AtomicBoolean();
+    AtomicFiles.IO io =
+        new AtomicFiles.IO() {
+          @Override
+          public void replace(Path source, Path target) throws IOException {
+            AtomicFiles.IO.super.replace(source, target);
+            if (failing.get() && target.getFileName().toString().equals("state.json"))
+              throw new SecurityException("provider denied directory synchronization");
+          }
+        };
+    AtomicLong now = new AtomicLong(100000);
+    PassService service = prepared(new Store(path(), io), now);
+    UUID id = UUID.randomUUID();
+    failing.set(true);
+    assertThrows(IllegalStateException.class, () -> service.add(id, 100, "order", false));
+    assertFalse(service.available());
+    failing.set(false);
+    service.resume();
+    assertEquals(100, service.progress("s", id).xp);
+    assertTrue(service.add(id, 100, "order", false).duplicate());
+  }
 }
