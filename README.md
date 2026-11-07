@@ -6,6 +6,10 @@ Mod **server-side** para Minecraft **1.21.1**, Fabric e Java **21**. O cliente u
 
 Este repositório estava vazio. A especificação disponível está em [docs/REQUISITOS.md](docs/REQUISITOS.md); a especificação anterior citada nesse arquivo não foi fornecida. Consulte [docs/VALIDACAO.md](docs/VALIDACAO.md) para os limites de validação.
 
+## Correção de compatibilidade de permissões (0.3.2)
+
+A 0.3.1 do Shirokai Pass incluía a Fabric Permissions API 0.3.3, destinada ao Minecraft 1.21.3. Isso podia causar `NoSuchMethodError` ao entrar no Minecraft 1.21.1. A 0.3.2 inclui a API 0.3.1 compatível, preserva as verificações e as correções anteriores de persistência/login. [Causa e testes com LuckPerms 5.4.140](docs/PERMISSIONS-FIX-0.3.2.md).
+
 ## Correção de login no Windows (0.3.1)
 
 A versão 0.3.0 tentava abrir o diretório de dados com `FileChannel` após gravar o JSON, operação não suportada pelo provedor Windows. A 0.3.1 mantém o `fsync` do arquivo e a substituição segura, sem abrir diretórios como canais no Windows. Os arquivos existentes continuam em `<mundo>/shirokaipass/state.json`; não é preciso apagar ou recriar o progresso.
@@ -25,7 +29,7 @@ Não apague os auxiliares `state.json.created` e `state.json.pending`. O primeir
 
 ## Compilar e instalar
 
-Com JDK 21: `./gradlew build`. O JAR distribuível fica em `build/libs/shirokai-pass-0.3.1.jar` (não use o `sources`). Substitua o JAR antigo em `mods/` (não mantenha duas versões juntas) num servidor Fabric 1.21.1 com Fabric API. Faça backup do mundo antes de atualizar.
+Com JDK 21: `./gradlew build`. O JAR distribuível fica em `build/libs/shirokai-pass-0.3.2.jar` (não use o `sources`). Substitua o JAR antigo em `mods/` (não mantenha duas versões juntas) num servidor Fabric 1.21.1 com Fabric API. Faça backup do mundo antes de atualizar.
 
 Na primeira inicialização são criados `config/shirokaipass.json` e, após a primeira alteração, `<mundo>/shirokaipass/state.json`. Não existe temporada automática. Crie uma pelo console:
 
@@ -148,7 +152,7 @@ Esse comando não entrega novamente. Não apague registros para tentar recuperar
 
 ## Permissões
 
-A **Fabric Permissions API v0 0.3.3 está embutida no JAR**, com chamadas diretas. Instale um provedor compatível, como LuckPerms Fabric, para configurar os nós. Sem provedor externo, jogadores comuns têm `shirokaipass.use`, e os nós administrativos exigem nível OP 2; bypass exige OP 4. Falha no provedor nega acesso e registra erro. Console mantém o nível nativo.
+A **Fabric Permissions API v0 0.3.1 está embutida no JAR**, fixada para Minecraft 1.21.1. A integração foi testada com **LuckPerms Fabric 5.4.140**, que inclui a mesma API. O loader exige essa versão compatível; o build verifica uma única cópia no JAR. Sem provedor externo, jogadores comuns têm `shirokaipass.use`, e os nós administrativos exigem nível OP 2; bypass exige OP 4. Falha no provedor nega acesso e registra erro. Console mantém o nível nativo.
 
 | Permissão | Acesso |
 | --- | --- |

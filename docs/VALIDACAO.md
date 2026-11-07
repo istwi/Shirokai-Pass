@@ -1,4 +1,8 @@
-# Validação atual — 0.3.1
+# Validação atual — 0.3.2
+
+A compatibilidade de permissões e os testes com LuckPerms Fabric 5.4.140 estão em [PERMISSIONS-FIX-0.3.2.md](PERMISSIONS-FIX-0.3.2.md). Resultados caso a caso: [audit-0.3.2.json](audit-0.3.2.json).
+
+# Histórico — 0.3.1
 
 A correção de login/persistência está documentada em [LOGIN-FIX-0.3.1.md](LOGIN-FIX-0.3.1.md), com 48 testes Linux, 47 Windows + 1 caso POSIX não aplicável, e 33 verificações funcionais. Para reproduzir as falhas de login, execute `python3 tools/smoke/audit.py storage` depois de compilar `integrationModJar`.
 
@@ -29,7 +33,7 @@ O modo `premium` testa compra de 30 dias, renovação, pedido repetido, concess�
 - Não observar duplicação nos cenários executados não prova ausência de todos os bugs possíveis.
 - Itens/comandos de outros mods não compartilham uma transação distribuída com o JSON do passe. Na queda durante entrega, `REVIEW` impede repetição automática; conferir e compensar manualmente quando necessário.
 - Os clientes dos testes são clientes de protocolo sem Shirokai Pass instalado. Isso valida contêineres e cliques vanilla; não substitui uma revisão estética no Minecraft oficial.
-- A entrega real de Pokémon no **Cobblemon 1.8.3**, a integração com uma instalação real de **LuckPerms** e a revisão visual com resource packs continuam não executadas. Foram testados os limites de autorização nativos e a Fabric Permissions API embutida sem provedor externo.
+- A entrega real de Pokémon no **Cobblemon 1.8.3** e a revisão visual com resource packs continuam não executadas. A integração real com **LuckPerms Fabric 5.4.140** foi validada na 0.3.2, além do funcionamento sem provedor externo.
 - Os testes locais usam autenticação offline somente no servidor isolado. Servidor de produção deve manter autenticação online.
 
 O [roteiro manual](TESTE-FINAL.md) complementa a automação. A release é publicada como pré-release enquanto essas integrações externas não forem validadas.
