@@ -1,21 +1,22 @@
 plugins { id 'fabric-loom' version '1.9.2' }
-version = '0.3.1'
+version = '0.3.2'
 group = 'br.com.shirokai'
 base { archivesName = 'shirokai-pass' }
 repositories { mavenCentral() }
+ext.permissionsApiVersion = '0.3.1'
 dependencies {
  minecraft 'com.mojang:minecraft:1.21.1'
  mappings 'net.fabricmc:yarn:1.21.1+build.3:v2'
  modImplementation 'net.fabricmc:fabric-loader:0.16.10'
  modImplementation 'net.fabricmc.fabric-api:fabric-api:0.116.1+1.21.1'
- modImplementation('me.lucko:fabric-permissions-api:0.3.3') { transitive = false }
- include('me.lucko:fabric-permissions-api:0.3.3') { transitive = false }
+ modImplementation("me.lucko:fabric-permissions-api:${permissionsApiVersion}") { transitive = false; version { strictly permissionsApiVersion } }
+ include("me.lucko:fabric-permissions-api:${permissionsApiVersion}") { transitive = false; version { strictly permissionsApiVersion } }
  testImplementation platform('org.junit:junit-bom:5.11.4')
  testImplementation 'org.junit.jupiter:junit-jupiter'
  testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 }
 java { toolchain { languageVersion = JavaLanguageVersion.of(21) }; withSourcesJar() }
-processResources { inputs.property 'version', project.version; filesMatching('fabric.mod.json') { expand version: project.version } }
+processResources { inputs.property 'version', project.version; inputs.property 'permissions_api_version', permissionsApiVersion; filesMatching('fabric.mod.json') { expand version: project.version, permissions_api_version: permissionsApiVersion } }
 test { useJUnitPlatform() }
 loom { accessWidenerPath = file('src/main/resources/shirokaipass.accesswidener'); runs { server { server(); runDir 'run' } } }
 
@@ -41,3 +42,36 @@ loom.runs {
   vmArg '-Dshirokai.audit=true'
  }
 }
+
+// Inspect the distributable, not just the Gradle dependency graph. A newer API
+// can compile while linking Minecraft methods that do not exist on 1.21.1.
+tasks.register('verifyBundledPermissions') {
+ dependsOn tasks.named('remapJar')
+ doLast {
+  def artifact = tasks.named('remapJar').get().archiveFile.get().asFile
+  new java.util.zip.ZipFile(artifact).withCloseable { outer ->
+   def metadata = new groovy.json.JsonSlurper().parseText(outer.getInputStream(outer.getEntry('fabric.mod.json')).getText('UTF-8'))
+   assert metadata.depends['minecraft'] == '1.21.1'
+   assert metadata.depends['fabric-permissions-api-v0'] == permissionsApiVersion
+   assert outer.getEntry('me/lucko/fabric/api/permissions/v0/Permissions.class') == null : 'Do not shade a second API copy'
+   def matches = []
+   metadata.jars.each { nested ->
+    def bytes = outer.getInputStream(outer.getEntry(nested.file)).bytes
+    new java.util.zip.ZipInputStream(new ByteArrayInputStream(bytes)).withCloseable { input ->
+     def entry
+     while ((entry = input.nextEntry) != null) {
+      def contents = input.readAllBytes()
+      if (entry.name == 'fabric.mod.json') {
+       def descriptor = new groovy.json.JsonSlurper().parseText(new String(contents, 'UTF-8'))
+       if (descriptor.id == 'fabric-permissions-api-v0') matches.add(descriptor.version)
+      }
+      if (entry.name.endsWith('.class')) assert !new String(contents, 'ISO-8859-1').contains('method_64396') : 'Incompatible Minecraft 1.21.3 player method bundled'
+     }
+    }
+   }
+   assert matches == [permissionsApiVersion] : "Expected exactly one compatible API, got ${matches}"
+   logger.lifecycle("Verified distributable: one Fabric Permissions API ${permissionsApiVersion}, pinned for Minecraft 1.21.1")
+  }
+ }
+}
+tasks.named('check') { dependsOn tasks.named('verifyBundledPermissions') }

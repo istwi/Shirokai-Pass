@@ -270,12 +270,9 @@ public final class ShirokaiPass implements ModInitializer {
   }
 
   public static boolean permission(ServerCommandSource source, String node, int fallback) {
-    try {
-      return me.lucko.fabric.api.permissions.v0.Permissions.check(source, node, fallback);
-    } catch (RuntimeException e) {
-      LOG.error("Falha no provedor de permissões", e);
-      return false;
-    }
+    return PermissionGuard.check(
+        () -> me.lucko.fabric.api.permissions.v0.Permissions.check(source, node, fallback),
+        error -> LOG.error("Falha no provedor de permissões; acesso negado para {}", node, error));
   }
 
   public void claim(ServerPlayerEntity p, String season, Collection<String> keys) {
