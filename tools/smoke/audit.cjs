@@ -57,6 +57,36 @@ const item=(value,count=1)=>({type:'item',value:'minecraft:'+value,count,weight:
   await c.quit();await other.quit();
   rcon('passeadmin xp add DupeTester 100 audit/offline-1');rcon('passeadmin xp add DupeTester 100 audit/offline-1');assert.equal(profile('DupeTester').xp,1100);
   record('XP offline por nome conhecido e transação repetida','+100 uma vez; 1100 XP persistidos');
+ } else if(phase==='permissions'||phase==='permissions_restart'||phase==='fallback'){
+  c=await connect('PermTester');other=await connect('GrantTester');
+  const file=path.join(world,'permission-PermTester.json');await wait(()=>fs.existsSync(file),'entity API during JOIN');
+  const join=JSON.parse(fs.readFileSync(file,'utf8'));assert.equal(join.apiVersion,'0.3.1');assert.equal(join.apiCount,1);assert.equal(join.lpVersion,phase==='fallback'?'absent':'5.4.140');assert.equal(c.closed,false);
+  record('Login e API Entity do Minecraft 1.21.1',phase==='fallback'?'API 0.3.1 única sem provedor externo':'LuckPerms 5.4.140 + API 0.3.1 única; sem método inexistente');
+  let seq=0;
+  async function check(node,expected){
+    for(let attempts=0;attempts<15;attempts++){
+      const request='r'+Date.now()+'-'+seq++;rcon('auditpermissions PermTester '+node+' '+request);
+      await wait(()=>fs.existsSync(file)&&JSON.parse(fs.readFileSync(file,'utf8')).request===request,'permission probe');
+      const result=JSON.parse(fs.readFileSync(file,'utf8'));if(['source','entity','uuid','profile','shirokai'].every(k=>result[k]===expected))return result;await pause(100);
+    }throw Error('Permission result did not match '+node+' expected '+expected);
+  }
+  if(phase==='permissions_restart'){
+    await check('shirokaipass.use',true);await check('shirokaipass.admin.xp',false);assert.equal(profile('GrantTester').xp,100);await c.command('passe');await wait(()=>c.name(28)==='✦ Recompensas','home after restart');record('Reinício com LuckPerms e permissões persistidas','login, allow/deny e XP preservados');
+  }else{
+    rcon('passeadmin season create audit 30d 7d');rcon('passeadmin xp set GrantTester 0');
+    if(phase==='fallback'){
+      await c.command('passe');await wait(()=>c.name(28)==='✦ Recompensas','fallback home');await c.command('passeadmin xp add GrantTester 100');assert.equal(profile('GrantTester').xp,0);record('Sem LuckPerms: uso comum e administração negada','fallback nativo preservado');
+      rcon('op PermTester');const request='op'+Date.now();rcon('auditpermissions PermTester shirokaipass.admin.xp '+request);await wait(()=>JSON.parse(fs.readFileSync(file,'utf8')).request===request,'OP probe');const result=JSON.parse(fs.readFileSync(file,'utf8'));assert.equal(result.source,true);assert.equal(result.entity,true);assert.equal(result.shirokai,true);await c.command('passeadmin xp add GrantTester 100');await wait(()=>profile('GrantTester').xp===100,'OP fallback award');record('Sem provedor: OP autorizado e destinatário sem OP','concessão pela mesma API; sem bypass em falha de backend');
+    }else{
+      rcon('lp user PermTester permission set shirokaipass.use false');await check('shirokaipass.use',false);const before=c.window;await c.command('passe');assert.equal(c.window,before);record('LuckPerms nega uso do passe','source/entity/UUID/profile e comando negados');
+      rcon('lp user PermTester permission set shirokaipass.use true');await check('shirokaipass.use',true);await c.command('passe');await wait(()=>c.name(28)==='✦ Recompensas','LP granted home');record('LuckPerms permite uso do passe','todos os overloads e menu funcionam');
+      await c.command('passeadmin xp add GrantTester 100');assert.equal(profile('GrantTester').xp,0);record('LuckPerms: jogador comum sem administração','XP do destinatário inalterada');
+      rcon('lp user PermTester permission set shirokaipass.admin.xp true');await check('shirokaipass.admin.xp',true);await c.command('passeadmin xp add GrantTester 100');await wait(()=>profile('GrantTester').xp===100,'permission grants XP');record('LuckPerms concede nó administrativo específico','jogador autorizado concede XP a destinatário sem OP');
+      rcon('lp user PermTester permission set shirokaipass.admin.xp false');await check('shirokaipass.admin.xp',false);await c.command('passeadmin xp add GrantTester 100');assert.equal(profile('GrantTester').xp,100);record('LuckPerms revoga permissão em tempo real','comando volta a ser negado');
+      rcon('op PermTester');rcon('lp user PermTester permission set shirokaipass.admin false');await check('shirokaipass.admin.xp',false);await c.command('passeadmin xp add GrantTester 100');assert.equal(profile('GrantTester').xp,100);record('Negação explícita prevalece mesmo com OP','não há fallback permissivo quando LuckPerms nega');rcon('deop PermTester');
+    }
+  }
+  await c.quit();c=await connect('PermTester');assert.equal(c.closed,false);record('Reconexão repetida','jogador permanece no servidor sem LinkageError');await c.quit();await other.quit();
  } else if(phase==='storage'){
   c=await connect('DupeTester');rcon('passeadmin season create audit 30d 7d');rcon('passeadmin xp set DupeTester 100');reward(1,[item('diamond')]);
   assert.ok(rcon('list').includes('DupeTester'));record('Login com armazenamento normal','jogador permanece no mundo');
