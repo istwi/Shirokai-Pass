@@ -1,0 +1,31 @@
+name: Storage regression Linux and Windows
+on:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  test:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+      - name: Compile and test native filesystem behavior
+        shell: bash
+        run: ./gradlew test build --no-daemon
+      - name: Preserve exact outcomes including platform skips
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: storage-tests-${{ matrix.os }}
+          path: |
+            build/test-results/test/
+            build/reports/tests/test/

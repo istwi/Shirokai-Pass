@@ -15,6 +15,8 @@ public final class PassService {
   private State state;
   private final LongSupplier clock;
   private boolean failed;
+  private Throwable failure;
+  private final Set<com.google.gson.JsonElement> recoveryCandidates = new HashSet<>();
 
   public PassService(Store store, LongSupplier clock) throws IOException {
     this.store = store;
@@ -22,7 +24,81 @@ public final class PassService {
     state = store.load();
   }
 
+  private PassService(Store store, LongSupplier clock, boolean deferred) {
+    this.store = store;
+    this.clock = clock;
+  }
+
+  /** Startup facade: unreadable state disables the pass, never the Minecraft server/login. */
+  public static PassService open(Store store, LongSupplier clock) {
+    PassService service = new PassService(store, clock, true);
+    try {
+      service.state = store.load();
+      service.recover();
+    } catch (IOException | RuntimeException e) {
+      service.block(e);
+    }
+    return service;
+  }
+
+  public synchronized boolean available() {
+    return !failed && state != null;
+  }
+
+  public synchronized Throwable failure() {
+    return failure;
+  }
+
+  public java.nio.file.Path storagePath() {
+    return store.path();
+  }
+
+  private void readable() {
+    if (state == null) throw unavailable();
+  }
+
+  public synchronized void requireWritable() {
+    if (!available()) throw unavailable();
+  }
+
+  private IllegalStateException unavailable() {
+    return new IllegalStateException(
+        "Persistência do passe indisponível; repare o caminho/permissões e use /passeadmin storage"
+            + " recover. Login continua liberado.",
+        failure);
+  }
+
+  private void block(Throwable error) {
+    failed = true;
+    failure = error;
+    if (state != null) recoveryCandidates.add(Store.JSON.toJsonTree(state));
+  }
+
+  /** Reload only a known committed/attempted snapshot, then prove that it is writable. */
+  public synchronized void resume() throws IOException {
+    if (available()) return;
+    try {
+      State candidate = store.load();
+      if (state != null && !recoveryCandidates.contains(Store.JSON.toJsonTree(candidate)))
+        throw new IOException(
+            "Dados do disco diferem dos estados confirmados/tentados. Nada será sobrescrito: "
+                + store.path());
+      markInterrupted(candidate);
+      recoveryCandidates.add(Store.JSON.toJsonTree(candidate));
+      store.save(candidate); // A real durable write, not an exists()/isWritable() guess.
+      state = candidate;
+      failed = false;
+      failure = null;
+      recoveryCandidates.clear();
+    } catch (IOException | RuntimeException e) {
+      block(e);
+      if (e instanceof IOException io) throw io;
+      throw new IOException("Não foi possível recuperar armazenamento", e);
+    }
+  }
+
   public synchronized State snapshot() {
+    readable();
     return copy(state);
   }
 
@@ -31,16 +107,20 @@ public final class PassService {
   }
 
   private <T> T change(Function<State, T> change) {
-    if (failed)
-      throw new IllegalStateException("Persistência indisponível: reinicie após reparar o disco");
+    requireWritable();
     State next = copy(state);
     T result = change.apply(next);
     try {
       store.save(next);
       state = next;
     } catch (IOException e) {
-      failed = true;
-      throw new IllegalStateException("Não foi possível persistir; operação bloqueada", e);
+      recoveryCandidates.add(Store.JSON.toJsonTree(next));
+      block(e);
+      throw new IllegalStateException(
+          "Não foi possível persistir "
+              + store.path()
+              + "; operação bloqueada. Login não é afetado.",
+          e);
     }
     return result;
   }
@@ -54,6 +134,7 @@ public final class PassService {
   }
 
   public synchronized Season active() {
+    readable();
     Season s = state.seasons.get(state.active);
     if (s == null || !s.earning(clock.getAsLong()))
       throw new IllegalArgumentException("Não há temporada ativa para XP");
@@ -88,15 +169,18 @@ public final class PassService {
   }
 
   public synchronized void remember(UUID id, String name) {
+    readable();
     if (!id.equals(state.names.get(name.toLowerCase(Locale.ROOT))))
       edit(s -> s.names.put(name.toLowerCase(Locale.ROOT), id));
   }
 
   public synchronized UUID known(String name) {
+    readable();
     return state.names.get(name.toLowerCase(Locale.ROOT));
   }
 
   public synchronized Progress progress(String season, UUID id) {
+    readable();
     Progress p = state.players.get(playerKey(season, id));
     return p == null ? new Progress() : Store.JSON.fromJson(Store.JSON.toJson(p), Progress.class);
   }
@@ -106,6 +190,7 @@ public final class PassService {
   }
 
   public synchronized double multiplier() {
+    readable();
     return state.events.stream()
         .filter(e -> clock.getAsLong() >= e.start && clock.getAsLong() < e.end)
         .mapToDouble(e -> e.multiplier)
@@ -114,6 +199,7 @@ public final class PassService {
   }
 
   public synchronized XpResult add(UUID id, long amount, String transaction, boolean bypass) {
+    requireWritable();
     Objects.requireNonNull(id);
     if (amount <= 0) throw new IllegalArgumentException("XP deve ser positiva");
     if (transaction != null && !transaction.matches("[A-Za-z0-9_.:/-]{1,128}"))
@@ -191,14 +277,17 @@ public final class PassService {
   }
 
   public synchronized boolean hasPremium(String season, UUID id) {
+    readable();
     return hasPremium(state, season, id);
   }
 
   public synchronized boolean hasPremium(UUID id) {
+    readable();
     return hasPremium(state, state.active, id);
   }
 
   public synchronized long premiumExpiresAt(UUID id) {
+    readable();
     return state.premiumUntil.getOrDefault(id.toString(), 0L);
   }
 
@@ -206,6 +295,7 @@ public final class PassService {
    * Account subscription, renewed from its remaining expiry, independent of the selected season.
    */
   public synchronized long grantPremium(UUID id, long duration, String operation) {
+    requireWritable();
     Objects.requireNonNull(id);
     if (duration <= 0) throw new IllegalArgumentException("Duração deve ser positiva");
     if (operation != null && !operation.matches("[A-Za-z0-9_.:/-]{1,128}"))
@@ -318,18 +408,21 @@ public final class PassService {
         });
   }
 
+  private static void markInterrupted(State state) {
+    state.deliveries.values().stream()
+        .filter(d -> d.status.equals("DELIVERING"))
+        .forEach(
+            d -> {
+              d.status = "REVIEW";
+              d.error =
+                  "Servidor/armazenamento interrompido durante entrega. Conferência manual"
+                      + " necessária.";
+            });
+  }
+
   public synchronized void recover() {
-    boolean any = state.deliveries.values().stream().anyMatch(d -> d.status.equals("DELIVERING"));
-    if (any)
-      edit(
-          s ->
-              s.deliveries.values().stream()
-                  .filter(d -> d.status.equals("DELIVERING"))
-                  .forEach(
-                      d -> {
-                        d.status = "REVIEW";
-                        d.error =
-                            "Servidor interrompido durante entrega. Conferência manual necessária.";
-                      }));
+    readable();
+    if (state.deliveries.values().stream().anyMatch(d -> d.status.equals("DELIVERING")))
+      edit(PassService::markInterrupted);
   }
 }

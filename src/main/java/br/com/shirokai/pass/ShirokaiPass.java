@@ -22,11 +22,12 @@ import org.slf4j.*;
 public final class ShirokaiPass implements ModInitializer {
   public static final Logger LOG = LoggerFactory.getLogger("shirokaipass");
   private static ShirokaiPass INSTANCE;
-  public Config config;
+  public Config config = new Config();
   public PassService service;
   private MinecraftServer server;
   private final Map<UUID, Notice> notices = new HashMap<>();
   private int ticks;
+  private long nextStorageRetry, lastStorageLog;
   private final NavigableMap<Long, Set<UUID>> premiumDeadlines = new TreeMap<>();
 
   private record Notice(long xp, double factor, int before, int after) {}
@@ -47,16 +48,16 @@ public final class ShirokaiPass implements ModInitializer {
   }
 
   public void reload() throws Exception {
+    String document = Store.readText(configPath());
     Config candidate =
-        Files.exists(configPath())
-            ? Store.JSON.fromJson(Files.readString(configPath()), Config.class)
-            : new Config();
+        document == null ? new Config() : Store.JSON.fromJson(document, Config.class);
     if (candidate == null) throw new IllegalArgumentException("Config vazia");
     candidate.validate();
     for (String icon : candidate.icons.values())
       if (!Registries.ITEM.containsId(Identifier.of(icon)))
         throw new IllegalArgumentException("Ícone desconhecido: " + icon);
-    if (!Files.exists(configPath())) Store.write(configPath(), Store.JSON.toJson(candidate));
+    if (document == null) Store.write(configPath(), Store.JSON.toJson(candidate));
+    else Store.finishPending(configPath());
     config = candidate;
   }
 
@@ -71,29 +72,28 @@ public final class ShirokaiPass implements ModInitializer {
           server = s;
           try {
             reload();
-            service =
-                new PassService(
-                    new Store(
-                        s.getSavePath(net.minecraft.util.WorldSavePath.ROOT)
-                            .resolve("shirokaipass/state.json")),
-                    System::currentTimeMillis);
-            service.recover();
-            premiumDeadlines.clear();
-            service
-                .snapshot()
-                .premiumUntil
-                .forEach(
-                    (id, until) -> {
-                      if (until > System.currentTimeMillis())
-                        premiumDeadlines
-                            .computeIfAbsent(until, k -> new HashSet<>())
-                            .add(UUID.fromString(id));
-                    });
           } catch (Exception e) {
-            throw new IllegalStateException(
-                "Shirokai Pass não pode abrir o estado com segurança", e);
+            LOG.error(
+                "Configuração do passe indisponível; arquivo existente preservado. Use reload após"
+                    + " reparar.",
+                e);
           }
-          LOG.info("Shirokai Pass iniciado: {} temporadas", service.snapshot().seasons.size());
+          service =
+              PassService.open(
+                  new Store(
+                      s.getSavePath(net.minecraft.util.WorldSavePath.ROOT)
+                          .resolve("shirokaipass/state.json")),
+                  System::currentTimeMillis);
+          if (service.available()) {
+            rebuildPremiumDeadlines();
+            LOG.info("Shirokai Pass iniciado: {} temporadas", service.snapshot().seasons.size());
+          } else {
+            nextStorageRetry = System.currentTimeMillis() + 30000;
+            logStorageFailure(service.failure());
+            LOG.warn(
+                "Shirokai Pass iniciado em modo indisponível; entrada de jogadores permanece"
+                    + " liberada.");
+          }
         });
     ServerLifecycleEvents.SERVER_STOPPED.register(
         s -> {
@@ -104,10 +104,22 @@ public final class ShirokaiPass implements ModInitializer {
         });
     ServerPlayConnectionEvents.JOIN.register(
         (handler, sender, s) -> {
-          if (service != null) {
-            service.remember(handler.player.getUuid(), handler.player.getGameProfile().getName());
-            deliver(handler.player);
-          }
+          LoginGuard.run(
+              () -> {
+                if (service == null)
+                  throw new IllegalStateException("Passe ainda não inicializado");
+                service.requireWritable();
+                service.remember(
+                    handler.player.getUuid(), handler.player.getGameProfile().getName());
+                deliver(handler.player);
+              },
+              error -> {
+                logStorageFailure(error);
+                handler.player.sendMessage(
+                    Text.literal(
+                        "✦ Passe temporariamente indisponível. Você pode continuar jogando."),
+                    true);
+              });
         });
     ServerPlayConnectionEvents.DISCONNECT.register(
         (handler, s) -> TextInput.clear(handler.player.getUuid()));
@@ -115,6 +127,11 @@ public final class ShirokaiPass implements ModInitializer {
         s -> {
           if (++ticks % 20 == 0) {
             long now = System.currentTimeMillis();
+            if (service == null) return;
+            if (!service.available()) {
+              if (now >= nextStorageRetry) recoverStorage();
+              if (!service.available()) return;
+            }
             while (!premiumDeadlines.isEmpty() && premiumDeadlines.firstKey() <= now) {
               var expired = premiumDeadlines.pollFirstEntry();
               for (UUID id : expired.getValue())
@@ -123,7 +140,8 @@ public final class ShirokaiPass implements ModInitializer {
                   if (online != null) {
                     Menus.refresh(online);
                     if (!service.hasPremium(id))
-                      online.sendMessage(Text.literal("✦ A validade do seu Premium terminou."), true);
+                      online.sendMessage(
+                          Text.literal("✦ A validade do seu Premium terminou."), true);
                   }
                 }
             }
@@ -148,6 +166,56 @@ public final class ShirokaiPass implements ModInitializer {
                 });
           }
         });
+  }
+
+  private void rebuildPremiumDeadlines() {
+    premiumDeadlines.clear();
+    service
+        .snapshot()
+        .premiumUntil
+        .forEach(
+            (id, until) -> {
+              if (until > System.currentTimeMillis())
+                premiumDeadlines
+                    .computeIfAbsent(until, k -> new HashSet<>())
+                    .add(UUID.fromString(id));
+            });
+  }
+
+  private void logStorageFailure(Throwable error) {
+    long now = System.currentTimeMillis();
+    if (lastStorageLog == 0 || now - lastStorageLog >= 30000) {
+      lastStorageLog = now;
+      LOG.error(
+          "Falha do Shirokai Pass em {}. Login preservado; alterações e entregas bloqueadas. Repare"
+              + " permissões/caminhos/bloqueios e use /passeadmin storage recover.",
+          service == null ? "inicialização" : service.storagePath(),
+          error);
+    }
+  }
+
+  public boolean recoverStorage() {
+    nextStorageRetry = System.currentTimeMillis() + 30000;
+    if (service == null) return false;
+    try {
+      service.resume();
+      rebuildPremiumDeadlines();
+      for (ServerPlayerEntity player : server().getPlayerManager().getPlayerList()) {
+        LoginGuard.run(
+            () -> {
+              service.remember(player.getUuid(), player.getGameProfile().getName());
+              deliver(player);
+              Menus.refresh(player);
+            },
+            this::logStorageFailure);
+      }
+      if (!service.available()) return false;
+      LOG.info("Armazenamento do passe recuperado com dados validados: {}", service.storagePath());
+      return true;
+    } catch (Exception error) {
+      logStorageFailure(error);
+      return false;
+    }
   }
 
   public XpResult award(UUID id, long amount, String transaction, boolean bypass) {
@@ -217,6 +285,7 @@ public final class ShirokaiPass implements ModInitializer {
   }
 
   public void deliver(ServerPlayerEntity p) {
+    service.requireWritable();
     for (Delivery d : service.snapshot().deliveries.values()) {
       if (!d.player.equals(p.getUuidAsString()) || !d.status.equals("READY")) continue;
       try {
@@ -287,6 +356,10 @@ public final class ShirokaiPass implements ModInitializer {
         server().getPlayerManager().savePlayerData(p);
         service.status(d.id, "DELIVERING", "DONE", "");
       } catch (Exception e) {
+        if (!service.available()) {
+          logStorageFailure(e);
+          return;
+        }
         Delivery current = service.snapshot().deliveries.get(d.id);
         if (current.status.equals("DELIVERING"))
           service.status(

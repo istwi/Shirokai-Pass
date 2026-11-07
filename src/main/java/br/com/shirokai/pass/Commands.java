@@ -503,6 +503,9 @@ public final class Commands {
                         c,
                         x -> {
                           mod.reload();
+                          if (!mod.service.available() && !mod.recoverStorage())
+                            throw new IllegalStateException(
+                                "Configuração recarregada; armazenamento ainda indisponível");
                           say(c, "Configuração recarregada");
                         })));
     // Resolving an uncertain command requires checking external side effects, never automatic
@@ -529,6 +532,39 @@ public final class Commands {
     root.then(
         admin("gui", "rewards")
             .executes(c -> run(c, x -> AdminGui.dashboard(mod, c.getSource().getPlayerOrThrow()))));
+    root.then(
+        literal("storage")
+            .requires(source -> ShirokaiPass.permission(source, "shirokaipass.admin", 2))
+            .then(
+                literal("status")
+                    .executes(
+                        c ->
+                            run(
+                                c,
+                                x ->
+                                    say(
+                                        c,
+                                        mod.service.available()
+                                            ? "Armazenamento disponível: "
+                                                + mod.service.storagePath()
+                                            : "Armazenamento indisponível; login liberado: "
+                                                + mod.service.storagePath()))))
+            .then(
+                literal("recover")
+                    .executes(
+                        c ->
+                            run(
+                                c,
+                                x -> {
+                                  if (!mod.recoverStorage())
+                                    throw new IllegalStateException(
+                                        "Armazenamento ainda indisponível. Consulte o console;"
+                                            + " nenhum dado foi redefinido.");
+                                  say(
+                                      c,
+                                      "Armazenamento recuperado; dados validados e gravação"
+                                          + " confirmada");
+                                }))));
     d.register(root);
   }
 

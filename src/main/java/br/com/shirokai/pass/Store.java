@@ -5,8 +5,6 @@ import static java.nio.file.StandardOpenOption.*;
 
 import com.google.gson.*;
 import java.io.IOException;
-import java.nio.channels.FileChannel;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.*;
 
 /**
@@ -16,15 +14,69 @@ import java.nio.file.*;
 public final class Store {
   public static final Gson JSON = new GsonBuilder().setPrettyPrinting().create();
   private final Path path;
+  private final AtomicFiles.IO io;
+  private boolean observed;
+  private boolean initiallyMissing;
 
   public Store(Path path) {
-    this.path = path;
+    this(path, AtomicFiles.NIO);
+  }
+
+  Store(Path path, AtomicFiles.IO io) {
+    this.path = AtomicFiles.absolute(path);
+    this.io = io;
+  }
+
+  public Path path() {
+    return path;
+  }
+
+  private Path markerPath() {
+    return path.resolveSibling(path.getFileName() + ".created");
+  }
+
+  private boolean markerExists() throws IOException {
+    AtomicFiles.Document marker = AtomicFiles.read(markerPath());
+    if (marker == null) return false;
+    try {
+      JsonObject object = JsonParser.parseString(marker.text()).getAsJsonObject();
+      if (object.get("shirokaipassStore").getAsInt() != 1
+          || !path.getFileName().toString().equals(object.get("file").getAsString()))
+        throw new IllegalArgumentException();
+      return true;
+    } catch (RuntimeException error) {
+      throw new IOException(
+          "Marcador de armazenamento desconhecido: " + markerPath() + ". Preservado para reparo.",
+          error);
+    }
+  }
+
+  private void ensureMarker() throws IOException {
+    if (markerExists()) {
+      AtomicFiles.complete(markerPath(), io);
+      return;
+    }
+    JsonObject marker = new JsonObject();
+    marker.addProperty("shirokaipassStore", 1);
+    marker.addProperty("file", path.getFileName().toString());
+    AtomicFiles.write(markerPath(), JSON.toJson(marker), io);
   }
 
   public State load() throws IOException {
-    if (!Files.exists(path)) return new State();
+    boolean marked = markerExists();
+    AtomicFiles.Document candidate = AtomicFiles.read(path);
+    if (candidate == null) {
+      if (observed || marked && !initiallyMissing)
+        throw new IOException(
+            "O arquivo de dados existente desapareceu: "
+                + path
+                + ". Nenhum estado vazio foi criado.");
+      initiallyMissing = true;
+      return new State();
+    }
+    observed = true;
     try {
-      JsonObject document = JsonParser.parseString(Files.readString(path)).getAsJsonObject();
+      JsonObject document = JsonParser.parseString(candidate.text()).getAsJsonObject();
       for (String field :
           java.util.List.of(
               "schema", "seasons", "players", "deliveries", "transactions", "names", "events"))
@@ -83,6 +135,7 @@ public final class Store {
             || e.multiplier < 1
             || e.multiplier > 100
             || e.end < e.start) throw new IllegalStateException("Evento inválido");
+      if (candidate.journal()) AtomicFiles.complete(path, io);
       return state;
     } catch (RuntimeException e) {
       throw new IOException("Estado inválido: restaure um backup; não foi redefinido", e);
@@ -90,25 +143,21 @@ public final class Store {
   }
 
   public void save(State state) throws IOException {
-    write(path, JSON.toJson(state));
+    ensureMarker();
+    AtomicFiles.write(path, JSON.toJson(state), io);
+    observed = true;
+  }
+
+  public static String readText(Path path) throws IOException {
+    AtomicFiles.Document document = AtomicFiles.read(path);
+    return document == null ? null : document.text();
+  }
+
+  public static void finishPending(Path path) throws IOException {
+    AtomicFiles.complete(path, AtomicFiles.NIO);
   }
 
   public static void write(Path path, String json) throws IOException {
-    Files.createDirectories(path.toAbsolutePath().getParent());
-    Path temp = Files.createTempFile(path.toAbsolutePath().getParent(), ".shirokai-", ".tmp");
-    try {
-      byte[] bytes = json.getBytes(StandardCharsets.UTF_8);
-      try (FileChannel ch = FileChannel.open(temp, WRITE)) {
-        java.nio.ByteBuffer buffer = java.nio.ByteBuffer.wrap(bytes);
-        while (buffer.hasRemaining()) ch.write(buffer);
-        ch.force(true);
-      }
-      Files.move(temp, path, StandardCopyOption.ATOMIC_MOVE, StandardCopyOption.REPLACE_EXISTING);
-      try (FileChannel directory = FileChannel.open(path.toAbsolutePath().getParent(), READ)) {
-        directory.force(true);
-      }
-    } finally {
-      Files.deleteIfExists(temp);
-    }
+    AtomicFiles.write(path, json, AtomicFiles.NIO);
   }
 }
