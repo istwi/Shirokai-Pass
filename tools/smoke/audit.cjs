@@ -29,7 +29,7 @@ async function connect(username){
  c.command=async command=>{client.write('chat_command',{command});await pause(200);};
  c.click=(slot,mode=0,mouseButton=0,forged=false)=>client.write('window_click',{windowId:c.window,stateId:c.state,slot,mode,mouseButton,changedSlots:forged?[{location:54,item:{itemCount:64,itemId:require('minecraft-data')('1.21.1').itemsByName.diamond.id,addedComponentCount:0,removedComponentCount:0,components:[],removeComponents:[]}}]:[],cursorItem:{itemCount:0}});
  c.quit=async()=>{client.end();await wait(()=>c.closed,'disconnect');};
- await wait(()=>c.online||c.error,'login',30000);if(c.error)throw c.error;await pause(250);return c;
+ await wait(()=>c.online||c.error||c.closed,'login',30000);if(c.error)throw c.error;if(c.closed&&!c.online)throw Error('Disconnected during login: '+username);await pause(250);return c;
 }
 function reward(level,choices,mode='fixed'){const json=JSON.stringify({enabled:true,mode,choices});rcon(`passeadmin rewards set audit ${level} false ${json}`);}
 const item=(value,count=1)=>({type:'item',value:'minecraft:'+value,count,weight:1});
@@ -60,18 +60,18 @@ const item=(value,count=1)=>({type:'item',value:'minecraft:'+value,count,weight:
  } else if(phase==='storage'){
   c=await connect('DupeTester');rcon('passeadmin season create audit 30d 7d');rcon('passeadmin xp set DupeTester 100');reward(1,[item('diamond')]);
   assert.ok(rcon('list').includes('DupeTester'));record('Login com armazenamento normal','jogador permanece no mundo');
-  rcon('auditstorage fail');other=await connect('LoginDuringFailure');await pause(1200);assert.equal(other.closed,false);assert.ok(rcon('list').includes('LoginDuringFailure'));
+  rcon('auditstorage fail');other=await connect('JoinFailure');await pause(1200);assert.equal(other.closed,false);assert.ok(rcon('list').includes('JoinFailure'));
   assert.match(rcon('passeadmin storage status'),/indisponível/);record('Login com arquivo de estado substituído por diretório','jogador conectado; passe bloqueado, sem Invalid player data');
   const data=path.join(world,'shirokaipass/state.json'),backup=path.join(world,'shirokaipass/state.json.audit-saved');const before=fs.readFileSync(backup,'utf8');
   await c.command('passe recompensas');await wait(()=>c.name(10)==='Grátis • 1','cached menu');for(let i=0;i<20;i++)c.click(10);await pause(300);assert.equal(count('DupeTester','diamond'),0);assert.equal(fs.readFileSync(backup,'utf8'),before);
   record('Resgates durante falha','20 cliques negados; nenhum item e backup intacto');
   rcon('passeadmin xp add DupeTester 100 blocked-event');assert.equal(fs.readFileSync(backup,'utf8'),before);record('XP durante falha','sem falso sucesso ou alteração do snapshot confirmado');
-  rcon('auditstorage repair');assert.match(rcon('passeadmin storage recover'),/recuperado/);assert.equal(profile('DupeTester').xp,100);assert.equal(id('LoginDuringFailure')!==undefined,true);
+  rcon('auditstorage repair');assert.match(rcon('passeadmin storage recover'),/recuperado/);assert.equal(profile('DupeTester').xp,100);assert.equal(id('JoinFailure')!==undefined,true);
   await c.command('passe recompensas');for(let i=0;i<30;i++)c.click(10);await wait(()=>deliveries('DupeTester','free:1')[0]?.status==='DONE','claim after repair');assert.equal(count('DupeTester','diamond'),1);record('Recuperação sem reiniciar','100 XP preservidos; nome do jogador novo salvo; 1 prêmio após reparo');
   await c.quit();await other.quit();
  } else if(phase==='storage_corrupt'){
   const data=path.join(world,'shirokaipass/state.json'),backup=data+'.startup-saved';const broken=fs.readFileSync(data,'utf8');assert.equal(broken,'broken-storage-fixture');
-  c=await connect('LoginWithCorruptState');await pause(1200);assert.equal(c.closed,false);assert.ok(rcon('list').includes('LoginWithCorruptState'));assert.match(rcon('passeadmin storage status'),/indisponível/);assert.equal(fs.readFileSync(data,'utf8'),broken);record('Login após reinício com JSON corrompido','servidor e login ativos; arquivo corrompido não sobrescrito');
+  c=await connect('JoinCorrupt');await pause(1200);assert.equal(c.closed,false);assert.ok(rcon('list').includes('JoinCorrupt'));assert.match(rcon('passeadmin storage status'),/indisponível/);assert.equal(fs.readFileSync(data,'utf8'),broken);record('Login após reinício com JSON corrompido','servidor e login ativos; arquivo corrompido não sobrescrito');
   fs.copyFileSync(backup,data);assert.match(rcon('passeadmin storage recover'),/recuperado/);assert.equal(profile('DupeTester').xp,100);assert.equal(deliveries('DupeTester','free:1').length,1);assert.equal(deliveries('DupeTester','free:1')[0].status,'DONE');
   await c.quit();c=await connect('DupeTester');await c.command('passe recompensas');for(let i=0;i<30;i++)c.click(10);await pause(300);assert.equal(count('DupeTester','diamond'),1);record('Reparo após falha de leitura e reinício','XP, inventário e recibo preservados; nenhum novo prêmio');await c.quit();
  } else if(phase==='admin'){
