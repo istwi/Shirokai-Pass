@@ -1,4 +1,8 @@
-# Validação atual — 0.3.2
+# Validação atual — 0.4.0
+
+A nova interface de 36 slots foi validada com 63 verificações funcionais, 51 testes Java no Linux e 50 no Windows (1 caso POSIX não aplicável). [Layout, reprodução e limites](GUI-0.4.0.md) · [Resultados caso a caso](audit-0.4.0.json). As correções anteriores de permissões, login e persistência foram preservadas e retestadas.
+
+# Histórico — 0.3.2
 
 A compatibilidade de permissões e os testes com LuckPerms Fabric 5.4.140 estão em [PERMISSIONS-FIX-0.3.2.md](PERMISSIONS-FIX-0.3.2.md). Resultados caso a caso: [audit-0.3.2.json](audit-0.3.2.json).
 

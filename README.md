@@ -6,6 +6,14 @@ Mod **server-side** para Minecraft **1.21.1**, Fabric e Java **21**. O cliente u
 
 Este repositório estava vazio. A especificação disponível está em [docs/REQUISITOS.md](docs/REQUISITOS.md); a especificação anterior citada nesse arquivo não foi fornecida. Consulte [docs/VALIDACAO.md](docs/VALIDACAO.md) para os limites de validação.
 
+## Interface minimalista (0.4.0)
+
+`/passe` abre diretamente as recompensas em **36 slots**, com nove níveis por página. Sem decoração nem painel inicial: grátis na primeira linha, Premium na segunda, progresso na terceira e somente duas setas e um livro na quarta. As cores indicam **verde** (nível concluído sem prêmio elegível pendente), **amarelo** (recompensa disponível), **laranja** (próximo nível em progresso) e **cinza** (bloqueado). O Premium bloqueado é explicado no tooltip.
+
+O livro reúne temporada, nível, XP do nível, Premium e tempo restante. Clique na recompensa para resgatar. Os ícones mostram itens reais configurados, incluindo componentes; conjuntos/sorteios têm um item representativo e um resumo no tooltip. Prêmios somente de comando usam papel; Pokémon usam uma Poké Bola quando o item do Cobblemon está disponível. A página 12 contém apenas o nível 100; os demais slots ficam vazios. A tela aberta se atualiza a cada segundo, além das atualizações imediatas de XP/resgate.
+
+Dados, configurações, assinaturas, comandos e regras de resgate continuam compatíveis, sem migração. As correções de persistência/login e a API de permissões 0.3.1 permanecem. [Implementação e testes](docs/GUI-0.4.0.md).
+
 ## Correção de compatibilidade de permissões (0.3.2)
 
 A 0.3.1 do Shirokai Pass incluía a Fabric Permissions API 0.3.3, destinada ao Minecraft 1.21.3. Isso podia causar `NoSuchMethodError` ao entrar no Minecraft 1.21.1. A 0.3.2 inclui a API 0.3.1 compatível, preserva as verificações e as correções anteriores de persistência/login. [Causa e testes com LuckPerms 5.4.140](docs/PERMISSIONS-FIX-0.3.2.md).
@@ -29,7 +37,7 @@ Não apague os auxiliares `state.json.created` e `state.json.pending`. O primeir
 
 ## Compilar e instalar
 
-Com JDK 21: `./gradlew build`. O JAR distribuível fica em `build/libs/shirokai-pass-0.3.2.jar` (não use o `sources`). Substitua o JAR antigo em `mods/` (não mantenha duas versões juntas) num servidor Fabric 1.21.1 com Fabric API. Faça backup do mundo antes de atualizar.
+Com JDK 21: `./gradlew build`. O JAR distribuível fica em `build/libs/shirokai-pass-0.4.0.jar` (não use o `sources`). Substitua o JAR antigo em `mods/` (não mantenha duas versões juntas) num servidor Fabric 1.21.1 com Fabric API. Faça backup do mundo antes de atualizar.
 
 Na primeira inicialização são criados `config/shirokaipass.json` e, após a primeira alteração, `<mundo>/shirokaipass/state.json`. Não existe temporada automática. Crie uma pelo console:
 
@@ -41,12 +49,13 @@ passeadmin season create primeira 90d 7d
 
 ## Jogadores
 
-- `/passe`: página inicial de 54 slots.
-- `/passe recompensas`: abre uma das 15 páginas no nível atual; sete níveis por página, última com dois.
-- `/passe perfil`, `/passe premium`, `/passe historico`, `/passe info`, `/passe pendentes`.
+- `/passe`: passe de 36 slots aberto no nível atual.
+- `/passe recompensas`: mesma tela; 12 páginas, nove níveis por página e última somente com o nível 100.
+- `/passe perfil`, `/passe premium` e `/passe info`: mesma tela com informações no livro central.
+- `/passe historico`: temporadas anteriores. `/passe pendentes`: fila de entrega; clique no livro para tentar as entregas prontas.
 - `/passe resgatartudo`: reserva todas as recompensas elegíveis da temporada atual.
 
-No histórico, clique em uma temporada para abrir seus prêmios e resgatar durante o período extra. O Premium permanente (`true`) é individual por temporada. A assinatura temporária é por UUID e continua válida ao trocar de temporada. Reduzir XP ou desativar Premium não desfaz resgates já registrados. Inventário cheio mantém prêmios prontos na fila; o botão de pendências ou o próximo login tenta novamente.
+No histórico, clique em uma temporada para abrir seus prêmios e resgatar durante o período extra. O Premium permanente (`true`) é individual por temporada. A assinatura temporária é por UUID e continua válida ao trocar de temporada. Reduzir XP ou desativar Premium não desfaz resgates já registrados. Inventário cheio mantém prêmios prontos na fila; `/passe pendentes` ou o próximo login tenta novamente.
 
 ## Premium mensal automático
 
@@ -112,7 +121,7 @@ Durações aceitam inteiro positivo e `s`, `m`, `h` ou `d`. Só um evento de XP 
 /passeadmin reload
 ```
 
-Abra `/passeadmin` para o painel administrativo. O editor é um menu de 54 slots: escolha um nível/trilha, adicione ou remova prêmios, selecione item/comando/Pokémon, quantidade e peso, alterne todos os prêmios/sorteio e ative a recompensa. As chances percentuais aparecem no rascunho. Clique em **Revisar e salvar** e confirme; cancelar descarta as alterações. Nenhum JSON é necessário.
+Abra `/passeadmin` para o painel administrativo. A seleção de nível/trilha do editor usa a grade de 36 slots. Os formulários administrativos de edição mantêm seus 54 slots: adicione ou remova prêmios, selecione item/comando/Pokémon, quantidade e peso, alterne todos os prêmios/sorteio e ative a recompensa. As chances percentuais aparecem no rascunho. Clique em **Revisar e salvar** e confirme; cancelar descarta as alterações. Nenhum JSON é necessário.
 
 Campos curtos usam a bigorna vanilla: digite no campo de nome e clique no corante **Salvar valor** do segundo slot. Escape retorna ao editor. Para textos extensos, **Conteúdo longo** solicita entrada privada no chat; digite `cancelar` para voltar. Termine um trecho com `\` para continuar na próxima mensagem, até 4.096 caracteres. O prazo de entrada é de dois minutos e o rascunho de quinze minutos.
 

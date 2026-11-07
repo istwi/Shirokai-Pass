@@ -1,0 +1,483 @@
+{
+  "version": "0.4.0",
+  "sourceCommit": "fb755b3dc51e6fcaff6a5fe646b6520bcd3e576d",
+  "minecraft": "1.21.1",
+  "java": 21,
+  "permissionsApi": "0.3.1",
+  "luckPerms": "5.4.140",
+  "ci": {
+    "gui": "https://github.com/istwi/Shirokai-Pass/actions/runs/42323407631",
+    "permissions": "https://github.com/istwi/Shirokai-Pass/actions/runs/42323412666",
+    "native": "https://github.com/istwi/Shirokai-Pass/actions/runs/42323415859"
+  },
+  "unit": {
+    "linux": {
+      "passed": 51,
+      "skipped": 0,
+      "failed": 0
+    },
+    "windows": {
+      "passed": 50,
+      "skipped": 1,
+      "failed": 0,
+      "skipReason": "POSIX permission case does not apply on Windows"
+    }
+  },
+  "functional": {
+    "passed": 63,
+    "suites": [
+      {
+        "mode": "gui",
+        "passed": 15,
+        "phases": [
+          {
+            "phase": "gui",
+            "passed": 14,
+            "results": [
+              {
+                "name": "Sem temporada: tela mínima de 36 slots",
+                "status": "passed",
+                "detail": "título preservado, livro central, navegação e nenhum preenchimento"
+              },
+              {
+                "name": "Trilhas horizontais e estados iniciais",
+                "status": "passed",
+                "detail": "nove níveis alinhados, primeiro laranja, seguintes cinza e aviso Premium"
+              },
+              {
+                "name": "Ícones reais, componentes e sorteios",
+                "status": "passed",
+                "detail": "espada encantada, quantidades e tooltip; configuração original intacta"
+              },
+              {
+                "name": "Cliques em níveis bloqueados e slots informativos",
+                "status": "passed",
+                "detail": "nenhum item, resgate ou alteração de inventário"
+              },
+              {
+                "name": "XP e informações atualizam com a tela aberta",
+                "status": "passed",
+                "detail": "nível 1, XP 0/125, amarelo e tempo restante no mesmo livro"
+              },
+              {
+                "name": "150 cliques no resgate direto",
+                "status": "passed",
+                "detail": "uma espada, um recibo, ícone preservado e indicador verde"
+              },
+              {
+                "name": "Premium bloqueado, ativado e resgatado",
+                "status": "passed",
+                "detail": "negado sem Premium; dois lingotes uma única vez após ativação"
+              },
+              {
+                "name": "Ações de inventário e pacotes forjados",
+                "status": "passed",
+                "detail": "shift, número, clone, drop, drag e double-click não movem ícones"
+              },
+              {
+                "name": "Quatro cores e prêmio de comando",
+                "status": "passed",
+                "detail": "verde/amarelo/laranja/cinza automáticos; comando executado uma vez"
+              },
+              {
+                "name": "Navegação de nove níveis",
+                "status": "passed",
+                "detail": "página 2 mostra níveis 10–18 nas duas trilhas"
+              },
+              {
+                "name": "Limites de paginação e nível 100",
+                "status": "passed",
+                "detail": "12 páginas; última com um nível; espaços restantes vazios; setas não ultrapassam limites"
+              },
+              {
+                "name": "Prévia na nova GUI",
+                "status": "passed",
+                "detail": "36 slots e nenhum resgate sob spam"
+              },
+              {
+                "name": "Abertura no nível atual e resgate do nível 100",
+                "status": "passed",
+                "detail": "última página correta e uma estrela entregue"
+              },
+              {
+                "name": "Histórico e período extra preservados",
+                "status": "passed",
+                "detail": "temporada nova sem apagar progresso; resgate antigo disponível dentro do prazo"
+              }
+            ]
+          },
+          {
+            "phase": "gui_restart",
+            "passed": 1,
+            "results": [
+              {
+                "name": "Reinício preserva progresso, Premium, configuração e resgates",
+                "status": "passed",
+                "detail": "133750 XP, seis resgates e sem duplicação do nível 100"
+              }
+            ]
+          }
+        ],
+        "world": "world-20261107-011914"
+      },
+      {
+        "mode": "dupe",
+        "passed": 11,
+        "phases": [
+          {
+            "phase": "rapid",
+            "passed": 6,
+            "results": [
+              {
+                "name": "150 cliques rápidos no mesmo prêmio",
+                "status": "passed",
+                "detail": "1 recibo, 1 diamante"
+              },
+              {
+                "name": "100 cliques rápidos por prêmio e resgatartudo após resgate",
+                "status": "passed",
+                "detail": "3 recompensas únicas; sorteio e comando executados 1 vez; 1421ms"
+              },
+              {
+                "name": "Shift, tecla numérica, clone, drop, arrastar, double-click e slots forjados",
+                "status": "passed",
+                "detail": "inventário idêntico; nenhum ícone movido"
+              },
+              {
+                "name": "Administração por jogador sem OP",
+                "status": "passed",
+                "detail": "XP não alterada"
+              },
+              {
+                "name": "Reabertura após spam de cliques",
+                "status": "passed",
+                "detail": "passe horizontal"
+              },
+              {
+                "name": "XP offline por nome conhecido e transação repetida",
+                "status": "passed",
+                "detail": "+100 uma vez; 1100 XP persistidos"
+              }
+            ]
+          },
+          {
+            "phase": "restart",
+            "passed": 2,
+            "results": [
+              {
+                "name": "Reinício normal + recibos + inventário",
+                "status": "passed",
+                "detail": "1100 XP, 3 resgates, 1 diamante; nenhum novo prêmio após repetir clique"
+              },
+              {
+                "name": "Inventário cheio + 30 cliques",
+                "status": "passed",
+                "detail": "1 reserva READY, nenhum diamante entregue"
+              }
+            ]
+          },
+          {
+            "phase": "crash",
+            "passed": 2,
+            "results": [
+              {
+                "name": "Pendência preservada após reinício e entregue uma vez",
+                "status": "passed",
+                "detail": "2 diamantes após liberar inventário"
+              },
+              {
+                "name": "Interrupção controlada durante entrega",
+                "status": "passed",
+                "detail": "arquivo DELIVERING confirmado antes do SIGKILL"
+              }
+            ]
+          },
+          {
+            "phase": "recovery",
+            "passed": 1,
+            "results": [
+              {
+                "name": "Recuperação após SIGKILL + repetição de cliques",
+                "status": "passed",
+                "detail": "REVIEW preservado; 2 diamantes antes/depois; sem reentrega automática"
+              }
+            ]
+          }
+        ],
+        "world": "world-20261107-012004"
+      },
+      {
+        "mode": "storage",
+        "passed": 7,
+        "phases": [
+          {
+            "phase": "storage",
+            "passed": 5,
+            "results": [
+              {
+                "name": "Login com armazenamento normal",
+                "status": "passed",
+                "detail": "jogador permanece no mundo"
+              },
+              {
+                "name": "Login com arquivo de estado substituído por diretório",
+                "status": "passed",
+                "detail": "jogador conectado; passe bloqueado, sem Invalid player data"
+              },
+              {
+                "name": "Resgates durante falha",
+                "status": "passed",
+                "detail": "20 cliques negados; nenhum item e backup intacto"
+              },
+              {
+                "name": "XP durante falha",
+                "status": "passed",
+                "detail": "sem falso sucesso ou alteração do snapshot confirmado"
+              },
+              {
+                "name": "Recuperação sem reiniciar",
+                "status": "passed",
+                "detail": "100 XP preservidos; nome do jogador novo salvo; 1 prêmio após reparo"
+              }
+            ]
+          },
+          {
+            "phase": "storage_corrupt",
+            "passed": 2,
+            "results": [
+              {
+                "name": "Login após reinício com JSON corrompido",
+                "status": "passed",
+                "detail": "servidor e login ativos; arquivo corrompido não sobrescrito"
+              },
+              {
+                "name": "Reparo após falha de leitura e reinício",
+                "status": "passed",
+                "detail": "XP, inventário e recibo preservados; nenhum novo prêmio"
+              }
+            ]
+          }
+        ],
+        "world": "world-20261107-012132"
+      },
+      {
+        "mode": "premium",
+        "passed": 8,
+        "phases": [
+          {
+            "phase": "premium_setup",
+            "passed": 3,
+            "results": [
+              {
+                "name": "Compra mensal e renovação com ID de pedido",
+                "status": "passed",
+                "detail": "30 dias + 30 dias; replay não concede dias extras"
+              },
+              {
+                "name": "Jogador comum não concede Premium",
+                "status": "passed",
+                "detail": "assinatura inalterada"
+              },
+              {
+                "name": "Premium concedido por nome offline",
+                "status": "passed",
+                "detail": "validade persistida antes do reinício"
+              }
+            ]
+          },
+          {
+            "phase": "premium_expire",
+            "passed": 5,
+            "results": [
+              {
+                "name": "Premium offline preservado após reinício",
+                "status": "passed",
+                "detail": "perfil e prazo ativos sem nova concessão"
+              },
+              {
+                "name": "Assinatura temporária permite resgate Premium",
+                "status": "passed",
+                "detail": "um prêmio entregue"
+              },
+              {
+                "name": "Expiração automática + 50 cliques no prêmio",
+                "status": "passed",
+                "detail": "menu aberto atualizado; segundo prêmio bloqueado sem desativação manual"
+              },
+              {
+                "name": "Replay após vencimento",
+                "status": "passed",
+                "detail": "pedido antigo não reativa assinatura"
+              },
+              {
+                "name": "Compatibilidade true/false e mês de 30 dias",
+                "status": "passed",
+                "detail": "remoção revoga assinatura e acesso permanente"
+              }
+            ]
+          }
+        ],
+        "world": "world-20261107-012220"
+      },
+      {
+        "mode": "admin",
+        "passed": 7,
+        "phases": [
+          {
+            "phase": "admin",
+            "passed": 7,
+            "results": [
+              {
+                "name": "Editor usa rascunho sem alterar prêmio antes da confirmação",
+                "status": "passed",
+                "detail": "quantidade 2 no rascunho, 1 no arquivo"
+              },
+              {
+                "name": "Bigorna e cancelamento não vazam ícones",
+                "status": "passed",
+                "detail": "zero papéis/corantes no inventário"
+              },
+              {
+                "name": "50 cliques na confirmação do editor",
+                "status": "passed",
+                "detail": "configuração salva uma vez; nenhum item concedido"
+              },
+              {
+                "name": "Prévia administrativa sob cliques rápidos",
+                "status": "passed",
+                "detail": "nenhum resgate ou item"
+              },
+              {
+                "name": "Conteúdo longo permanece privado",
+                "status": "passed",
+                "detail": "outro jogador não recebe o texto"
+              },
+              {
+                "name": "Dois administradores editam o mesmo prêmio",
+                "status": "passed",
+                "detail": "segundo salvamento recusado; primeira edição preservada"
+              },
+              {
+                "name": "Edição gráfica em lote com confirmação",
+                "status": "passed",
+                "detail": "somente níveis 10–12 alterados"
+              }
+            ]
+          }
+        ],
+        "world": "world-20261107-012344"
+      },
+      {
+        "mode": "fallback",
+        "passed": 4,
+        "phases": [
+          {
+            "phase": "fallback",
+            "passed": 4,
+            "results": [
+              {
+                "name": "Login e API Entity do Minecraft 1.21.1",
+                "status": "passed",
+                "detail": "API 0.3.1 única sem provedor externo"
+              },
+              {
+                "name": "Sem LuckPerms: uso comum e administração negada",
+                "status": "passed",
+                "detail": "fallback nativo preservado"
+              },
+              {
+                "name": "Sem provedor: OP autorizado e destinatário sem OP",
+                "status": "passed",
+                "detail": "concessão pela mesma API; sem bypass em falha de backend"
+              },
+              {
+                "name": "Reconexão repetida",
+                "status": "passed",
+                "detail": "jogador permanece no servidor sem LinkageError"
+              }
+            ]
+          }
+        ],
+        "world": "world-20261107-012409"
+      },
+      {
+        "mode": "permissions",
+        "passed": 11,
+        "phases": [
+          {
+            "phase": "permissions",
+            "passed": 8,
+            "results": [
+              {
+                "name": "Login e API Entity do Minecraft 1.21.1",
+                "status": "passed",
+                "detail": "LuckPerms 5.4.140 + API 0.3.1 única; sem método inexistente"
+              },
+              {
+                "name": "LuckPerms nega uso do passe",
+                "status": "passed",
+                "detail": "source/entity/UUID/profile e comando negados"
+              },
+              {
+                "name": "LuckPerms permite uso do passe",
+                "status": "passed",
+                "detail": "todos os overloads e menu funcionam"
+              },
+              {
+                "name": "LuckPerms: jogador comum sem administração",
+                "status": "passed",
+                "detail": "XP do destinatário inalterada"
+              },
+              {
+                "name": "LuckPerms concede nó administrativo específico",
+                "status": "passed",
+                "detail": "jogador autorizado concede XP a destinatário sem OP"
+              },
+              {
+                "name": "LuckPerms revoga permissão em tempo real",
+                "status": "passed",
+                "detail": "comando volta a ser negado"
+              },
+              {
+                "name": "Negação explícita prevalece mesmo com OP",
+                "status": "passed",
+                "detail": "não há fallback permissivo quando LuckPerms nega"
+              },
+              {
+                "name": "Reconexão repetida",
+                "status": "passed",
+                "detail": "jogador permanece no servidor sem LinkageError"
+              }
+            ]
+          },
+          {
+            "phase": "permissions_restart",
+            "passed": 3,
+            "results": [
+              {
+                "name": "Login e API Entity do Minecraft 1.21.1",
+                "status": "passed",
+                "detail": "LuckPerms 5.4.140 + API 0.3.1 única; sem método inexistente"
+              },
+              {
+                "name": "Reinício com LuckPerms e permissões persistidas",
+                "status": "passed",
+                "detail": "login, allow/deny e XP preservados"
+              },
+              {
+                "name": "Reconexão repetida",
+                "status": "passed",
+                "detail": "jogador permanece no servidor sem LinkageError"
+              }
+            ]
+          }
+        ],
+        "world": "world-20261107-012438"
+      }
+    ]
+  },
+  "limits": [
+    "Protocol clients on isolated offline-auth servers; no visual review in official Minecraft client",
+    "Full modpack and real Cobblemon 1.8.3 reward delivery not executed; existing integration code unchanged"
+  ]
+}
