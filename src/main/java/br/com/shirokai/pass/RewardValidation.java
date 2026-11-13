@@ -18,6 +18,7 @@ final class RewardValidation {
               "Divida a quantidade de itens em outras recompensas (limite: 36 slots)");
         totalSlots += slots;
       }
+      if (choice.type.equals("pokemon")) PokemonRewards.properties(choice.value);
       if (choice.type.equals("command")) {
         String command =
             choice

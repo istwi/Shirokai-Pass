@@ -292,19 +292,17 @@ public final class ShirokaiPass implements ModInitializer {
         // Preflight all prizes before committing external side effects.
         int slots = 0;
         Map<Choice, String> prepared = new IdentityHashMap<>();
+        Map<Choice, Object> pokemon = new IdentityHashMap<>();
         for (Choice c : d.prizes) {
           c.validate();
           if (c.type.equals("item")) {
             ItemStack sample = RewardItems.stack(server(), c.value, 1);
             slots += (c.count + sample.getMaxCount() - 1) / sample.getMaxCount();
           }
-          if (c.type.equals("pokemon") && !FabricLoader.getInstance().isModLoaded("cobblemon"))
-            throw new IllegalArgumentException("Cobblemon não instalado");
-          if (!c.type.equals("item")) {
-            String command =
-                c.type.equals("pokemon")
-                    ? "pokegive " + p.getGameProfile().getName() + " " + c.value
-                    : expand(p.getUuid(), c.value, d.season);
+          if (c.type.equals("pokemon"))
+            pokemon.put(c, PokemonRewards.prepare(c.value));
+          if (c.type.equals("command")) {
+            String command = expand(p.getUuid(), c.value, d.season);
             if (command.startsWith("/")) command = command.substring(1);
             var parsed =
                 server()
@@ -338,7 +336,8 @@ public final class ShirokaiPass implements ModInitializer {
                   throw new IllegalStateException("Inventário mudou durante entrega");
               }
             }
-            case "command", "pokemon" -> {
+            case "pokemon" -> PokemonRewards.deliver(p, pokemon.get(c));
+            case "command" -> {
               String cmd = prepared.get(c);
               int outcome =
                   server()

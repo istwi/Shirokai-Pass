@@ -421,9 +421,25 @@ public final class PassService {
             });
   }
 
+  private static boolean legacyPokemonFailure(Delivery d) {
+    // The old self-only command rejected its console source before adding a Pokémon.
+    // Mixed rewards may already have delivered items/commands and must stay in REVIEW.
+    return d.status.equals("REVIEW")
+        && "A player is required to run this command here".equals(d.error)
+        && d.prizes.size() == 1
+        && d.prizes.getFirst().type.equals("pokemon");
+  }
+
   public synchronized void recover() {
     readable();
-    if (state.deliveries.values().stream().anyMatch(d -> d.status.equals("DELIVERING")))
-      edit(PassService::markInterrupted);
+    if (state.deliveries.values().stream()
+        .anyMatch(d -> d.status.equals("DELIVERING") || legacyPokemonFailure(d)))
+      edit(s -> {
+        markInterrupted(s);
+        s.deliveries.values().stream().filter(PassService::legacyPokemonFailure).forEach(d -> {
+          d.status = "READY";
+          d.error = "Entrega Pokémon recuperada; tente novamente";
+        });
+      });
   }
 }

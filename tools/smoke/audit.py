@@ -29,7 +29,7 @@ operators.write_text('[]\n')
 PASSWORD = secrets.token_urlsafe(24)
 ENV = dict(os.environ, MC_PORT='25585', MC_RCON_PORT='25595', MC_RCON_PASSWORD=PASSWORD, MC_WORLD=str(WORLD), MC_RESULTS=str(RESULTS))
 (RUN / 'mods').mkdir(exist_ok=True)
-shutil.copy2(ROOT / 'build/integration/shirokai-pass-test-harness.jar', RUN / 'mods/shirokai-pass-test-harness.jar')
+shutil.copy2(Path(os.environ.get('MC_HARNESS_JAR', ROOT / 'build/integration/shirokai-pass-test-harness.jar')), RUN / 'mods/shirokai-pass-test-harness.jar')
 # Only the known test provider is managed here; production mods are never touched.
 mode=sys.argv[1] if len(sys.argv)>1 else 'dupe'
 provider=RUN/'mods/LuckPerms-Fabric-5.4.140.jar'
@@ -61,7 +61,8 @@ def start(number):
     global server,log
     filename=RUN / ('audit-session-'+str(number)+'.log')
     log=filename.open('w')
-    server=subprocess.Popen([str(ROOT/'gradlew'),'runAuditServer','--console=plain','--no-daemon'],cwd=ROOT,stdin=subprocess.PIPE,stdout=log,stderr=subprocess.STDOUT,env=ENV)
+    server_command = json.loads(ENV['MC_SERVER_COMMAND_JSON']) if ENV.get('MC_SERVER_COMMAND_JSON') else [str(ROOT/'gradlew'),'runAuditServer','--console=plain','--no-daemon']
+    server=subprocess.Popen(server_command,cwd=RUN if ENV.get('MC_SERVER_COMMAND_JSON') else ROOT,stdin=subprocess.PIPE,stdout=log,stderr=subprocess.STDOUT,env=ENV)
     deadline=time.monotonic()+180
     while time.monotonic()<deadline:
         if server.poll() is not None: raise RuntimeError('Server exited; see '+str(filename))
@@ -87,8 +88,10 @@ def phase(name):
 
 try:
     mode=sys.argv[1] if len(sys.argv)>1 else 'dupe'
-    names = ('gui','gui_restart') if mode=='gui' else ('permissions','permissions_restart') if mode=='permissions' else ('fallback',) if mode=='fallback' else ('storage','storage_corrupt') if mode=='storage' else ('admin',) if mode=='admin' else ('premium_setup','premium_expire') if mode=='premium' else ('rapid','restart','crash','recovery')
-    if mode=='gui':
+    names = ('pokemon',) if mode=='pokemon' else ('gui','gui_restart') if mode=='gui' else ('permissions','permissions_restart') if mode=='permissions' else ('fallback',) if mode=='fallback' else ('storage','storage_corrupt') if mode=='storage' else ('admin',) if mode=='admin' else ('premium_setup','premium_expire') if mode=='premium' else ('rapid','restart','crash','recovery')
+    if mode=='pokemon':
+        start(1);phase('pokemon');stop()
+    elif mode=='gui':
         start(1);phase('gui');stop()
         start(2);phase('gui_restart');stop()
     elif mode=='permissions':

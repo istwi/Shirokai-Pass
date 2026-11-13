@@ -224,14 +224,23 @@ public final class Menus {
           && s.claiming(System.currentTimeMillis());
     }
 
-    private ItemStack rewardIcon(Season s, Progress p, Reward r, boolean premiumActive) {
+    private ItemStack rewardIcon(State state, Season s, Progress p, Reward r, boolean premiumActive) {
       boolean claimed = p.claimed.contains(key(r.level, r.premium));
       boolean eligible = available(s, p, r, premiumActive);
+      Delivery pending = state.deliveries.values().stream()
+          .filter(d -> d.player.equals(owner.getUuidAsString()) && d.season.equals(s.id)
+              && d.reward.equals(key(r.level, r.premium)) && !d.status.equals("DONE"))
+          .findFirst().orElse(null);
       List<String> lore = new ArrayList<>();
       lore.add(
           !r.enabled
               ? "Não configurada"
-              : claimed ? "Resgatada" : eligible ? "Disponível" : "Bloqueada");
+              : pending != null ? "Entrega pendente" : claimed ? "Resgatada" : eligible ? "Disponível" : "Bloqueada");
+      if (pending != null) {
+        if (pending.status.equals("READY")) lore.add("Clique para tentar entregar novamente");
+        else lore.add("Aguardando revisão de um administrador");
+        if (pending.error != null && !pending.error.isBlank()) lore.add(shortText(pending.error));
+      }
       if (r.premium && !premiumActive) lore.add("Requer passe Premium");
       if (!s.claiming(System.currentTimeMillis())) lore.add("Prazo de resgate encerrado");
       long total = r.choices.stream().mapToLong(c -> c.weight).sum();
@@ -254,6 +263,13 @@ public final class Menus {
         } else
           label =
               c.type.equals("pokemon") ? "Pokémon: " + shortText(c.value) : "Comando do servidor";
+        if (c.type.equals("pokemon") && display.isEmpty()) {
+          try {
+            display = PokemonRewards.icon(c.value);
+          } catch (IllegalArgumentException e) {
+            // Keep pending rewards visible even while Cobblemon is unavailable.
+          }
+        }
         if (i < 4)
           lore.add(
               label
@@ -266,14 +282,17 @@ public final class Menus {
         boolean pokemon = r.choices.stream().anyMatch(c -> c.type.equals("pokemon"));
         display = icon(pokemon ? "cobblemon:poke_ball" : "minecraft:paper", "", Formatting.AQUA);
       }
+      if (r.choices.stream().anyMatch(c -> c.type.equals("pokemon")))
+        lore.add("Pokémon entregue à equipe ou ao PC");
       if (view.equals("editor")) lore.add("Clique para editar");
       else if (preview) lore.add("Prévia • sem resgates");
       else if (eligible) lore.add("Clique para resgatar");
       return decorate(
           display,
           (r.premium ? "Premium" : "Grátis") + " • " + r.level,
-          claimed
-              ? Formatting.GREEN
+          pending != null
+              ? Formatting.RED
+              : claimed ? Formatting.GREEN
               : eligible ? Formatting.YELLOW : r.premium ? Formatting.GOLD : Formatting.AQUA,
           lore);
     }
@@ -315,7 +334,7 @@ public final class Menus {
           claimable |= available(s, p, r, premiumActive);
           put(
               (premium ? 9 : 0) + col,
-              rewardIcon(s, p, r, premiumActive),
+              rewardIcon(state, s, p, r, premiumActive),
               () -> {
                 if (view.equals("editor")) {
                   if (!ShirokaiPass.permission(
@@ -324,7 +343,10 @@ public final class Menus {
                           owner.getCommandSource(), "shirokaipass.admin", 2))
                     throw new IllegalArgumentException("Sem permissão");
                   AdminGui.editReward(mod, owner, s.id, key, page);
-                } else if (!preview) mod.claim(owner, s.id, List.of(key));
+                } else if (!preview) {
+                  if (p.claimed.contains(key)) mod.deliver(owner);
+                  else mod.claim(owner, s.id, List.of(key));
+                }
               });
         }
         int current = level(s, p.xp);

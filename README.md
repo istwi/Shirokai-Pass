@@ -37,7 +37,7 @@ Não apague os auxiliares `state.json.created` e `state.json.pending`. O primeir
 
 ## Compilar e instalar
 
-Com JDK 21: `./gradlew build`. O JAR distribuível fica em `build/libs/shirokai-pass-0.4.0.jar` (não use o `sources`). Substitua o JAR antigo em `mods/` (não mantenha duas versões juntas) num servidor Fabric 1.21.1 com Fabric API. Faça backup do mundo antes de atualizar.
+Com JDK 21: `./gradlew build`. O JAR distribuível fica em `build/libs/shirokai-pass-0.4.1.jar` (não use o `sources`). Substitua o JAR antigo em `mods/` (não mantenha duas versões juntas) num servidor Fabric 1.21.1 com Fabric API. Faça backup do mundo antes de atualizar.
 
 Na primeira inicialização são criados `config/shirokaipass.json` e, após a primeira alteração, `<mundo>/shirokaipass/state.json`. Não existe temporada automática. Crie uma pelo console:
 
@@ -190,3 +190,23 @@ PassApi.addXp(playerUuid, 100, "meumod/quest/UUID/123");
 ```
 
 Retorna `CompletableFuture<Model.XpResult>`; agenda a operação na thread do servidor. Não bloqueie essa thread com `.join()`. A API é uma capacidade de código confiável no processo do servidor; seus chamadores devem autorizar a origem. `PassApi.expand(uuid, texto)` expõe os placeholders internos. A API não é necessária para integrar por comandos.
+
+## Recompensas Pokémon
+
+O passe entrega Pokémon pela API de armazenamento do Cobblemon, à equipe e, quando
+ela está cheia, ao PC. Pokémon não são itens do inventário Minecraft. A espécie
+é validada ao salvar a recompensa; use, por exemplo, `pikachu level=10 shiny`.
+O menu do passe e a lista do editor exibem o modelo do Pokémon fornecido pelo
+Cobblemon. Para enxergar esse modelo, o cliente precisa do Cobblemon.
+
+Uma entrega pendente aparece em vermelho no prêmio, com o motivo e a opção de
+tentar novamente. O resgate reservado é preservado, sem criar outra recompensa.
+Entregas em `REVIEW` precisam de conferência administrativa: não confirme com
+`delivery acknowledge` antes de conferir/compensar a entrega, pois esse comando
+somente encerra a pendência e não entrega o Pokémon.
+
+A versão 0.4.1 também libera automaticamente para nova tentativa as entregas
+antigas em `REVIEW` que contêm somente um Pokémon e o erro exato
+`A player is required to run this command here`. Após atualizar e reiniciar,
+abra `/passe pendentes` ou clique no prêmio pendente. Entregas mistas ou com
+resultado incerto continuam exigindo revisão para evitar duplicação.

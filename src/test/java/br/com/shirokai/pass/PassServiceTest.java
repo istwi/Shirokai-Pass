@@ -145,6 +145,57 @@ class PassServiceTest {
   }
 
   @Test
+  void pokemonPreflightFailureRemainsRetryableWithoutReservingAgain() throws Exception {
+    service.add(player, 100, null, false);
+    service.edit(s -> s.seasons.get("s1").rewards.get("free:1").choices =
+        new ArrayList<>(List.of(new Choice("pokemon", "pikachu level=10 shiny", 1, 1))));
+    Delivery delivery = service.claim(player, "s1", List.of("free:1"), new Random()).getFirst();
+    service.status(delivery.id, "READY", "READY", "Cobblemon não instalado");
+    PassService restarted = new PassService(store, now::get);
+    restarted.recover();
+    Delivery pending = restarted.snapshot().deliveries.get(delivery.id);
+    assertEquals("READY", pending.status);
+    assertEquals("pikachu level=10 shiny", pending.prizes.getFirst().value);
+    assertTrue(restarted.claim(player, "s1", List.of("free:1"), new Random()).isEmpty());
+    restarted.status(delivery.id, "READY", "DELIVERING", "");
+    restarted.status(delivery.id, "DELIVERING", "DONE", "");
+    assertEquals(1, restarted.snapshot().deliveries.size());
+  }
+
+  @Test
+  void legacyConsolePokemonFailureCanBeRetriedAfterRestart() throws Exception {
+    service.add(player, 100, null, false);
+    service.edit(s -> s.seasons.get("s1").rewards.get("free:1").choices =
+        new ArrayList<>(List.of(new Choice("pokemon", "pikachu level=10", 1, 1))));
+    Delivery d = service.claim(player, "s1", List.of("free:1"), new Random()).getFirst();
+    service.status(d.id, "READY", "REVIEW", "A player is required to run this command here");
+    PassService restarted = new PassService(store, now::get);
+    restarted.recover();
+    assertEquals("READY", restarted.snapshot().deliveries.get(d.id).status);
+    assertTrue(restarted.claim(player, "s1", List.of("free:1"), new Random()).isEmpty());
+    restarted.recover();
+    assertEquals(1, restarted.snapshot().deliveries.size());
+  }
+
+  @Test
+  void ambiguousAndMixedPokemonFailuresStillRequireReview() throws Exception {
+    service.add(player, 225, null, false);
+    service.edit(s -> {
+      s.seasons.get("s1").rewards.get("free:1").choices = new ArrayList<>(List.of(
+          new Choice("item", "minecraft:diamond", 1, 1),
+          new Choice("pokemon", "pikachu", 1, 1)));
+      s.seasons.get("s1").rewards.get("free:2").choices = new ArrayList<>(List.of(
+          new Choice("pokemon", "eevee", 1, 1)));
+    });
+    var deliveries = service.claim(player, "s1", List.of("free:1", "free:2"), new Random());
+    service.status(deliveries.get(0).id, "READY", "REVIEW", "A player is required to run this command here");
+    service.status(deliveries.get(1).id, "READY", "DELIVERING", "");
+    PassService restarted = new PassService(store, now::get);
+    restarted.recover();
+    deliveries.forEach(d -> assertEquals("REVIEW", restarted.snapshot().deliveries.get(d.id).status));
+  }
+
+  @Test
   void corruptStateFailsClosed() throws Exception {
     Files.writeString(dir.resolve("state.json"), "broken!");
     assertThrows(java.io.IOException.class, () -> new PassService(store, now::get));

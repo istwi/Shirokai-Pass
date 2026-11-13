@@ -1,5 +1,5 @@
 plugins { id 'fabric-loom' version '1.9.2' }
-version = '0.4.0'
+version = '0.4.1'
 group = 'br.com.shirokai'
 base { archivesName = 'shirokai-pass' }
 repositories { mavenCentral() }
@@ -75,3 +75,11 @@ tasks.register('verifyBundledPermissions') {
  }
 }
 tasks.named('check') { dependsOn tasks.named('verifyBundledPermissions') }
+
+// Real modpack regressions must also exercise the production intermediary namespace.
+tasks.register('remapIntegrationModJar', net.fabricmc.loom.task.RemapJarTask) {
+ dependsOn tasks.named('integrationModJar')
+ inputFile = tasks.named('integrationModJar', Jar).flatMap { it.archiveFile }
+ archiveFileName = 'shirokai-pass-test-harness-intermediary.jar'
+ destinationDirectory = layout.buildDirectory.dir('integration')
+}

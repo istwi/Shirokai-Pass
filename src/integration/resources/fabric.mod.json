@@ -8,7 +8,8 @@
     "main": [
       "br.com.shirokai.pass.IntegrationHarness",
       "br.com.shirokai.pass.AuditHarness",
-      "br.com.shirokai.pass.PermissionAuditHarness"
+      "br.com.shirokai.pass.PermissionAuditHarness",
+      "br.com.shirokai.pass.PokemonAuditHarness"
     ]
   },
   "depends": {

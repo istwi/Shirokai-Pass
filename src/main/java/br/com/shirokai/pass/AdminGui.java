@@ -502,9 +502,17 @@ final class AdminGui {
                 c.type.equals("item")
                     ? "minecraft:chest"
                     : c.type.equals("pokemon") ? "minecraft:dragon_egg" : "minecraft:command_block";
+            ItemStack display = new ItemStack(Registries.ITEM.get(Identifier.of(item)));
+            if (c.type.equals("pokemon")) {
+              try {
+                display = PokemonRewards.icon(c.value);
+              } catch (IllegalArgumentException e) {
+                // Invalid drafts remain editable, including without Cobblemon installed.
+              }
+            }
             b.button(
                 (i / 7 + 1) * 9 + 1 + i % 7,
-                item,
+                display,
                 "Prêmio " + (index + 1) + " • " + c.type,
                 () -> choice(mod, p, d, index, page),
                 c.value,
@@ -851,6 +859,11 @@ final class AdminGui {
       ItemStack stack =
           new ItemStack(
               id != null && Registries.ITEM.containsId(id) ? Registries.ITEM.get(id) : Items.PAPER);
+      button(slot, stack, label, action, lines);
+    }
+
+    void button(int slot, ItemStack stack, String label, Runnable action, String... lines) {
+      stack = stack.copy();
       stack.set(
           DataComponentTypes.CUSTOM_NAME,
           Text.literal(label).formatted(Formatting.AQUA).styled(s -> s.withItalic(false)));

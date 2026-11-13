@@ -34,7 +34,12 @@ async function connect(username){
 function reward(level,choices,mode='fixed'){const json=JSON.stringify({enabled:true,mode,choices});rcon(`passeadmin rewards set audit ${level} false ${json}`);}
 const item=(value,count=1)=>({type:'item',value:'minecraft:'+value,count,weight:1});
 (async()=>{let c,other;try{
- if(phase==='gui'){
+ if(phase==='pokemon'){
+  c=await connect('PokemonTester');
+  const result=rcon('auditpokemon PokemonTester');
+  assert.ok(result.includes('POKEMON_AUDIT_SUCCESS'), result);
+  record('Cobblemon real: modelo, espécie, resgate e armazenamento','API real: entrega única, recibo DONE e equipe cheia envia ao PC');
+ }else if(phase==='gui'){
   c=await connect('DupeTester');
   const md=require('minecraft-data')('1.21.1');
   const itemName=slot=>md.items[c.slots[slot]?.itemId]?.name;
