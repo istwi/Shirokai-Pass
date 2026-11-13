@@ -73,15 +73,31 @@ public final class Menus {
 
   private static ItemStack decorate(
       ItemStack stack, String name, Formatting color, List<String> lore) {
-    stack.set(
-        DataComponentTypes.CUSTOM_NAME,
-        Text.literal(name).formatted(color).styled(s -> s.withItalic(false)));
+    return decorateRich(stack, name, color,
+        lore.stream().map(line -> line(line, Formatting.GRAY)).toList());
+  }
+
+  private static Text line(String text, Formatting color) {
+    return Text.literal(text).formatted(color).styled(style -> style.withItalic(false));
+  }
+
+  private static Text detail(String label, String value, Formatting color) {
+    return Text.literal(label).formatted(Formatting.GRAY).styled(style -> style.withItalic(false))
+        .append(line(value, color));
+  }
+
+  private static ItemStack decorateRich(
+      ItemStack stack, String name, Formatting color, List<Text> lore) {
+    stack.set(DataComponentTypes.CUSTOM_NAME,
+        Text.literal(name).formatted(color).styled(style -> style.withItalic(false).withBold(true)));
     List<Text> lines = new ArrayList<>();
-    // Preserve configured item lore/components in the display copy, never in the stored reward.
+    // Display copies preserve custom reward lore and components.
     LoreComponent original = stack.get(DataComponentTypes.LORE);
-    if (original != null) lines.addAll(original.lines());
-    for (String line : lore)
-      lines.add(Text.literal(line).formatted(Formatting.GRAY).styled(s -> s.withItalic(false)));
+    if (original != null) {
+      lines.addAll(original.lines());
+      if (!original.lines().isEmpty()) lines.add(line("", Formatting.GRAY));
+    }
+    lines.addAll(lore);
     stack.set(DataComponentTypes.LORE, new LoreComponent(lines));
     return stack;
   }
@@ -189,30 +205,44 @@ public final class Menus {
       int lv = s == null ? 0 : level(s, p.xp);
       long floor = s == null ? 0 : threshold(lv, s.baseXp, s.incrementXp);
       long needed = s == null || lv == 100 ? 0 : threshold(lv + 1, s.baseXp, s.incrementXp) - floor;
-      List<String> lore = new ArrayList<>();
-      lore.add("Temporada: " + (s == null ? "Aguardando início" : s.name));
-      lore.add("Nível: " + lv + " / 100");
-      lore.add(
-          lv == 100 ? "XP: " + p.xp + " • Nível máximo" : "XP: " + (p.xp - floor) + " / " + needed);
-      lore.add("Premium: " + (premiumActive ? "Ativo" : "Inativo"));
+      List<Text> lore = new ArrayList<>();
+      lore.add(line("━━━━━━━━━━━━━━━━━━━━━━━━", Formatting.DARK_AQUA));
+      lore.add(detail("Temporada: ", s == null ? "Aguardando início" : s.name, Formatting.WHITE));
+      lore.add(line("", Formatting.GRAY));
+      lore.add(line("✦ SUA JORNADA", Formatting.AQUA));
+      lore.add(detail("Nível: ", lv + " / 100", Formatting.YELLOW));
+      lore.add(detail("XP: ", lv == 100 ? p.xp + " • Nível máximo"
+          : (p.xp - floor) + " / " + needed, Formatting.GREEN));
+      int filled = lv == 100 ? 16 : needed == 0 ? 0
+          : (int) Math.max(0, Math.min(16, 16.0 * (p.xp - floor) / needed));
+      lore.add(Text.literal("").styled(style -> style.withItalic(false))
+          .append(line("▰".repeat(filled), Formatting.GREEN))
+          .append(line("▱".repeat(16 - filled), Formatting.DARK_GRAY))
+          .append(line(lv == 100 ? "  MAX" : "  Próximo nível", Formatting.GRAY)));
+      lore.add(line("", Formatting.GRAY));
+      lore.add(line("✦ SEU PASSE", Formatting.GOLD));
+      lore.add(detail("Premium: ", premiumActive ? "Ativo" : "Inativo",
+          premiumActive ? Formatting.GOLD : Formatting.DARK_GRAY));
       if (premiumActive && !p.premium)
-        lore.add("Premium restante: " + remaining(mod.service.premiumExpiresAt(owner.getUuid())));
+        lore.add(detail("Premium restante: ", remaining(mod.service.premiumExpiresAt(owner.getUuid())),
+            Formatting.YELLOW));
       if (s != null) {
         long now = System.currentTimeMillis();
-        lore.add(
-            now < s.end
-                ? "Temporada restante: " + remaining(s.end)
-                : now < s.graceEnd
-                    ? "Resgate extra: " + remaining(s.graceEnd)
-                    : "Temporada encerrada");
+        lore.add(now < s.end
+            ? detail("Temporada restante: ", remaining(s.end), Formatting.AQUA)
+            : now < s.graceEnd
+                ? detail("Resgate extra: ", remaining(s.graceEnd), Formatting.YELLOW)
+                : line("Temporada encerrada", Formatting.RED));
       }
-      lore.add("Página " + (page + 1) + " / 12");
+      lore.add(line("", Formatting.GRAY));
+      lore.add(line("Página " + (page + 1) + " / 12", Formatting.DARK_GRAY));
       if (preview)
-        lore.add(view.equals("editor") ? "Edição de recompensas" : "Prévia • sem resgates");
-      if (view.equals("premium")) lore.add(mod.config.premiumInfo);
-      if (view.equals("info")) lore.add(mod.config.rules);
-      return icon(
-          "minecraft:book", "Informações do passe", Formatting.AQUA, lore.toArray(String[]::new));
+        lore.add(line(view.equals("editor") ? "Edição de recompensas" : "Prévia • sem resgates",
+            Formatting.LIGHT_PURPLE));
+      if (view.equals("premium")) lore.add(line(mod.config.premiumInfo, Formatting.GOLD));
+      if (view.equals("info")) lore.add(line(mod.config.rules, Formatting.WHITE));
+      lore.add(line("━━━━━━━━━━━━━━━━━━━━━━━━", Formatting.DARK_AQUA));
+      return decorateRich(new ItemStack(Items.BOOK), "Informações do passe", Formatting.AQUA, lore);
     }
 
     private boolean available(Season s, Progress p, Reward r, boolean premiumActive) {
@@ -231,18 +261,23 @@ public final class Menus {
           .filter(d -> d.player.equals(owner.getUuidAsString()) && d.season.equals(s.id)
               && d.reward.equals(key(r.level, r.premium)) && !d.status.equals("DONE"))
           .findFirst().orElse(null);
-      List<String> lore = new ArrayList<>();
-      lore.add(
-          !r.enabled
-              ? "Não configurada"
-              : pending != null ? "Entrega pendente" : claimed ? "Resgatada" : eligible ? "Disponível" : "Bloqueada");
+      List<Text> lore = new ArrayList<>();
+      String status = !r.enabled ? "Não configurada" : pending != null ? "Entrega pendente"
+          : claimed ? "Resgatada" : eligible ? "Disponível" : "Bloqueada";
+      lore.add(line(status, pending != null ? Formatting.RED : claimed ? Formatting.GREEN
+          : eligible ? Formatting.YELLOW : Formatting.DARK_GRAY));
       if (pending != null) {
-        if (pending.status.equals("READY")) lore.add("Clique para tentar entregar novamente");
-        else lore.add("Aguardando revisão de um administrador");
-        if (pending.error != null && !pending.error.isBlank()) lore.add(shortText(pending.error));
+        lore.add(line(pending.status.equals("READY") ? "Clique para tentar entregar novamente"
+            : "Aguardando revisão de um administrador", Formatting.YELLOW));
+        if (pending.error != null && !pending.error.isBlank())
+          lore.add(line(shortText(pending.error), Formatting.RED));
       }
-      if (r.premium && !premiumActive) lore.add("Requer passe Premium");
-      if (!s.claiming(System.currentTimeMillis())) lore.add("Prazo de resgate encerrado");
+      if (r.premium && !premiumActive) lore.add(line("Requer passe Premium", Formatting.GOLD));
+      if (!s.claiming(System.currentTimeMillis()))
+        lore.add(line("Prazo de resgate encerrado", Formatting.RED));
+      lore.add(line("", Formatting.GRAY));
+      lore.add(line(r.mode.equals("random") ? "✦ SORTEIO DE RECOMPENSAS" : "✦ SUAS RECOMPENSAS",
+          r.premium ? Formatting.GOLD : Formatting.AQUA));
       long total = r.choices.stream().mapToLong(c -> c.weight).sum();
       ItemStack display = ItemStack.EMPTY;
       for (int i = 0; i < r.choices.size(); i++) {
@@ -271,23 +306,25 @@ public final class Menus {
           }
         }
         if (i < 4)
-          lore.add(
-              label
-                  + (r.mode.equals("random") && total > 0
-                      ? String.format(Locale.ROOT, " (%.1f%%)", 100.0 * c.weight / total)
-                      : ""));
+          lore.add(Text.literal("").styled(style -> style.withItalic(false))
+              .append(line(label, c.type.equals("pokemon") ? Formatting.LIGHT_PURPLE
+                  : c.type.equals("item") ? Formatting.WHITE : Formatting.AQUA))
+              .append(line(r.mode.equals("random") && total > 0
+                  ? String.format(Locale.ROOT, " (%.1f%%)", 100.0 * c.weight / total) : "",
+                  Formatting.YELLOW)));
       }
-      if (r.choices.size() > 4) lore.add("+" + (r.choices.size() - 4) + " prêmios");
+      if (r.choices.size() > 4) lore.add(line("+" + (r.choices.size() - 4) + " prêmios", Formatting.GRAY));
       if (display.isEmpty()) {
         boolean pokemon = r.choices.stream().anyMatch(c -> c.type.equals("pokemon"));
         display = icon(pokemon ? "cobblemon:poke_ball" : "minecraft:paper", "", Formatting.AQUA);
       }
+      lore.add(line("", Formatting.GRAY));
       if (r.choices.stream().anyMatch(c -> c.type.equals("pokemon")))
-        lore.add("Pokémon entregue à equipe ou ao PC");
-      if (view.equals("editor")) lore.add("Clique para editar");
-      else if (preview) lore.add("Prévia • sem resgates");
-      else if (eligible) lore.add("Clique para resgatar");
-      return decorate(
+        lore.add(line("Pokémon entregue à equipe ou ao PC", Formatting.LIGHT_PURPLE));
+      if (view.equals("editor")) lore.add(line("Clique para editar", Formatting.YELLOW));
+      else if (preview) lore.add(line("Prévia • sem resgates", Formatting.GRAY));
+      else if (eligible) lore.add(line("Clique para resgatar", Formatting.GREEN));
+      return decorateRich(
           display,
           (r.premium ? "Premium" : "Grátis") + " • " + r.level,
           pending != null

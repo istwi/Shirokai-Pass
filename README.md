@@ -37,7 +37,7 @@ Não apague os auxiliares `state.json.created` e `state.json.pending`. O primeir
 
 ## Compilar e instalar
 
-Com JDK 21: `./gradlew build`. O JAR distribuível fica em `build/libs/shirokai-pass-0.4.1.jar` (não use o `sources`). Substitua o JAR antigo em `mods/` (não mantenha duas versões juntas) num servidor Fabric 1.21.1 com Fabric API. Faça backup do mundo antes de atualizar.
+Com JDK 21: `./gradlew build`. O JAR distribuível fica em `build/libs/shirokai-pass-0.4.2.jar` (não use o `sources`). Substitua o JAR antigo em `mods/` (não mantenha duas versões juntas) num servidor Fabric 1.21.1 com Fabric API. Faça backup do mundo antes de atualizar.
 
 Na primeira inicialização são criados `config/shirokaipass.json` e, após a primeira alteração, `<mundo>/shirokaipass/state.json`. Não existe temporada automática. Crie uma pelo console:
 
@@ -210,3 +210,10 @@ antigas em `REVIEW` que contêm somente um Pokémon e o erro exato
 `A player is required to run this command here`. Após atualizar e reiniciar,
 abra `/passe pendentes` ou clique no prêmio pendente. Entregas mistas ou com
 resultado incerto continuam exigindo revisão para evitar duplicação.
+
+### Apresentação do passe — 0.4.2
+
+O livro de informações separa jornada e passe, com barra de XP e valores coloridos.
+As recompensas destacam status, Pokémon em lilás, itens em branco, chances em
+amarelo e ações em verde. Títulos em negrito e espaços separam os detalhes;
+componentes e lore dos itens configurados continuam preservados.
