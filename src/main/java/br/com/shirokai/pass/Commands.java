@@ -362,8 +362,20 @@ public final class Commands {
                                                     + " → "
                                                     + java.time.Instant.ofEpochMilli(e.end));
                                         })))));
+    root.then(admin("tempo","seasons")
+      .then(literal("reiniciar").executes(c->run(c,x->{mod.timer("reset",0);say(c,"Prazo reiniciado; XP e resgates mantidos.");})))
+      .then(literal("adicionar").then(argument("dias",IntegerArgumentType.integer(1,3650)).executes(c->run(c,x->{mod.timer("add",IntegerArgumentType.getInteger(c,"dias"));say(c,"Dias adicionados ao prazo.");}))))
+      .then(literal("definir").then(argument("dias",IntegerArgumentType.integer(1,3650)).executes(c->run(c,x->{mod.timer("set",IntegerArgumentType.getInteger(c,"dias"));say(c,"Dias restantes definidos a partir de agora.");})))));
+    root.then(admin("arquivos","seasons").executes(c->run(c,x->{
+      say(c,"Pasta: "+mod.rootPath());say(c,"passe.json: temporada e prazo | rewards/: prêmios | data/players.json: XP/resgates");
+      say(c,"Prazo: /passeadmin tempo reiniciar | adicionar <dias> | definir <dias>. Aplicar JSON: /passeadmin reload");
+    })));
     root.then(
         admin("season", "seasons")
+            .then(literal("time")
+                .then(literal("reset").executes(c->run(c,x->{mod.timer("reset",0);say(c,"Prazo reiniciado a partir de agora; XP e resgates mantidos.");})))
+                .then(literal("add").then(argument("days",IntegerArgumentType.integer(1,3650)).executes(c->run(c,x->{mod.timer("add",IntegerArgumentType.getInteger(c,"days"));say(c,"Dias adicionados; confira passe.json.");}))))
+                .then(literal("set").then(argument("days",IntegerArgumentType.integer(1,3650)).executes(c->run(c,x->{mod.timer("set",IntegerArgumentType.getInteger(c,"days"));say(c,"Prazo definido a partir de agora; XP e resgates mantidos.");})))))
             .then(
                 literal("create")
                     .then(

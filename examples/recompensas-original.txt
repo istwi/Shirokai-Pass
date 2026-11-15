@@ -1,0 +1,204 @@
+Passe Grátis
+Nível	Recompensa
+1	8 Poké Ball
+2	$5k + 8 Ferro
+3	2 Rare Candy
+4	5 Great Ball
+5	1 Pedra do Fogo
+6	$8k + 5 Ouro
+7	3 Rare Candy
+8	1 Caixa Básica
+9	5 Great Ball + 8 Redstone
+10	1 Caixa Epic + 3 Lápis
+11	8 Great Ball
+12	$10k
+13	4 Rare Candy
+14	1 Pedra do Trovão
+15	1 Caixa Básica
+16	5 Ultra Ball
+17	$12k + 5 Ferro
+18	5 Rare Candy
+19	1 Pedra da Folha
+20	1 Caixa Epic + 1 Token
+21	10 Ultra Ball
+22	$15k
+23	6 Rare Candy + 5 Ouro
+24	1 Pedra Brilhante
+25	1 Caixa Epic + 1 Riolu
+26	8 Rare Candy
+27	$18k
+28	1 Pedra Noturna + 8 Redstone
+29	10 Ultra Ball
+30	1 Caixa Epic + 2 Tokens + 1 Bloco de Ferro
+31	$20k
+32	10 Rare Candy
+33	1 Pedra do Alvorecer
+34	1 Caixa Epic + 3 Diamantes
+35	$22k
+36	12 Rare Candy
+37	1 Pedra do Gelo
+38	15 Ultra Ball + 8 Ouro
+39	1 Caixa Epic
+40	1 Caixa Paradoxo + 2 Tokens
+41	$25k
+42	15 Rare Candy
+43	2 Pedra do Fogo
+44	1 Caixa Epic + 1 Bloco de Ouro
+45	$28k + 1 Gastly
+46	20 Rare Candy
+47	2 Caixa Epic
+48	2 Pedra da Água + 5 Diamantes
+49	20 Ultra Ball
+50	1 Caixa Paradoxo + 3 Tokens
+51	$30k
+52	25 Rare Candy
+53	1 Caixa Paradoxo
+54	2 Pedra do Trovão + 10 Ferro
+55	$35k + 1 Larvitar
+56	2 Caixa Epic
+57	30 Rare Candy
+58	1 Caixa Ultra Beast + 8 Ouro
+59	2 Pedra da Lua
+60	1 Caixa Ultra Beast + 3 Tokens + 1 Bloco de Diamante
+61	$40k
+62	30 Ultra Ball
+63	2 Caixa Paradoxo
+64	35 Rare Candy
+65	$45k
+66	1 Caixa Ultra Beast
+67	2 Pedra do Sol
+68	40 Rare Candy + 1 Bloco de Ouro
+69	2 Caixa Epic
+70	1 Caixa Mítica + 4 Tokens
+71	$50k
+72	40 Rare Candy
+73	1 Caixa Ultra Beast
+74	2 Pedra Brilhante + 5 Diamantes
+75	1 Lucario + $55k
+76	2 Caixa Paradoxo
+77	50 Rare Candy
+78	1 Caixa Mítica + 1 Bloco de Diamante
+79	2 Pedra Noturna
+80	1 Caixa Mítica + 5 Tokens
+81	$60k
+82	50 Ultra Ball
+83	2 Caixa Ultra Beast
+84	2 Pedra do Alvorecer + 1 Bloco de Ouro
+85	$65k
+86	60 Rare Candy
+87	1 Caixa Mítica
+88	3 Caixa Paradoxo + 10 Diamantes
+89	2 Pedra do Gelo
+90	1 Caixa Mítica + 6 Tokens + 1 Bloco de Diamante
+91	$70k
+92	70 Rare Candy
+93	2 Caixa Mítica
+94	3 Pedra do Fogo + 2 Blocos de Ouro
+95	$80k
+96	80 Rare Candy
+97	2 Caixa Mítica
+98	3 Caixa Ultra Beast + 2 Blocos de Diamante
+99	1 Caixa Lendária
+100	1 Caixa Lendária + 10 Tokens + $100k + 2 Blocos de Diamante
+Passe Pago
+Nível	Recompensa
+1	15 Great Ball
+2	1 Caixa Básica + 16 Ferro
+3	$15k
+4	5 Rare Candy
+5	2 Caixa Básica
+6	1 Pedra da Água + 16 Ouro
+7	10 Ultra Ball
+8	$25k
+9	8 Rare Candy + 32 Redstone
+10	1 Caixa Epic + 3 Tokens + 8 Diamantes
+11	15 Ultra Ball
+12	$40k
+13	10 Rare Candy
+14	1 Caixa Epic + 1 Bloco de Ferro
+15	1 Pedra da Lua + 1 Gible
+16	$50k
+17	12 Rare Candy + 16 Esmeraldas
+18	2 Caixa Básica
+19	15 Ultra Ball
+20	1 Caixa Paradoxo + 5 Tokens + 1 Bloco de Ouro
+21	$75k
+22	1 Caixa Epic
+23	1 Pedra do Sol + 2 Blocos de Ouro
+24	15 Rare Candy
+25	1 Pokémon Shiny Aleatório + 1 Bloco de Diamante
+26	$100k
+27	2 Caixa Epic
+28	20 Ultra Ball + 3 Blocos de Diamante
+29	20 Rare Candy
+30	1 Caixa Ultra Beast + 8 Tokens + 5 Blocos de Ferro
+31	$120k
+32	1 Caixa Paradoxo
+33	1 Pedra Noturna
+34	25 Rare Candy + 4 Blocos de Diamante
+35	3 Tokens + 1 Dratini
+36	2 Caixa Epic
+37	$150k
+38	1 Caixa Paradoxo + 3 Blocos de Esmeralda
+39	30 Rare Candy
+40	1 Master Ball + 10 Tokens + 5 Blocos de Diamante
+41	$180k
+42	1 Caixa Ultra Beast
+43	5 Tokens
+44	2 Caixa Paradoxo + 5 Blocos de Ouro
+45	$200k
+46	40 Rare Candy
+47	1 Caixa Mítica
+48	6 Tokens + 6 Blocos de Diamante
+49	2 Caixa Ultra Beast
+50	1 Dragonite + 1 Pokémon Shiny Aleatório + 15 Tokens + 8 Blocos de Diamante
+51	$250k
+52	1 Caixa Mítica
+53	8 Tokens
+54	50 Rare Candy + 5 Blocos de Esmeralda
+55	3 Caixa Paradoxo
+56	$300k
+57	1 Caixa Lendária
+58	10 Tokens + 8 Blocos de Diamante
+59	2 Caixa Mítica
+60	1 Caixa Lendária + 20 Tokens + 10 Blocos de Diamante
+61	$350k
+62	60 Rare Candy
+63	12 Tokens
+64	1 Caixa Shiny + 8 Blocos de Esmeralda
+65	2 Caixa Ultra Beast + 1 Bagon
+66	$400k
+67	2 Caixa Lendária
+68	15 Tokens + 10 Blocos de Ouro
+69	3 Caixa Mítica
+70	1 Caixa Shiny + 25 Tokens + 1 Beldum + 1 Bloco de Netherite
+71	$500k
+72	80 Rare Candy
+73	18 Tokens
+74	1 Caixa Lendária + 12 Blocos de Diamante
+75	1 Pokémon Shiny Aleatório
+76	3 Caixa Ultra Beast
+77	$600k
+78	20 Tokens + 10 Blocos de Esmeralda
+79	2 Caixa Lendária
+80	1 Master Ball + 1 Caixa Shiny + 35 Tokens + 1 Garchomp + 2 Blocos de Netherite
+81	$700k
+82	100 Rare Candy
+83	25 Tokens
+84	3 Caixa Lendária + 15 Blocos de Diamante
+85	VIP Médio (30 dias)
+86	2 Caixa Shiny
+87	$800k
+88	30 Tokens + 15 Blocos de Esmeralda
+89	4 Caixa Mítica
+90	1 Caixa Lendária + 1 Caixa Shiny + 50 Tokens + 1 Tyranitar + 3 Blocos de Netherite
+91	$1M
+92	150 Rare Candy
+93	40 Tokens
+94	3 Caixa Lendária + 20 Blocos de Diamante
+95	VIP Top (30 dias) + 1 Salamence
+96	3 Caixa Shiny
+97	$1.5M
+98	60 Tokens + 20 Blocos de Esmeralda
+99	5 Caixa Lendária
+100	1 Lendário Shiny Perfeito (6IV) + 100 Tokens + VIP Top (60 dias) + 5 Blocos de Netherite

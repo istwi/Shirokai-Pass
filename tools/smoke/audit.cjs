@@ -8,7 +8,7 @@ function record(name,detail){results.push({name,status:'passed',detail});console
 const pause=ms=>new Promise(resolve=>setTimeout(resolve,ms));
 async function wait(condition,label,timeout=15000){const start=Date.now();while(!condition()){if(Date.now()-start>timeout)throw Error('Timeout: '+label);await pause(40);}}
 function rcon(command){const r=spawnSync('python3',[path.join(__dirname,'rcon.py'),command],{env:process.env,encoding:'utf8'});assert.equal(r.status,0,r.stderr);return r.stdout.trim();}
-const state=()=>JSON.parse(fs.readFileSync(path.join(world,'shirokaipass/state.json'),'utf8'));
+const state=()=>{const s=JSON.parse(fs.readFileSync(path.join(world,'shirokaipass/data/players.json'),'utf8'));for(const season of Object.values(s.seasons)){const book=JSON.parse(fs.readFileSync(path.join(world,'shirokaipass/rewards',season.id+'.json'),'utf8'));season.rewards={};for(const [track,paid] of [['free',false],['premium',true]])for(const [level,r] of Object.entries(book[track]))season.rewards[track+':'+level]={...r,level:Number(level),premium:paid};}return s;};
 const profile=name=>{const entry=Object.entries(state().names).find(([n])=>n===name.toLowerCase());return entry&&state().players['audit/'+entry[1]];};
 const id=name=>state().names[name.toLowerCase()];
 const deliveries=(name,key)=>Object.values(state().deliveries).filter(d=>d.player===id(name)&&(!key||d.reward===key));
@@ -39,7 +39,24 @@ const item=(value,count=1)=>({type:'item',value:'minecraft:'+value,count,weight:
   const result=rcon('auditpokemon PokemonTester');
   assert.ok(result.includes('POKEMON_AUDIT_SUCCESS'), result);
   record('Cobblemon real: modelo, espécie, resgate e armazenamento','API real: entrega única, recibo DONE e equipe cheia envia ao PC');
- }else if(phase==='gui'){
+ }else if(phase==='crates'){
+  c=await connect('CrateTester');assert.match(rcon('auditcrate CrateTester'),/CRATE_PASS_SMOKE_OK/);record('Chaves nativas reais','assinatura aceita pelo Crates, 3 chaves, jogador sem OP, sem duplicação e sem efeitos parciais');await c.quit();
+ }else if(phase==='setup'){
+  const root=path.join(world,'shirokaipass'), control=path.join(root,'passe.json'), rewards=path.join(root,'rewards/shirokai_01.json');
+  assert.equal(state().active,'shirokai_01');const original=JSON.parse(fs.readFileSync(rewards));assert.equal(Object.keys(original.free).length,100);assert.equal(Object.keys(original.premium).length,100);record('Passe automático com 100+100 níveis','catálogo da tabela criado em rewards/');
+  c=await connect('ConfigTester');rcon('passeadmin xp set ConfigTester 100');
+  original.free['1'].choices=[item('diamond',3)];fs.writeFileSync(rewards,JSON.stringify(original));const edited=fs.readFileSync(rewards,'utf8');
+  rcon('passeadmin xp add ConfigTester 1');assert.equal(fs.readFileSync(rewards,'utf8'),edited);assert.match(rcon('passeadmin reload'),/recarregada/);assert.equal(state().seasons.shirokai_01.rewards['free:1'].choices[0].count,3);record('Editar catálogo sem apagar jogadores','XP não sobrescreve arquivo; reload aplica edição');
+  const uid=id('ConfigTester');const xp=()=>state().players['shirokai_01/'+uid].xp;assert.equal(xp(),101);
+  const before=state().seasons.shirokai_01.end;rcon('passeadmin tempo adicionar 7');assert.equal(state().seasons.shirokai_01.end,before+7*86400000);
+  const began=Date.now();rcon('passeadmin tempo definir 30');assert.ok(state().seasons.shirokai_01.end>=began+30*86400000);assert.equal(xp(),101);rcon('passeadmin tempo reiniciar');assert.equal(xp(),101);record('Comandos de prazo','add/set/reset preservam XP');
+  const cfg=JSON.parse(fs.readFileSync(control));cfg.durationDays=14;cfg.timerRevision='manual-2';fs.writeFileSync(control,JSON.stringify(cfg));assert.match(rcon('passeadmin reload'),/recarregada/);assert.equal(state().seasons.shirokai_01.end-state().seasons.shirokai_01.start,14*86400000);assert.equal(xp(),101);record('Reiniciar por JSON','timerRevision aplica uma vez');
+  cfg.id='temporada_02';cfg.name='Segunda temporada';fs.writeFileSync(control,JSON.stringify(cfg));assert.match(rcon('passeadmin reload'),/recarregada/);assert.equal(state().active,'temporada_02');assert.equal(state().players['temporada_02/'+uid],undefined);assert.equal(xp(),101);
+  const raw=JSON.parse(fs.readFileSync(path.join(root,'data/players.json')));assert.deepEqual(raw.seasons.temporada_02.rewards,{});assert.ok(fs.existsSync(path.join(root,'rewards/temporada_02.json')));record('Nova temporada por ID','progresso novo separado; recompensas fora dos dados');
+  fs.writeFileSync(path.join(process.env.MC_RESULTS,'setup-checkpoint.json'),JSON.stringify({end:state().seasons.temporada_02.end,uid}));await c.quit();
+ } else if(phase==='setup_restart'){
+  const saved=JSON.parse(fs.readFileSync(path.join(process.env.MC_RESULTS,'setup-checkpoint.json')));assert.equal(state().active,'temporada_02');assert.equal(state().seasons.temporada_02.end,saved.end);assert.equal(state().players['shirokai_01/'+saved.uid].xp,101);record('Reinício mantém relógio e dados','não renova duração ao iniciar servidor');
+ } else if(phase==='gui'){
   c=await connect('DupeTester');
   const md=require('minecraft-data')('1.21.1');
   const itemName=slot=>md.items[c.slots[slot]?.itemId]?.name;
@@ -63,7 +80,7 @@ const item=(value,count=1)=>({type:'item',value:'minecraft:'+value,count,weight:
   reward(4,[item('diamond'),item('emerald')],'random');reward(9,[item('apple')]);reward(10,[item('iron_ingot',2)]);reward(100,[item('nether_star')]);
   rcon('passeadmin rewards set audit 1 true '+JSON.stringify({enabled:true,mode:'fixed',choices:[item('gold_ingot',2)]}));
   const configured=JSON.stringify(state().seasons.audit.rewards);
-  await wait(()=>itemName(0)==='diamond_sword'&&itemName(1)==='emerald','actual reward icons');
+  await wait(()=>itemName(0)==='diamond_sword'&&itemName(1)==='emerald'&&itemName(9)==='gold_ingot','all configured reward icons');
   assert.equal(c.slots[1].itemCount,3);assert.ok(c.slots[0].components.some(x=>x.type==='enchantments'));assert.equal(itemName(9),'gold_ingot');
   assert.equal(itemName(2),'paper');assert.ok(c.lore(3).some(x=>x.includes('50.0%')));assert.equal(JSON.stringify(state().seasons.audit.rewards),configured);
   record('Ícones reais, componentes e sorteios','espada encantada, quantidades e tooltip; configuração original intacta');
@@ -174,7 +191,7 @@ const item=(value,count=1)=>({type:'item',value:'minecraft:'+value,count,weight:
   assert.ok(rcon('list').includes('DupeTester'));record('Login com armazenamento normal','jogador permanece no mundo');
   rcon('auditstorage fail');other=await connect('JoinFailure');await pause(1200);assert.equal(other.closed,false);assert.ok(rcon('list').includes('JoinFailure'));
   assert.match(rcon('passeadmin storage status'),/indisponível/);record('Login com arquivo de estado substituído por diretório','jogador conectado; passe bloqueado, sem Invalid player data');
-  const data=path.join(world,'shirokaipass/state.json'),backup=path.join(world,'shirokaipass/state.json.audit-saved');const before=fs.readFileSync(backup,'utf8');
+  const data=path.join(world,'shirokaipass/data/players.json'),backup=path.join(world,'shirokaipass/data/players.json.audit-saved');const before=fs.readFileSync(backup,'utf8');
   await c.command('passe recompensas');await wait(()=>c.name(0)==='Grátis • 1','cached menu');for(let i=0;i<20;i++)c.click(0);await pause(300);assert.equal(count('DupeTester','diamond'),0);assert.equal(fs.readFileSync(backup,'utf8'),before);
   record('Resgates durante falha','20 cliques negados; nenhum item e backup intacto');
   rcon('passeadmin xp add DupeTester 100 blocked-event');assert.equal(fs.readFileSync(backup,'utf8'),before);record('XP durante falha','sem falso sucesso ou alteração do snapshot confirmado');
@@ -182,7 +199,7 @@ const item=(value,count=1)=>({type:'item',value:'minecraft:'+value,count,weight:
   await c.command('passe recompensas');for(let i=0;i<30;i++)c.click(0);await wait(()=>deliveries('DupeTester','free:1')[0]?.status==='DONE','claim after repair');assert.equal(count('DupeTester','diamond'),1);record('Recuperação sem reiniciar','100 XP preservidos; nome do jogador novo salvo; 1 prêmio após reparo');
   await c.quit();await other.quit();
  } else if(phase==='storage_corrupt'){
-  const data=path.join(world,'shirokaipass/state.json'),backup=data+'.startup-saved';const broken=fs.readFileSync(data,'utf8');assert.equal(broken,'broken-storage-fixture');
+  const data=path.join(world,'shirokaipass/data/players.json'),backup=data+'.startup-saved';const broken=fs.readFileSync(data,'utf8');assert.equal(broken,'broken-storage-fixture');
   c=await connect('JoinCorrupt');await pause(1200);assert.equal(c.closed,false);assert.ok(rcon('list').includes('JoinCorrupt'));assert.match(rcon('passeadmin storage status'),/indisponível/);assert.equal(fs.readFileSync(data,'utf8'),broken);record('Login após reinício com JSON corrompido','servidor e login ativos; arquivo corrompido não sobrescrito');
   fs.copyFileSync(backup,data);assert.match(rcon('passeadmin storage recover'),/recuperado/);assert.equal(profile('DupeTester').xp,100);assert.equal(deliveries('DupeTester','free:1').length,1);assert.equal(deliveries('DupeTester','free:1')[0].status,'DONE');
   await c.quit();c=await connect('DupeTester');await c.command('passe recompensas');for(let i=0;i<30;i++)c.click(0);await pause(300);assert.equal(count('DupeTester','diamond'),1);record('Reparo após falha de leitura e reinício','XP, inventário e recibo preservados; nenhum novo prêmio');await c.quit();

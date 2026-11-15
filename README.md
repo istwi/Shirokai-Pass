@@ -1,3 +1,19 @@
+# Shirokai Pass — 0.5.0
+
+Novo formato: recompensas separadas dos jogadores e passe automático configurável.
+[Guia completo](docs/CONFIGURACAO-0.5.0.md) · [passe.json](examples/passe.json) ·
+[100 níveis grátis + 100 Premium](examples/shirokai_01.json).
+
+A temporada começa do zero nesta versão, conforme solicitado; não importa os
+dados antigos. Prazo: `/passeadmin tempo adicionar 7`, `definir 30` ou `reiniciar`.
+Local dos arquivos: `/passeadmin arquivos`. Edite JSONs e aplique `/passeadmin reload`.
+
+As seis recompensas Premium com VIP/espécies ainda não definidos ficam desativadas
+e identificadas, preservando a tabela original. Shirokai Crates0.2.1 usa type=crate;
+dinheiro/tokens usam as moedas configuradas no Impactor.
+
+---
+
 # Shirokai Pass
 
 Mod **server-side** para Minecraft **1.21.1**, Fabric e Java **21**. O cliente usa os menus de baú vanilla e não precisa instalar o mod. XP funciona sem NPCs, EasyNPC, Shirokai Trainers ou Cobblemon. A entrega de Pokémon exige Cobblemon no servidor; a versão alvo é **1.8.3**.
@@ -20,7 +36,7 @@ A 0.3.1 do Shirokai Pass incluía a Fabric Permissions API 0.3.3, destinada ao M
 
 ## Correção de login no Windows (0.3.1)
 
-A versão 0.3.0 tentava abrir o diretório de dados com `FileChannel` após gravar o JSON, operação não suportada pelo provedor Windows. A 0.3.1 mantém o `fsync` do arquivo e a substituição segura, sem abrir diretórios como canais no Windows. Os arquivos existentes continuam em `<mundo>/shirokaipass/state.json`; não é preciso apagar ou recriar o progresso.
+A versão 0.3.0 tentava abrir o diretório de dados com `FileChannel` após gravar o JSON, operação não suportada pelo provedor Windows. A 0.3.1 mantém o `fsync` do arquivo e a substituição segura, sem abrir diretórios como canais no Windows. Os arquivos existentes continuam em `<mundo>/shirokaipass/data/players.json`; não é preciso apagar ou recriar o progresso.
 
 Se houver uma falha real de acesso, disco ou arquivo bloqueado, o jogador continua entrando e jogando; as alterações/entregas do passe ficam bloqueadas até uma recuperação validada. Após corrigir o problema do sistema de arquivos, use no console:
 
@@ -31,7 +47,7 @@ passeadmin storage recover
 
 Dentro do jogo, adicione `/`. Exigem `shirokaipass.admin` (fallback OP 2). Há nova tentativa automática a cada 30 segundos; `recover` força a tentativa imediata. O comando só confirma recuperação após reler um estado válido e efetuar uma gravação real. `/passeadmin reload` também tenta recuperar caso o passe esteja indisponível.
 
-Não apague os auxiliares `state.json.created` e `state.json.pending`. O primeiro impede que dados desaparecidos sejam tratados como uma temporada vazia; o segundo é um journal de recuperação, quando a substituição atômica não é suportada. Faça backup da pasta do passe junto com o mundo e os dados dos jogadores. Em uma entrega com resultado incerto, `REVIEW` exige conferência/compensação manual e não é repetido automaticamente.
+Em 0.5.0, a recuperação usa `data/commit.json` e auxiliares `.pending`. Veja o guia para editar ou resetar dados com o servidor parado. Entregas com resultado incerto continuam em `REVIEW`, sem repetição automática.
 
 [Causa, arquivos e resultados dos testes](docs/LOGIN-FIX-0.3.1.md).
 
@@ -39,13 +55,13 @@ Não apague os auxiliares `state.json.created` e `state.json.pending`. O primeir
 
 Com JDK 21: `./gradlew build`. O JAR distribuível fica em `build/libs/shirokai-pass-0.4.2.jar` (não use o `sources`). Substitua o JAR antigo em `mods/` (não mantenha duas versões juntas) num servidor Fabric 1.21.1 com Fabric API. Faça backup do mundo antes de atualizar.
 
-Na primeira inicialização são criados `config/shirokaipass.json` e, após a primeira alteração, `<mundo>/shirokaipass/state.json`. Não existe temporada automática. Crie uma pelo console:
+Na primeira inicialização são criados `<mundo>/shirokaipass/config.json` e, após a primeira alteração, `<mundo>/shirokaipass/data/players.json`. Na 0.5.0 existe temporada automática por passe.json. Para o fluxo manual, use autoStart=false e crie uma pelo console:
 
 ```
 passeadmin season create primeira 90d 7d
 ```
 
-**Novas temporadas têm as 200 recompensas desativadas.** O editor contém modelos de um diamante na trilha grátis e dois na Premium, mas eles só ficam disponíveis após configurar e ativar cada prêmio ou intervalo. Temporadas existentes mantêm seus prêmios e resgates. A curva padrão requer 100 XP no primeiro nível, mais 25 por nível seguinte (133.750 XP acumulados para o nível 100). Cada temporada copia a curva, preservando o histórico.
+**Temporadas criadas manualmente por comando têm as 200 recompensas desativadas.** O passe automático usa a tabela de examples/shirokai_01.json. O editor contém modelos de um diamante na trilha grátis e dois na Premium, mas eles só ficam disponíveis após configurar e ativar cada prêmio ou intervalo. Temporadas existentes mantêm seus prêmios e resgates. A curva padrão requer 100 XP no primeiro nível, mais 25 por nível seguinte (133.750 XP acumulados para o nível 100). Cada temporada copia a curva, preservando o histórico.
 
 ## Jogadores
 
@@ -182,7 +198,7 @@ A **Fabric Permissions API v0 0.3.1 está embutida no JAR**, fixada para Minecra
 
 ## Configuração e API
 
-`config/shirokaipass.json` controla ícones dos botões iniciais, informações Premium, regras, curva das futuras temporadas e anúncios. Placeholders internos em anúncios/comandos: `{player}`, `{uuid}`, `{level}`, `{xp}`, `{season}`, `{premium}`. Mods externos substituem seus próprios `%player%` antes de executar comandos; nenhum sistema externo de placeholders é obrigatório.
+`<mundo>/shirokaipass/config.json` controla ícones dos botões iniciais, informações Premium, regras, curva das futuras temporadas e anúncios. Placeholders internos em anúncios/comandos: `{player}`, `{uuid}`, `{level}`, `{xp}`, `{season}`, `{premium}`. Mods externos substituem seus próprios `%player%` antes de executar comandos; nenhum sistema externo de placeholders é obrigatório.
 
 ```java
 PassApi.addXp(playerUuid, 100);

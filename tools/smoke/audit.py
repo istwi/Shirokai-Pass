@@ -20,6 +20,8 @@ RUN.mkdir(exist_ok=True)
 WORLD = RUN / ('world-' + time.strftime('%Y%m%d-%H%M%S'))
 RESULTS = RUN / ('results-' + WORLD.name)
 RESULTS.mkdir()
+(WORLD/'shirokaipass').mkdir(parents=True,exist_ok=True)
+(WORLD/'shirokaipass/passe.json').write_text(json.dumps({'schema':1,'autoStart':len(sys.argv)>1 and sys.argv[1]=='setup'})+'\n')
 # Operator lists belong to the server directory, not the selected world. Preserve
 # the prior fixture and reset it so a previous admin test cannot grant test users OP.
 operators=RUN/'ops.json'
@@ -61,12 +63,12 @@ def start(number):
     global server,log
     filename=RUN / ('audit-session-'+str(number)+'.log')
     log=filename.open('w')
-    server_command = json.loads(ENV['MC_SERVER_COMMAND_JSON']) if ENV.get('MC_SERVER_COMMAND_JSON') else [str(ROOT/'gradlew'),'runAuditServer','--console=plain','--no-daemon']
+    server_command = json.loads(ENV['MC_SERVER_COMMAND_JSON']) if ENV.get('MC_SERVER_COMMAND_JSON') else [sys.executable,str(ROOT/'tools/gradle_cloud.py')]+(['-PcrateSmoke'] if mode=='crates' else [])+['runAuditServer','--console=plain']
     server=subprocess.Popen(server_command,cwd=RUN if ENV.get('MC_SERVER_COMMAND_JSON') else ROOT,stdin=subprocess.PIPE,stdout=log,stderr=subprocess.STDOUT,env=ENV)
     deadline=time.monotonic()+180
     while time.monotonic()<deadline:
         if server.poll() is not None: raise RuntimeError('Server exited; see '+str(filename))
-        if 'Shirokai Pass iniciado' in filename.read_text(errors='replace'):
+        if 'Shirokai Pass iniciado' in filename.read_text(errors='replace') and (mode!='crates' or 'Shirokai Crates:' in filename.read_text(errors='replace')):
             try: command('list');print('SERVER READY',number,flush=True);return
             except (OSError,ConnectionError): pass
         time.sleep(0.2)
@@ -88,8 +90,13 @@ def phase(name):
 
 try:
     mode=sys.argv[1] if len(sys.argv)>1 else 'dupe'
-    names = ('pokemon',) if mode=='pokemon' else ('gui','gui_restart') if mode=='gui' else ('permissions','permissions_restart') if mode=='permissions' else ('fallback',) if mode=='fallback' else ('storage','storage_corrupt') if mode=='storage' else ('admin',) if mode=='admin' else ('premium_setup','premium_expire') if mode=='premium' else ('rapid','restart','crash','recovery')
-    if mode=='pokemon':
+    names = ('setup','setup_restart') if mode=='setup' else ('crates',) if mode=='crates' else ('pokemon',) if mode=='pokemon' else ('gui','gui_restart') if mode=='gui' else ('permissions','permissions_restart') if mode=='permissions' else ('fallback',) if mode=='fallback' else ('storage','storage_corrupt') if mode=='storage' else ('admin',) if mode=='admin' else ('premium_setup','premium_expire') if mode=='premium' else ('rapid','restart','crash','recovery')
+    if mode=='setup':
+        start(1);phase('setup');stop()
+        start(2);phase('setup_restart');stop()
+    elif mode=='crates':
+        start(1);phase('crates');stop()
+    elif mode=='pokemon':
         start(1);phase('pokemon');stop()
     elif mode=='gui':
         start(1);phase('gui');stop()
@@ -101,8 +108,8 @@ try:
         start(1);phase('fallback');stop()
     elif mode=='storage':
         start(1);phase('storage');stop()
-        data=WORLD/'shirokaipass/state.json'
-        shutil.copy2(data,data.with_name('state.json.startup-saved'))
+        data=WORLD/'shirokaipass/data/players.json'
+        shutil.copy2(data,data.with_name('players.json.startup-saved'))
         data.write_text('broken-storage-fixture')
         start(2);phase('storage_corrupt');stop()
     elif mode=='admin':

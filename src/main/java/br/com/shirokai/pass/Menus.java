@@ -278,6 +278,8 @@ public final class Menus {
       lore.add(line("", Formatting.GRAY));
       lore.add(line(r.mode.equals("random") ? "✦ SORTEIO DE RECOMPENSAS" : "✦ SUAS RECOMPENSAS",
           r.premium ? Formatting.GOLD : Formatting.AQUA));
+      if(r.description!=null&&!r.description.isBlank())lore.add(line(shortText(r.description),Formatting.AQUA));
+      if(!r.enabled&&r.setupNote!=null&&!r.setupNote.isBlank())lore.add(line("Configuração pendente: "+shortText(r.setupNote),Formatting.YELLOW));
       long total = r.choices.stream().mapToLong(c -> c.weight).sum();
       ItemStack display = ItemStack.EMPTY;
       for (int i = 0; i < r.choices.size(); i++) {
@@ -297,7 +299,8 @@ public final class Menus {
           }
         } else
           label =
-              c.type.equals("pokemon") ? "Pokémon: " + shortText(c.value) : "Comando do servidor";
+              c.type.equals("pokemon") ? "Pokémon: " + shortText(c.value) : c.type.equals("crate")?"Chave: "+shortText(c.value)+" ×"+c.count:"Comando do servidor";
+        if(c.type.equals("crate")&&display.isEmpty()){try{display=CrateRewards.prepare(c.value);display.setCount(Math.min(c.count,display.getMaxCount()));}catch(IllegalArgumentException ignored){}}
         if (c.type.equals("pokemon") && display.isEmpty()) {
           try {
             display = PokemonRewards.icon(c.value);

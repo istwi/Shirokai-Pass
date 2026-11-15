@@ -15,6 +15,10 @@ public final class Store {
   public static final Gson JSON = new GsonBuilder().setPrettyPrinting().create();
   private final Path path;
   private final AtomicFiles.IO io;
+  private SplitFiles split;
+  public static Store directory(Path root){return directory(root,AtomicFiles.NIO);}
+  static Store directory(Path root,AtomicFiles.IO io){Store store=new Store(root.resolve("data/players.json"),io);store.split=new SplitFiles(root,io);return store;}
+  public RewardBook rewards(String id)throws IOException{return split==null?null:split.book(id);}
   private boolean observed;
   private boolean initiallyMissing;
 
@@ -63,6 +67,7 @@ public final class Store {
   }
 
   public State load() throws IOException {
+    if(split!=null){String raw=split.load();return raw==null?new State():validate(raw,true);}
     boolean marked = markerExists();
     AtomicFiles.Document candidate = AtomicFiles.read(path);
     if (candidate == null) {
@@ -75,8 +80,14 @@ public final class Store {
       return new State();
     }
     observed = true;
+    State state=validate(candidate.text(),true);
+    if(candidate.journal())AtomicFiles.complete(path,io);
+    return state;
+  }
+
+  static State validate(String raw,boolean withRewards)throws IOException {
     try {
-      JsonObject document = JsonParser.parseString(candidate.text()).getAsJsonObject();
+      JsonObject document = JsonParser.parseString(raw).getAsJsonObject();
       for (String field :
           java.util.List.of(
               "schema", "seasons", "players", "deliveries", "transactions", "names", "events"))
@@ -105,7 +116,7 @@ public final class Store {
       }
       for (Season s : state.seasons.values()) {
         s.cap();
-        for (Reward r : s.rewards.values()) r.validate();
+        if(withRewards)for (Reward r : s.rewards.values()) r.validate();
       }
       if (state.active != null && !state.seasons.containsKey(state.active))
         throw new IllegalStateException("Temporada ativa desconhecida");
@@ -135,7 +146,7 @@ public final class Store {
             || e.multiplier < 1
             || e.multiplier > 100
             || e.end < e.start) throw new IllegalStateException("Evento inválido");
-      if (candidate.journal()) AtomicFiles.complete(path, io);
+
       return state;
     } catch (RuntimeException e) {
       throw new IOException("Estado inválido: restaure um backup; não foi redefinido", e);
@@ -143,6 +154,7 @@ public final class Store {
   }
 
   public void save(State state) throws IOException {
+    if(split!=null){split.save(state);return;}
     ensureMarker();
     AtomicFiles.write(path, JSON.toJson(state), io);
     observed = true;

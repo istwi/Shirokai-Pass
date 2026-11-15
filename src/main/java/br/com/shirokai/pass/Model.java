@@ -57,6 +57,8 @@ public final class Model {
 
   public static class Season {
     public String id, name;
+    public String timerRevision="";
+    public int configuredDurationDays, configuredGraceDays;
     public long start, end, graceEnd, baseXp = 100, incrementXp = 25;
     public Map<String, Reward> rewards = new LinkedHashMap<>();
 
@@ -104,6 +106,7 @@ public final class Model {
   }
 
   public static class Reward {
+    public String description="", setupNote="";
     public int level;
     public boolean premium;
     public boolean enabled = true;
@@ -114,7 +117,7 @@ public final class Model {
       if (level < 1
           || level > 100
           || choices == null
-          || choices.isEmpty()
+          || enabled && choices.isEmpty()
           || choices.size() > 100
           || !(mode.equals("fixed") || mode.equals("random")))
         throw new IllegalArgumentException("Recompensa inválida");
@@ -123,7 +126,7 @@ public final class Model {
         c.validate();
         sum = Math.addExact(sum, c.weight);
       }
-      if (sum <= 0) throw new IllegalArgumentException("Pesos inválidos");
+      if (enabled && sum <= 0) throw new IllegalArgumentException("Pesos inválidos");
     }
   }
 
@@ -142,14 +145,14 @@ public final class Model {
     }
 
     public void validate() {
-      if (!Set.of("item", "command", "pokemon").contains(type)
+      if (!Set.of("item", "command", "pokemon", "crate").contains(type)
           || value == null
           || value.isBlank()
           || value.contains("\n")
           || value.contains("\r")
           || count < 1
           || count > 2304
-          || (!type.equals("item") && count != 1)
+          || (!type.equals("item") && !type.equals("crate") && count != 1)
           || value.length() > 4096
           || weight <= 0) throw new IllegalArgumentException("Prêmio inválido");
     }

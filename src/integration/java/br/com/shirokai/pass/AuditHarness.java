@@ -30,8 +30,8 @@ public final class AuditHarness implements ModInitializer {
                                           .getSource()
                                           .getServer()
                                           .getSavePath(WorldSavePath.ROOT)
-                                          .resolve("shirokaipass/state.json");
-                                  var backup = state.resolveSibling("state.json.audit-saved");
+                                          .resolve("shirokaipass/data/players.json");
+                                  var backup = state.resolveSibling("players.json.audit-saved");
                                   if (java.nio.file.Files.exists(backup)
                                       || !java.nio.file.Files.isRegularFile(state))
                                     throw new IllegalStateException("Unsafe fixture state");
@@ -53,8 +53,8 @@ public final class AuditHarness implements ModInitializer {
                                           .getSource()
                                           .getServer()
                                           .getSavePath(WorldSavePath.ROOT)
-                                          .resolve("shirokaipass/state.json");
-                                  var backup = state.resolveSibling("state.json.audit-saved");
+                                          .resolve("shirokaipass/data/players.json");
+                                  var backup = state.resolveSibling("players.json.audit-saved");
                                   if (!java.nio.file.Files.isDirectory(state)
                                       || !java.nio.file.Files.isRegularFile(backup))
                                     throw new IllegalStateException("Unsafe fixture state");

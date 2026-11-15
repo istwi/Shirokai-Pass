@@ -1,0 +1,3309 @@
+{
+  "schema": 1,
+  "free": {
+    "1": {
+      "enabled": true,
+      "description": "8 Poké Ball",
+      "setupNote": "",
+      "mode": "fixed",
+      "choices": [
+        {
+          "type": "item",
+          "value": "cobblemon:poke_ball",
+          "count": 8,
+          "weight": 1
+        }
+      ]
+    },
+    "2": {
+      "enabled": true,
+      "description": "$5k + 8 Ferro",
+      "setupNote": "",
+      "mode": "fixed",
+      "choices": [
+        {
+          "type": "command",
+          "value": "eco deposit 5000 impactor:dollars {player}",
+          "count": 1,
+          "weight": 1
+        },
+        {
+          "type": "item",
+          "value": "minecraft:iron_ingot",
+          "count": 8,
+          "weight": 1
+        }
+      ]
+    },
+    "3": {
+      "enabled": true,
+      "description": "2 Rare Candy",
+      "setupNote": "",
+      "mode": "fixed",
+      "choices": [
+        {
+          "type": "item",
+          "value": "cobblemon:rare_candy",
+          "count": 2,
+          "weight": 1
+        }
+      ]
+    },
+    "4": {
+      "enabled": true,
+      "description": "5 Great Ball",
+      "setupNote": "",
+      "mode": "fixed",
+      "choices": [
+        {
+          "type": "item",
+          "value": "cobblemon:great_ball",
+          "count": 5,
+          "weight": 1
+        }
+      ]
+    },
+    "5": {
+      "enabled": true,
+      "description": "1 Pedra do Fogo",
+      "setupNote": "",
+      "mode": "fixed",
+      "choices": [
+        {
+          "type": "item",
+          "value": "cobblemon:fire_stone",
+          "count": 1,
+          "weight": 1
+        }
+      ]
+    },
+    "6": {
+      "enabled": true,
+      "description": "$8k + 5 Ouro",
+      "setupNote": "",
+      "mode": "fixed",
+      "choices": [
+        {
+          "type": "command",
+          "value": "eco deposit 8000 impactor:dollars {player}",
+          "count": 1,
+          "weight": 1
+        },
+        {
+          "type": "item",
+          "value": "minecraft:gold_ingot",
+          "count": 5,
+          "weight": 1
+        }
+      ]
+    },
+    "7": {
+      "enabled": true,
+      "description": "3 Rare Candy",
+      "setupNote": "",
+      "mode": "fixed",
+      "choices": [
+        {
+          "type": "item",
+          "value": "cobblemon:rare_candy",
+          "count": 3,
+          "weight": 1
+        }
+      ]
+    },
+    "8": {
+      "enabled": true,
+      "description": "1 Caixa Básica",
+      "setupNote": "",
+      "mode": "fixed",
+      "choices": [
+        {
+          "type": "crate",
+          "value": "inicial_rara",
+          "count": 1,
+          "weight": 1
+        }
+      ]
+    },
+    "9": {
+      "enabled": true,
+      "description": "5 Great Ball + 8 Redstone",
+      "setupNote": "",
+      "mode": "fixed",
+      "choices": [
+        {
+          "type": "item",
+          "value": "cobblemon:great_ball",
+          "count": 5,
+          "weight": 1
+        },
+        {
+          "type": "item",
+          "value": "minecraft:redstone",
+          "count": 8,
+          "weight": 1
+        }
+      ]
+    },
+    "10": {
+      "enabled": true,
+      "description": "1 Caixa Epic + 3 Lápis",
+      "setupNote": "",
+      "mode": "fixed",
+      "choices": [
+        {
+          "type": "crate",
+          "value": "caixa_epica",
+          "count": 1,
+          "weight": 1
+        },
+        {
+          "type": "item",
+          "value": "minecraft:lapis_lazuli",
+          "count": 3,
+          "weight": 1
+        }
+      ]
+    },
+    "11": {
+      "enabled": true,
+      "description": "8 Great Ball",
+      "setupNote": "",
+      "mode": "fixed",
+      "choices": [
+        {
+          "type": "item",
+          "value": "cobblemon:great_ball",
+          "count": 8,
+          "weight": 1
+        }
+      ]
+    },
+    "12": {
+      "enabled": true,
+      "description": "$10k",
+      "setupNote": "",
+      "mode": "fixed",
+      "choices": [
+        {
+          "type": "command",
+          "value": "eco deposit 10000 impactor:dollars {player}",
+          "count": 1,
+          "weight": 1
+        }
+      ]
+    },
+    "13": {
+      "enabled": true,
+      "description": "4 Rare Candy",
+      "setupNote": "",
+      "mode": "fixed",
+      "choices": [
+        {
+          "type": "item",
+          "value": "cobblemon:rare_candy",
+          "count": 4,
+          "weight": 1
+        }
+      ]
+    },
+    "14": {
+      "enabled": true,
+      "description": "1 Pedra do Trovão",
+      "setupNote": "",
+      "mode": "fixed",
+      "choices": [
+        {
+          "type": "item",
+          "value": "cobblemon:thunder_stone",
+          "count": 1,
+          "weight": 1
+        }
+      ]
+    },
+    "15": {
+      "enabled": true,
+      "description": "1 Caixa Básica",
+      "setupNote": "",
+      "mode": "fixed",
+      "choices": [
+        {
+          "type": "crate",
+          "value": "inicial_rara",
+          "count": 1,
+          "weight": 1
+        }
+      ]
+    },
+    "16": {
+      "enabled": true,
+      "description": "5 Ultra Ball",
+      "setupNote": "",
+      "mode": "fixed",
+      "choices": [
+        {
+          "type": "item",
+          "value": "cobblemon:ultra_ball",
+          "count": 5,
+          "weight": 1
+        }
+      ]
+    },
+    "17": {
+      "enabled": true,
+      "description": "$12k + 5 Ferro",
+      "setupNote": "",
+      "mode": "fixed",
+      "choices": [
+        {
+          "type": "command",
+          "value": "eco deposit 12000 impactor:dollars {player}",
+          "count": 1,
+          "weight": 1
+        },
+        {
+          "type": "item",
+          "value": "minecraft:iron_ingot",
+          "count": 5,
+          "weight": 1
+        }
+      ]
+    },
+    "18": {
+      "enabled": true,
+      "description": "5 Rare Candy",
+      "setupNote": "",
+      "mode": "fixed",
+      "choices": [
+        {
+          "type": "item",
+          "value": "cobblemon:rare_candy",
+          "count": 5,
+          "weight": 1
+        }
+      ]
+    },
+    "19": {
+      "enabled": true,
+      "description": "1 Pedra da Folha",
+      "setupNote": "",
+      "mode": "fixed",
+      "choices": [
+        {
+          "type": "item",
+          "value": "cobblemon:leaf_stone",
+          "count": 1,
+          "weight": 1
+        }
+      ]
+    },
+    "20": {
+      "enabled": true,
+      "description": "1 Caixa Epic + 1 Token",
+      "setupNote": "",
+      "mode": "fixed",
+      "choices": [
+        {
+          "type": "crate",
+          "value": "caixa_epica",
+          "count": 1,
+          "weight": 1
+        },
+        {
+          "type": "command",
+          "value": "eco deposit 1 impactor:tokens {player}",
+          "count": 1,
+          "weight": 1
+        }
+      ]
+    },
+    "21": {
+      "enabled": true,
+      "description": "10 Ultra Ball",
+      "setupNote": "",
+      "mode": "fixed",
+      "choices": [
+        {
+          "type": "item",
+          "value": "cobblemon:ultra_ball",
+          "count": 10,
+          "weight": 1
+        }
+      ]
+    },
+    "22": {
+      "enabled": true,
+      "description": "$15k",
+      "setupNote": "",
+      "mode": "fixed",
+      "choices": [
+        {
+          "type": "command",
+          "value": "eco deposit 15000 impactor:dollars {player}",
+          "count": 1,
+          "weight": 1
+        }
+      ]
+    },
+    "23": {
+      "enabled": true,
+      "description": "6 Rare Candy + 5 Ouro",
+      "setupNote": "",
+      "mode": "fixed",
+      "choices": [
+        {
+          "type": "item",
+          "value": "cobblemon:rare_candy",
+          "count": 6,
+          "weight": 1
+        },
+        {
+          "type": "item",
+          "value": "minecraft:gold_ingot",
+          "count": 5,
+          "weight": 1
+        }
+      ]
+    },
+    "24": {
+      "enabled": true,
+      "description": "1 Pedra Brilhante",
+      "setupNote": "",
+      "mode": "fixed",
+      "choices": [
+        {
+          "type": "item",
+          "value": "cobblemon:shiny_stone",
+          "count": 1,
+          "weight": 1
+        }
+      ]
+    },
+    "25": {
+      "enabled": true,
+      "description": "1 Caixa Epic + 1 Riolu",
+      "setupNote": "",
+      "mode": "fixed",
+      "choices": [
+        {
+          "type": "crate",
+          "value": "caixa_epica",
+          "count": 1,
+          "weight": 1
+        },
+        {
+          "type": "pokemon",
+          "value": "riolu",
+          "count": 1,
+          "weight": 1
+        }
+      ]
+    },
+    "26": {
+      "enabled": true,
+      "description": "8 Rare Candy",
+      "setupNote": "",
+      "mode": "fixed",
+      "choices": [
+        {
+          "type": "item",
+          "value": "cobblemon:rare_candy",
+          "count": 8,
+          "weight": 1
+        }
+      ]
+    },
+    "27": {
+      "enabled": true,
+      "description": "$18k",
+      "setupNote": "",
+      "mode": "fixed",
+      "choices": [
+        {
+          "type": "command",
+          "value": "eco deposit 18000 impactor:dollars {player}",
+          "count": 1,
+          "weight": 1
+        }
+      ]
+    },
+    "28": {
+      "enabled": true,
+      "description": "1 Pedra Noturna + 8 Redstone",
+      "setupNote": "",
+      "mode": "fixed",
+      "choices": [
+        {
+          "type": "item",
+          "value": "cobblemon:dusk_stone",
+          "count": 1,
+          "weight": 1
+        },
+        {
+          "type": "item",
+          "value": "minecraft:redstone",
+          "count": 8,
+          "weight": 1
+        }
+      ]
+    },
+    "29": {
+      "enabled": true,
+      "description": "10 Ultra Ball",
+      "setupNote": "",
+      "mode": "fixed",
+      "choices": [
+        {
+          "type": "item",
+          "value": "cobblemon:ultra_ball",
+          "count": 10,
+          "weight": 1
+        }
+      ]
+    },
+    "30": {
+      "enabled": true,
+      "description": "1 Caixa Epic + 2 Tokens + 1 Bloco de Ferro",
+      "setupNote": "",
+      "mode": "fixed",
+      "choices": [
+        {
+          "type": "crate",
+          "value": "caixa_epica",
+          "count": 1,
+          "weight": 1
+        },
+        {
+          "type": "command",
+          "value": "eco deposit 2 impactor:tokens {player}",
+          "count": 1,
+          "weight": 1
+        },
+        {
+          "type": "item",
+          "value": "minecraft:iron_block",
+          "count": 1,
+          "weight": 1
+        }
+      ]
+    },
+    "31": {
+      "enabled": true,
+      "description": "$20k",
+      "setupNote": "",
+      "mode": "fixed",
+      "choices": [
+        {
+          "type": "command",
+          "value": "eco deposit 20000 impactor:dollars {player}",
+          "count": 1,
+          "weight": 1
+        }
+      ]
+    },
+    "32": {
+      "enabled": true,
+      "description": "10 Rare Candy",
+      "setupNote": "",
+      "mode": "fixed",
+      "choices": [
+        {
+          "type": "item",
+          "value": "cobblemon:rare_candy",
+          "count": 10,
+          "weight": 1
+        }
+      ]
+    },
+    "33": {
+      "enabled": true,
+      "description": "1 Pedra do Alvorecer",
+      "setupNote": "",
+      "mode": "fixed",
+      "choices": [
+        {
+          "type": "item",
+          "value": "cobblemon:dawn_stone",
+          "count": 1,
+          "weight": 1
+        }
+      ]
+    },
+    "34": {
+      "enabled": true,
+      "description": "1 Caixa Epic + 3 Diamantes",
+      "setupNote": "",
+      "mode": "fixed",
+      "choices": [
+        {
+          "type": "crate",
+          "value": "caixa_epica",
+          "count": 1,
+          "weight": 1
+        },
+        {
+          "type": "item",
+          "value": "minecraft:diamond",
+          "count": 3,
+          "weight": 1
+        }
+      ]
+    },
+    "35": {
+      "enabled": true,
+      "description": "$22k",
+      "setupNote": "",
+      "mode": "fixed",
+      "choices": [
+        {
+          "type": "command",
+          "value": "eco deposit 22000 impactor:dollars {player}",
+          "count": 1,
+          "weight": 1
+        }
+      ]
+    },
+    "36": {
+      "enabled": true,
+      "description": "12 Rare Candy",
+      "setupNote": "",
+      "mode": "fixed",
+      "choices": [
+        {
+          "type": "item",
+          "value": "cobblemon:rare_candy",
+          "count": 12,
+          "weight": 1
+        }
+      ]
+    },
+    "37": {
+      "enabled": true,
+      "description": "1 Pedra do Gelo",
+      "setupNote": "",
+      "mode": "fixed",
+      "choices": [
+        {
+          "type": "item",
+          "value": "cobblemon:ice_stone",
+          "count": 1,
+          "weight": 1
+        }
+      ]
+    },
+    "38": {
+      "enabled": true,
+      "description": "15 Ultra Ball + 8 Ouro",
+      "setupNote": "",
+      "mode": "fixed",
+      "choices": [
+        {
+          "type": "item",
+          "value": "cobblemon:ultra_ball",
+          "count": 15,
+          "weight": 1
+        },
+        {
+          "type": "item",
+          "value": "minecraft:gold_ingot",
+          "count": 8,
+          "weight": 1
+        }
+      ]
+    },
+    "39": {
+      "enabled": true,
+      "description": "1 Caixa Epic",
+      "setupNote": "",
+      "mode": "fixed",
+      "choices": [
+        {
+          "type": "crate",
+          "value": "caixa_epica",
+          "count": 1,
+          "weight": 1
+        }
+      ]
+    },
+    "40": {
+      "enabled": true,
+      "description": "1 Caixa Paradoxo + 2 Tokens",
+      "setupNote": "",
+      "mode": "fixed",
+      "choices": [
+        {
+          "type": "crate",
+          "value": "caixa_paradoxo",
+          "count": 1,
+          "weight": 1
+        },
+        {
+          "type": "command",
+          "value": "eco deposit 2 impactor:tokens {player}",
+          "count": 1,
+          "weight": 1
+        }
+      ]
+    },
+    "41": {
+      "enabled": true,
+      "description": "$25k",
+      "setupNote": "",
+      "mode": "fixed",
+      "choices": [
+        {
+          "type": "command",
+          "value": "eco deposit 25000 impactor:dollars {player}",
+          "count": 1,
+          "weight": 1
+        }
+      ]
+    },
+    "42": {
+      "enabled": true,
+      "description": "15 Rare Candy",
+      "setupNote": "",
+      "mode": "fixed",
+      "choices": [
+        {
+          "type": "item",
+          "value": "cobblemon:rare_candy",
+          "count": 15,
+          "weight": 1
+        }
+      ]
+    },
+    "43": {
+      "enabled": true,
+      "description": "2 Pedra do Fogo",
+      "setupNote": "",
+      "mode": "fixed",
+      "choices": [
+        {
+          "type": "item",
+          "value": "cobblemon:fire_stone",
+          "count": 2,
+          "weight": 1
+        }
+      ]
+    },
+    "44": {
+      "enabled": true,
+      "description": "1 Caixa Epic + 1 Bloco de Ouro",
+      "setupNote": "",
+      "mode": "fixed",
+      "choices": [
+        {
+          "type": "crate",
+          "value": "caixa_epica",
+          "count": 1,
+          "weight": 1
+        },
+        {
+          "type": "item",
+          "value": "minecraft:gold_block",
+          "count": 1,
+          "weight": 1
+        }
+      ]
+    },
+    "45": {
+      "enabled": true,
+      "description": "$28k + 1 Gastly",
+      "setupNote": "",
+      "mode": "fixed",
+      "choices": [
+        {
+          "type": "command",
+          "value": "eco deposit 28000 impactor:dollars {player}",
+          "count": 1,
+          "weight": 1
+        },
+        {
+          "type": "pokemon",
+          "value": "gastly",
+          "count": 1,
+          "weight": 1
+        }
+      ]
+    },
+    "46": {
+      "enabled": true,
+      "description": "20 Rare Candy",
+      "setupNote": "",
+      "mode": "fixed",
+      "choices": [
+        {
+          "type": "item",
+          "value": "cobblemon:rare_candy",
+          "count": 20,
+          "weight": 1
+        }
+      ]
+    },
+    "47": {
+      "enabled": true,
+      "description": "2 Caixa Epic",
+      "setupNote": "",
+      "mode": "fixed",
+      "choices": [
+        {
+          "type": "crate",
+          "value": "caixa_epica",
+          "count": 2,
+          "weight": 1
+        }
+      ]
+    },
+    "48": {
+      "enabled": true,
+      "description": "2 Pedra da Água + 5 Diamantes",
+      "setupNote": "",
+      "mode": "fixed",
+      "choices": [
+        {
+          "type": "item",
+          "value": "cobblemon:water_stone",
+          "count": 2,
+          "weight": 1
+        },
+        {
+          "type": "item",
+          "value": "minecraft:diamond",
+          "count": 5,
+          "weight": 1
+        }
+      ]
+    },
+    "49": {
+      "enabled": true,
+      "description": "20 Ultra Ball",
+      "setupNote": "",
+      "mode": "fixed",
+      "choices": [
+        {
+          "type": "item",
+          "value": "cobblemon:ultra_ball",
+          "count": 20,
+          "weight": 1
+        }
+      ]
+    },
+    "50": {
+      "enabled": true,
+      "description": "1 Caixa Paradoxo + 3 Tokens",
+      "setupNote": "",
+      "mode": "fixed",
+      "choices": [
+        {
+          "type": "crate",
+          "value": "caixa_paradoxo",
+          "count": 1,
+          "weight": 1
+        },
+        {
+          "type": "command",
+          "value": "eco deposit 3 impactor:tokens {player}",
+          "count": 1,
+          "weight": 1
+        }
+      ]
+    },
+    "51": {
+      "enabled": true,
+      "description": "$30k",
+      "setupNote": "",
+      "mode": "fixed",
+      "choices": [
+        {
+          "type": "command",
+          "value": "eco deposit 30000 impactor:dollars {player}",
+          "count": 1,
+          "weight": 1
+        }
+      ]
+    },
+    "52": {
+      "enabled": true,
+      "description": "25 Rare Candy",
+      "setupNote": "",
+      "mode": "fixed",
+      "choices": [
+        {
+          "type": "item",
+          "value": "cobblemon:rare_candy",
+          "count": 25,
+          "weight": 1
+        }
+      ]
+    },
+    "53": {
+      "enabled": true,
+      "description": "1 Caixa Paradoxo",
+      "setupNote": "",
+      "mode": "fixed",
+      "choices": [
+        {
+          "type": "crate",
+          "value": "caixa_paradoxo",
+          "count": 1,
+          "weight": 1
+        }
+      ]
+    },
+    "54": {
+      "enabled": true,
+      "description": "2 Pedra do Trovão + 10 Ferro",
+      "setupNote": "",
+      "mode": "fixed",
+      "choices": [
+        {
+          "type": "item",
+          "value": "cobblemon:thunder_stone",
+          "count": 2,
+          "weight": 1
+        },
+        {
+          "type": "item",
+          "value": "minecraft:iron_ingot",
+          "count": 10,
+          "weight": 1
+        }
+      ]
+    },
+    "55": {
+      "enabled": true,
+      "description": "$35k + 1 Larvitar",
+      "setupNote": "",
+      "mode": "fixed",
+      "choices": [
+        {
+          "type": "command",
+          "value": "eco deposit 35000 impactor:dollars {player}",
+          "count": 1,
+          "weight": 1
+        },
+        {
+          "type": "pokemon",
+          "value": "larvitar",
+          "count": 1,
+          "weight": 1
+        }
+      ]
+    },
+    "56": {
+      "enabled": true,
+      "description": "2 Caixa Epic",
+      "setupNote": "",
+      "mode": "fixed",
+      "choices": [
+        {
+          "type": "crate",
+          "value": "caixa_epica",
+          "count": 2,
+          "weight": 1
+        }
+      ]
+    },
+    "57": {
+      "enabled": true,
+      "description": "30 Rare Candy",
+      "setupNote": "",
+      "mode": "fixed",
+      "choices": [
+        {
+          "type": "item",
+          "value": "cobblemon:rare_candy",
+          "count": 30,
+          "weight": 1
+        }
+      ]
+    },
+    "58": {
+      "enabled": true,
+      "description": "1 Caixa Ultra Beast + 8 Ouro",
+      "setupNote": "",
+      "mode": "fixed",
+      "choices": [
+        {
+          "type": "crate",
+          "value": "caixa_ultra_beasts",
+          "count": 1,
+          "weight": 1
+        },
+        {
+          "type": "item",
+          "value": "minecraft:gold_ingot",
+          "count": 8,
+          "weight": 1
+        }
+      ]
+    },
+    "59": {
+      "enabled": true,
+      "description": "2 Pedra da Lua",
+      "setupNote": "",
+      "mode": "fixed",
+      "choices": [
+        {
+          "type": "item",
+          "value": "cobblemon:moon_stone",
+          "count": 2,
+          "weight": 1
+        }
+      ]
+    },
+    "60": {
+      "enabled": true,
+      "description": "1 Caixa Ultra Beast + 3 Tokens + 1 Bloco de Diamante",
+      "setupNote": "",
+      "mode": "fixed",
+      "choices": [
+        {
+          "type": "crate",
+          "value": "caixa_ultra_beasts",
+          "count": 1,
+          "weight": 1
+        },
+        {
+          "type": "command",
+          "value": "eco deposit 3 impactor:tokens {player}",
+          "count": 1,
+          "weight": 1
+        },
+        {
+          "type": "item",
+          "value": "minecraft:diamond_block",
+          "count": 1,
+          "weight": 1
+        }
+      ]
+    },
+    "61": {
+      "enabled": true,
+      "description": "$40k",
+      "setupNote": "",
+      "mode": "fixed",
+      "choices": [
+        {
+          "type": "command",
+          "value": "eco deposit 40000 impactor:dollars {player}",
+          "count": 1,
+          "weight": 1
+        }
+      ]
+    },
+    "62": {
+      "enabled": true,
+      "description": "30 Ultra Ball",
+      "setupNote": "",
+      "mode": "fixed",
+      "choices": [
+        {
+          "type": "item",
+          "value": "cobblemon:ultra_ball",
+          "count": 30,
+          "weight": 1
+        }
+      ]
+    },
+    "63": {
+      "enabled": true,
+      "description": "2 Caixa Paradoxo",
+      "setupNote": "",
+      "mode": "fixed",
+      "choices": [
+        {
+          "type": "crate",
+          "value": "caixa_paradoxo",
+          "count": 2,
+          "weight": 1
+        }
+      ]
+    },
+    "64": {
+      "enabled": true,
+      "description": "35 Rare Candy",
+      "setupNote": "",
+      "mode": "fixed",
+      "choices": [
+        {
+          "type": "item",
+          "value": "cobblemon:rare_candy",
+          "count": 35,
+          "weight": 1
+        }
+      ]
+    },
+    "65": {
+      "enabled": true,
+      "description": "$45k",
+      "setupNote": "",
+      "mode": "fixed",
+      "choices": [
+        {
+          "type": "command",
+          "value": "eco deposit 45000 impactor:dollars {player}",
+          "count": 1,
+          "weight": 1
+        }
+      ]
+    },
+    "66": {
+      "enabled": true,
+      "description": "1 Caixa Ultra Beast",
+      "setupNote": "",
+      "mode": "fixed",
+      "choices": [
+        {
+          "type": "crate",
+          "value": "caixa_ultra_beasts",
+          "count": 1,
+          "weight": 1
+        }
+      ]
+    },
+    "67": {
+      "enabled": true,
+      "description": "2 Pedra do Sol",
+      "setupNote": "",
+      "mode": "fixed",
+      "choices": [
+        {
+          "type": "item",
+          "value": "cobblemon:sun_stone",
+          "count": 2,
+          "weight": 1
+        }
+      ]
+    },
+    "68": {
+      "enabled": true,
+      "description": "40 Rare Candy + 1 Bloco de Ouro",
+      "setupNote": "",
+      "mode": "fixed",
+      "choices": [
+        {
+          "type": "item",
+          "value": "cobblemon:rare_candy",
+          "count": 40,
+          "weight": 1
+        },
+        {
+          "type": "item",
+          "value": "minecraft:gold_block",
+          "count": 1,
+          "weight": 1
+        }
+      ]
+    },
+    "69": {
+      "enabled": true,
+      "description": "2 Caixa Epic",
+      "setupNote": "",
+      "mode": "fixed",
+      "choices": [
+        {
+          "type": "crate",
+          "value": "caixa_epica",
+          "count": 2,
+          "weight": 1
+        }
+      ]
+    },
+    "70": {
+      "enabled": true,
+      "description": "1 Caixa Mítica + 4 Tokens",
+      "setupNote": "",
+      "mode": "fixed",
+      "choices": [
+        {
+          "type": "crate",
+          "value": "caixa_mitica",
+          "count": 1,
+          "weight": 1
+        },
+        {
+          "type": "command",
+          "value": "eco deposit 4 impactor:tokens {player}",
+          "count": 1,
+          "weight": 1
+        }
+      ]
+    },
+    "71": {
+      "enabled": true,
+      "description": "$50k",
+      "setupNote": "",
+      "mode": "fixed",
+      "choices": [
+        {
+          "type": "command",
+          "value": "eco deposit 50000 impactor:dollars {player}",
+          "count": 1,
+          "weight": 1
+        }
+      ]
+    },
+    "72": {
+      "enabled": true,
+      "description": "40 Rare Candy",
+      "setupNote": "",
+      "mode": "fixed",
+      "choices": [
+        {
+          "type": "item",
+          "value": "cobblemon:rare_candy",
+          "count": 40,
+          "weight": 1
+        }
+      ]
+    },
+    "73": {
+      "enabled": true,
+      "description": "1 Caixa Ultra Beast",
+      "setupNote": "",
+      "mode": "fixed",
+      "choices": [
+        {
+          "type": "crate",
+          "value": "caixa_ultra_beasts",
+          "count": 1,
+          "weight": 1
+        }
+      ]
+    },
+    "74": {
+      "enabled": true,
+      "description": "2 Pedra Brilhante + 5 Diamantes",
+      "setupNote": "",
+      "mode": "fixed",
+      "choices": [
+        {
+          "type": "item",
+          "value": "cobblemon:shiny_stone",
+          "count": 2,
+          "weight": 1
+        },
+        {
+          "type": "item",
+          "value": "minecraft:diamond",
+          "count": 5,
+          "weight": 1
+        }
+      ]
+    },
+    "75": {
+      "enabled": true,
+      "description": "1 Lucario + $55k",
+      "setupNote": "",
+      "mode": "fixed",
+      "choices": [
+        {
+          "type": "pokemon",
+          "value": "lucario",
+          "count": 1,
+          "weight": 1
+        },
+        {
+          "type": "command",
+          "value": "eco deposit 55000 impactor:dollars {player}",
+          "count": 1,
+          "weight": 1
+        }
+      ]
+    },
+    "76": {
+      "enabled": true,
+      "description": "2 Caixa Paradoxo",
+      "setupNote": "",
+      "mode": "fixed",
+      "choices": [
+        {
+          "type": "crate",
+          "value": "caixa_paradoxo",
+          "count": 2,
+          "weight": 1
+        }
+      ]
+    },
+    "77": {
+      "enabled": true,
+      "description": "50 Rare Candy",
+      "setupNote": "",
+      "mode": "fixed",
+      "choices": [
+        {
+          "type": "item",
+          "value": "cobblemon:rare_candy",
+          "count": 50,
+          "weight": 1
+        }
+      ]
+    },
+    "78": {
+      "enabled": true,
+      "description": "1 Caixa Mítica + 1 Bloco de Diamante",
+      "setupNote": "",
+      "mode": "fixed",
+      "choices": [
+        {
+          "type": "crate",
+          "value": "caixa_mitica",
+          "count": 1,
+          "weight": 1
+        },
+        {
+          "type": "item",
+          "value": "minecraft:diamond_block",
+          "count": 1,
+          "weight": 1
+        }
+      ]
+    },
+    "79": {
+      "enabled": true,
+      "description": "2 Pedra Noturna",
+      "setupNote": "",
+      "mode": "fixed",
+      "choices": [
+        {
+          "type": "item",
+          "value": "cobblemon:dusk_stone",
+          "count": 2,
+          "weight": 1
+        }
+      ]
+    },
+    "80": {
+      "enabled": true,
+      "description": "1 Caixa Mítica + 5 Tokens",
+      "setupNote": "",
+      "mode": "fixed",
+      "choices": [
+        {
+          "type": "crate",
+          "value": "caixa_mitica",
+          "count": 1,
+          "weight": 1
+        },
+        {
+          "type": "command",
+          "value": "eco deposit 5 impactor:tokens {player}",
+          "count": 1,
+          "weight": 1
+        }
+      ]
+    },
+    "81": {
+      "enabled": true,
+      "description": "$60k",
+      "setupNote": "",
+      "mode": "fixed",
+      "choices": [
+        {
+          "type": "command",
+          "value": "eco deposit 60000 impactor:dollars {player}",
+          "count": 1,
+          "weight": 1
+        }
+      ]
+    },
+    "82": {
+      "enabled": true,
+      "description": "50 Ultra Ball",
+      "setupNote": "",
+      "mode": "fixed",
+      "choices": [
+        {
+          "type": "item",
+          "value": "cobblemon:ultra_ball",
+          "count": 50,
+          "weight": 1
+        }
+      ]
+    },
+    "83": {
+      "enabled": true,
+      "description": "2 Caixa Ultra Beast",
+      "setupNote": "",
+      "mode": "fixed",
+      "choices": [
+        {
+          "type": "crate",
+          "value": "caixa_ultra_beasts",
+          "count": 2,
+          "weight": 1
+        }
+      ]
+    },
+    "84": {
+      "enabled": true,
+      "description": "2 Pedra do Alvorecer + 1 Bloco de Ouro",
+      "setupNote": "",
+      "mode": "fixed",
+      "choices": [
+        {
+          "type": "item",
+          "value": "cobblemon:dawn_stone",
+          "count": 2,
+          "weight": 1
+        },
+        {
+          "type": "item",
+          "value": "minecraft:gold_block",
+          "count": 1,
+          "weight": 1
+        }
+      ]
+    },
+    "85": {
+      "enabled": true,
+      "description": "$65k",
+      "setupNote": "",
+      "mode": "fixed",
+      "choices": [
+        {
+          "type": "command",
+          "value": "eco deposit 65000 impactor:dollars {player}",
+          "count": 1,
+          "weight": 1
+        }
+      ]
+    },
+    "86": {
+      "enabled": true,
+      "description": "60 Rare Candy",
+      "setupNote": "",
+      "mode": "fixed",
+      "choices": [
+        {
+          "type": "item",
+          "value": "cobblemon:rare_candy",
+          "count": 60,
+          "weight": 1
+        }
+      ]
+    },
+    "87": {
+      "enabled": true,
+      "description": "1 Caixa Mítica",
+      "setupNote": "",
+      "mode": "fixed",
+      "choices": [
+        {
+          "type": "crate",
+          "value": "caixa_mitica",
+          "count": 1,
+          "weight": 1
+        }
+      ]
+    },
+    "88": {
+      "enabled": true,
+      "description": "3 Caixa Paradoxo + 10 Diamantes",
+      "setupNote": "",
+      "mode": "fixed",
+      "choices": [
+        {
+          "type": "crate",
+          "value": "caixa_paradoxo",
+          "count": 3,
+          "weight": 1
+        },
+        {
+          "type": "item",
+          "value": "minecraft:diamond",
+          "count": 10,
+          "weight": 1
+        }
+      ]
+    },
+    "89": {
+      "enabled": true,
+      "description": "2 Pedra do Gelo",
+      "setupNote": "",
+      "mode": "fixed",
+      "choices": [
+        {
+          "type": "item",
+          "value": "cobblemon:ice_stone",
+          "count": 2,
+          "weight": 1
+        }
+      ]
+    },
+    "90": {
+      "enabled": true,
+      "description": "1 Caixa Mítica + 6 Tokens + 1 Bloco de Diamante",
+      "setupNote": "",
+      "mode": "fixed",
+      "choices": [
+        {
+          "type": "crate",
+          "value": "caixa_mitica",
+          "count": 1,
+          "weight": 1
+        },
+        {
+          "type": "command",
+          "value": "eco deposit 6 impactor:tokens {player}",
+          "count": 1,
+          "weight": 1
+        },
+        {
+          "type": "item",
+          "value": "minecraft:diamond_block",
+          "count": 1,
+          "weight": 1
+        }
+      ]
+    },
+    "91": {
+      "enabled": true,
+      "description": "$70k",
+      "setupNote": "",
+      "mode": "fixed",
+      "choices": [
+        {
+          "type": "command",
+          "value": "eco deposit 70000 impactor:dollars {player}",
+          "count": 1,
+          "weight": 1
+        }
+      ]
+    },
+    "92": {
+      "enabled": true,
+      "description": "70 Rare Candy",
+      "setupNote": "",
+      "mode": "fixed",
+      "choices": [
+        {
+          "type": "item",
+          "value": "cobblemon:rare_candy",
+          "count": 70,
+          "weight": 1
+        }
+      ]
+    },
+    "93": {
+      "enabled": true,
+      "description": "2 Caixa Mítica",
+      "setupNote": "",
+      "mode": "fixed",
+      "choices": [
+        {
+          "type": "crate",
+          "value": "caixa_mitica",
+          "count": 2,
+          "weight": 1
+        }
+      ]
+    },
+    "94": {
+      "enabled": true,
+      "description": "3 Pedra do Fogo + 2 Blocos de Ouro",
+      "setupNote": "",
+      "mode": "fixed",
+      "choices": [
+        {
+          "type": "item",
+          "value": "cobblemon:fire_stone",
+          "count": 3,
+          "weight": 1
+        },
+        {
+          "type": "item",
+          "value": "minecraft:gold_block",
+          "count": 2,
+          "weight": 1
+        }
+      ]
+    },
+    "95": {
+      "enabled": true,
+      "description": "$80k",
+      "setupNote": "",
+      "mode": "fixed",
+      "choices": [
+        {
+          "type": "command",
+          "value": "eco deposit 80000 impactor:dollars {player}",
+          "count": 1,
+          "weight": 1
+        }
+      ]
+    },
+    "96": {
+      "enabled": true,
+      "description": "80 Rare Candy",
+      "setupNote": "",
+      "mode": "fixed",
+      "choices": [
+        {
+          "type": "item",
+          "value": "cobblemon:rare_candy",
+          "count": 80,
+          "weight": 1
+        }
+      ]
+    },
+    "97": {
+      "enabled": true,
+      "description": "2 Caixa Mítica",
+      "setupNote": "",
+      "mode": "fixed",
+      "choices": [
+        {
+          "type": "crate",
+          "value": "caixa_mitica",
+          "count": 2,
+          "weight": 1
+        }
+      ]
+    },
+    "98": {
+      "enabled": true,
+      "description": "3 Caixa Ultra Beast + 2 Blocos de Diamante",
+      "setupNote": "",
+      "mode": "fixed",
+      "choices": [
+        {
+          "type": "crate",
+          "value": "caixa_ultra_beasts",
+          "count": 3,
+          "weight": 1
+        },
+        {
+          "type": "item",
+          "value": "minecraft:diamond_block",
+          "count": 2,
+          "weight": 1
+        }
+      ]
+    },
+    "99": {
+      "enabled": true,
+      "description": "1 Caixa Lendária",
+      "setupNote": "",
+      "mode": "fixed",
+      "choices": [
+        {
+          "type": "crate",
+          "value": "caixa_lendaria",
+          "count": 1,
+          "weight": 1
+        }
+      ]
+    },
+    "100": {
+      "enabled": true,
+      "description": "1 Caixa Lendária + 10 Tokens + $100k + 2 Blocos de Diamante",
+      "setupNote": "",
+      "mode": "fixed",
+      "choices": [
+        {
+          "type": "crate",
+          "value": "caixa_lendaria",
+          "count": 1,
+          "weight": 1
+        },
+        {
+          "type": "command",
+          "value": "eco deposit 10 impactor:tokens {player}",
+          "count": 1,
+          "weight": 1
+        },
+        {
+          "type": "command",
+          "value": "eco deposit 100000 impactor:dollars {player}",
+          "count": 1,
+          "weight": 1
+        },
+        {
+          "type": "item",
+          "value": "minecraft:diamond_block",
+          "count": 2,
+          "weight": 1
+        }
+      ]
+    }
+  },
+  "premium": {
+    "1": {
+      "enabled": true,
+      "description": "15 Great Ball",
+      "setupNote": "",
+      "mode": "fixed",
+      "choices": [
+        {
+          "type": "item",
+          "value": "cobblemon:great_ball",
+          "count": 15,
+          "weight": 1
+        }
+      ]
+    },
+    "2": {
+      "enabled": true,
+      "description": "1 Caixa Básica + 16 Ferro",
+      "setupNote": "",
+      "mode": "fixed",
+      "choices": [
+        {
+          "type": "crate",
+          "value": "inicial_rara",
+          "count": 1,
+          "weight": 1
+        },
+        {
+          "type": "item",
+          "value": "minecraft:iron_ingot",
+          "count": 16,
+          "weight": 1
+        }
+      ]
+    },
+    "3": {
+      "enabled": true,
+      "description": "$15k",
+      "setupNote": "",
+      "mode": "fixed",
+      "choices": [
+        {
+          "type": "command",
+          "value": "eco deposit 15000 impactor:dollars {player}",
+          "count": 1,
+          "weight": 1
+        }
+      ]
+    },
+    "4": {
+      "enabled": true,
+      "description": "5 Rare Candy",
+      "setupNote": "",
+      "mode": "fixed",
+      "choices": [
+        {
+          "type": "item",
+          "value": "cobblemon:rare_candy",
+          "count": 5,
+          "weight": 1
+        }
+      ]
+    },
+    "5": {
+      "enabled": true,
+      "description": "2 Caixa Básica",
+      "setupNote": "",
+      "mode": "fixed",
+      "choices": [
+        {
+          "type": "crate",
+          "value": "inicial_rara",
+          "count": 2,
+          "weight": 1
+        }
+      ]
+    },
+    "6": {
+      "enabled": true,
+      "description": "1 Pedra da Água + 16 Ouro",
+      "setupNote": "",
+      "mode": "fixed",
+      "choices": [
+        {
+          "type": "item",
+          "value": "cobblemon:water_stone",
+          "count": 1,
+          "weight": 1
+        },
+        {
+          "type": "item",
+          "value": "minecraft:gold_ingot",
+          "count": 16,
+          "weight": 1
+        }
+      ]
+    },
+    "7": {
+      "enabled": true,
+      "description": "10 Ultra Ball",
+      "setupNote": "",
+      "mode": "fixed",
+      "choices": [
+        {
+          "type": "item",
+          "value": "cobblemon:ultra_ball",
+          "count": 10,
+          "weight": 1
+        }
+      ]
+    },
+    "8": {
+      "enabled": true,
+      "description": "$25k",
+      "setupNote": "",
+      "mode": "fixed",
+      "choices": [
+        {
+          "type": "command",
+          "value": "eco deposit 25000 impactor:dollars {player}",
+          "count": 1,
+          "weight": 1
+        }
+      ]
+    },
+    "9": {
+      "enabled": true,
+      "description": "8 Rare Candy + 32 Redstone",
+      "setupNote": "",
+      "mode": "fixed",
+      "choices": [
+        {
+          "type": "item",
+          "value": "cobblemon:rare_candy",
+          "count": 8,
+          "weight": 1
+        },
+        {
+          "type": "item",
+          "value": "minecraft:redstone",
+          "count": 32,
+          "weight": 1
+        }
+      ]
+    },
+    "10": {
+      "enabled": true,
+      "description": "1 Caixa Epic + 3 Tokens + 8 Diamantes",
+      "setupNote": "",
+      "mode": "fixed",
+      "choices": [
+        {
+          "type": "crate",
+          "value": "caixa_epica",
+          "count": 1,
+          "weight": 1
+        },
+        {
+          "type": "command",
+          "value": "eco deposit 3 impactor:tokens {player}",
+          "count": 1,
+          "weight": 1
+        },
+        {
+          "type": "item",
+          "value": "minecraft:diamond",
+          "count": 8,
+          "weight": 1
+        }
+      ]
+    },
+    "11": {
+      "enabled": true,
+      "description": "15 Ultra Ball",
+      "setupNote": "",
+      "mode": "fixed",
+      "choices": [
+        {
+          "type": "item",
+          "value": "cobblemon:ultra_ball",
+          "count": 15,
+          "weight": 1
+        }
+      ]
+    },
+    "12": {
+      "enabled": true,
+      "description": "$40k",
+      "setupNote": "",
+      "mode": "fixed",
+      "choices": [
+        {
+          "type": "command",
+          "value": "eco deposit 40000 impactor:dollars {player}",
+          "count": 1,
+          "weight": 1
+        }
+      ]
+    },
+    "13": {
+      "enabled": true,
+      "description": "10 Rare Candy",
+      "setupNote": "",
+      "mode": "fixed",
+      "choices": [
+        {
+          "type": "item",
+          "value": "cobblemon:rare_candy",
+          "count": 10,
+          "weight": 1
+        }
+      ]
+    },
+    "14": {
+      "enabled": true,
+      "description": "1 Caixa Epic + 1 Bloco de Ferro",
+      "setupNote": "",
+      "mode": "fixed",
+      "choices": [
+        {
+          "type": "crate",
+          "value": "caixa_epica",
+          "count": 1,
+          "weight": 1
+        },
+        {
+          "type": "item",
+          "value": "minecraft:iron_block",
+          "count": 1,
+          "weight": 1
+        }
+      ]
+    },
+    "15": {
+      "enabled": true,
+      "description": "1 Pedra da Lua + 1 Gible",
+      "setupNote": "",
+      "mode": "fixed",
+      "choices": [
+        {
+          "type": "item",
+          "value": "cobblemon:moon_stone",
+          "count": 1,
+          "weight": 1
+        },
+        {
+          "type": "pokemon",
+          "value": "gible",
+          "count": 1,
+          "weight": 1
+        }
+      ]
+    },
+    "16": {
+      "enabled": true,
+      "description": "$50k",
+      "setupNote": "",
+      "mode": "fixed",
+      "choices": [
+        {
+          "type": "command",
+          "value": "eco deposit 50000 impactor:dollars {player}",
+          "count": 1,
+          "weight": 1
+        }
+      ]
+    },
+    "17": {
+      "enabled": true,
+      "description": "12 Rare Candy + 16 Esmeraldas",
+      "setupNote": "",
+      "mode": "fixed",
+      "choices": [
+        {
+          "type": "item",
+          "value": "cobblemon:rare_candy",
+          "count": 12,
+          "weight": 1
+        },
+        {
+          "type": "item",
+          "value": "minecraft:emerald",
+          "count": 16,
+          "weight": 1
+        }
+      ]
+    },
+    "18": {
+      "enabled": true,
+      "description": "2 Caixa Básica",
+      "setupNote": "",
+      "mode": "fixed",
+      "choices": [
+        {
+          "type": "crate",
+          "value": "inicial_rara",
+          "count": 2,
+          "weight": 1
+        }
+      ]
+    },
+    "19": {
+      "enabled": true,
+      "description": "15 Ultra Ball",
+      "setupNote": "",
+      "mode": "fixed",
+      "choices": [
+        {
+          "type": "item",
+          "value": "cobblemon:ultra_ball",
+          "count": 15,
+          "weight": 1
+        }
+      ]
+    },
+    "20": {
+      "enabled": true,
+      "description": "1 Caixa Paradoxo + 5 Tokens + 1 Bloco de Ouro",
+      "setupNote": "",
+      "mode": "fixed",
+      "choices": [
+        {
+          "type": "crate",
+          "value": "caixa_paradoxo",
+          "count": 1,
+          "weight": 1
+        },
+        {
+          "type": "command",
+          "value": "eco deposit 5 impactor:tokens {player}",
+          "count": 1,
+          "weight": 1
+        },
+        {
+          "type": "item",
+          "value": "minecraft:gold_block",
+          "count": 1,
+          "weight": 1
+        }
+      ]
+    },
+    "21": {
+      "enabled": true,
+      "description": "$75k",
+      "setupNote": "",
+      "mode": "fixed",
+      "choices": [
+        {
+          "type": "command",
+          "value": "eco deposit 75000 impactor:dollars {player}",
+          "count": 1,
+          "weight": 1
+        }
+      ]
+    },
+    "22": {
+      "enabled": true,
+      "description": "1 Caixa Epic",
+      "setupNote": "",
+      "mode": "fixed",
+      "choices": [
+        {
+          "type": "crate",
+          "value": "caixa_epica",
+          "count": 1,
+          "weight": 1
+        }
+      ]
+    },
+    "23": {
+      "enabled": true,
+      "description": "1 Pedra do Sol + 2 Blocos de Ouro",
+      "setupNote": "",
+      "mode": "fixed",
+      "choices": [
+        {
+          "type": "item",
+          "value": "cobblemon:sun_stone",
+          "count": 1,
+          "weight": 1
+        },
+        {
+          "type": "item",
+          "value": "minecraft:gold_block",
+          "count": 2,
+          "weight": 1
+        }
+      ]
+    },
+    "24": {
+      "enabled": true,
+      "description": "15 Rare Candy",
+      "setupNote": "",
+      "mode": "fixed",
+      "choices": [
+        {
+          "type": "item",
+          "value": "cobblemon:rare_candy",
+          "count": 15,
+          "weight": 1
+        }
+      ]
+    },
+    "25": {
+      "enabled": false,
+      "description": "1 Pokémon Shiny Aleatório + 1 Bloco de Diamante",
+      "setupNote": "Definir espécie/pool e propriedades: 1 Pokémon Shiny Aleatório",
+      "mode": "fixed",
+      "choices": [
+        {
+          "type": "item",
+          "value": "minecraft:diamond_block",
+          "count": 1,
+          "weight": 1
+        }
+      ]
+    },
+    "26": {
+      "enabled": true,
+      "description": "$100k",
+      "setupNote": "",
+      "mode": "fixed",
+      "choices": [
+        {
+          "type": "command",
+          "value": "eco deposit 100000 impactor:dollars {player}",
+          "count": 1,
+          "weight": 1
+        }
+      ]
+    },
+    "27": {
+      "enabled": true,
+      "description": "2 Caixa Epic",
+      "setupNote": "",
+      "mode": "fixed",
+      "choices": [
+        {
+          "type": "crate",
+          "value": "caixa_epica",
+          "count": 2,
+          "weight": 1
+        }
+      ]
+    },
+    "28": {
+      "enabled": true,
+      "description": "20 Ultra Ball + 3 Blocos de Diamante",
+      "setupNote": "",
+      "mode": "fixed",
+      "choices": [
+        {
+          "type": "item",
+          "value": "cobblemon:ultra_ball",
+          "count": 20,
+          "weight": 1
+        },
+        {
+          "type": "item",
+          "value": "minecraft:diamond_block",
+          "count": 3,
+          "weight": 1
+        }
+      ]
+    },
+    "29": {
+      "enabled": true,
+      "description": "20 Rare Candy",
+      "setupNote": "",
+      "mode": "fixed",
+      "choices": [
+        {
+          "type": "item",
+          "value": "cobblemon:rare_candy",
+          "count": 20,
+          "weight": 1
+        }
+      ]
+    },
+    "30": {
+      "enabled": true,
+      "description": "1 Caixa Ultra Beast + 8 Tokens + 5 Blocos de Ferro",
+      "setupNote": "",
+      "mode": "fixed",
+      "choices": [
+        {
+          "type": "crate",
+          "value": "caixa_ultra_beasts",
+          "count": 1,
+          "weight": 1
+        },
+        {
+          "type": "command",
+          "value": "eco deposit 8 impactor:tokens {player}",
+          "count": 1,
+          "weight": 1
+        },
+        {
+          "type": "item",
+          "value": "minecraft:iron_block",
+          "count": 5,
+          "weight": 1
+        }
+      ]
+    },
+    "31": {
+      "enabled": true,
+      "description": "$120k",
+      "setupNote": "",
+      "mode": "fixed",
+      "choices": [
+        {
+          "type": "command",
+          "value": "eco deposit 120000 impactor:dollars {player}",
+          "count": 1,
+          "weight": 1
+        }
+      ]
+    },
+    "32": {
+      "enabled": true,
+      "description": "1 Caixa Paradoxo",
+      "setupNote": "",
+      "mode": "fixed",
+      "choices": [
+        {
+          "type": "crate",
+          "value": "caixa_paradoxo",
+          "count": 1,
+          "weight": 1
+        }
+      ]
+    },
+    "33": {
+      "enabled": true,
+      "description": "1 Pedra Noturna",
+      "setupNote": "",
+      "mode": "fixed",
+      "choices": [
+        {
+          "type": "item",
+          "value": "cobblemon:dusk_stone",
+          "count": 1,
+          "weight": 1
+        }
+      ]
+    },
+    "34": {
+      "enabled": true,
+      "description": "25 Rare Candy + 4 Blocos de Diamante",
+      "setupNote": "",
+      "mode": "fixed",
+      "choices": [
+        {
+          "type": "item",
+          "value": "cobblemon:rare_candy",
+          "count": 25,
+          "weight": 1
+        },
+        {
+          "type": "item",
+          "value": "minecraft:diamond_block",
+          "count": 4,
+          "weight": 1
+        }
+      ]
+    },
+    "35": {
+      "enabled": true,
+      "description": "3 Tokens + 1 Dratini",
+      "setupNote": "",
+      "mode": "fixed",
+      "choices": [
+        {
+          "type": "command",
+          "value": "eco deposit 3 impactor:tokens {player}",
+          "count": 1,
+          "weight": 1
+        },
+        {
+          "type": "pokemon",
+          "value": "dratini",
+          "count": 1,
+          "weight": 1
+        }
+      ]
+    },
+    "36": {
+      "enabled": true,
+      "description": "2 Caixa Epic",
+      "setupNote": "",
+      "mode": "fixed",
+      "choices": [
+        {
+          "type": "crate",
+          "value": "caixa_epica",
+          "count": 2,
+          "weight": 1
+        }
+      ]
+    },
+    "37": {
+      "enabled": true,
+      "description": "$150k",
+      "setupNote": "",
+      "mode": "fixed",
+      "choices": [
+        {
+          "type": "command",
+          "value": "eco deposit 150000 impactor:dollars {player}",
+          "count": 1,
+          "weight": 1
+        }
+      ]
+    },
+    "38": {
+      "enabled": true,
+      "description": "1 Caixa Paradoxo + 3 Blocos de Esmeralda",
+      "setupNote": "",
+      "mode": "fixed",
+      "choices": [
+        {
+          "type": "crate",
+          "value": "caixa_paradoxo",
+          "count": 1,
+          "weight": 1
+        },
+        {
+          "type": "item",
+          "value": "minecraft:emerald_block",
+          "count": 3,
+          "weight": 1
+        }
+      ]
+    },
+    "39": {
+      "enabled": true,
+      "description": "30 Rare Candy",
+      "setupNote": "",
+      "mode": "fixed",
+      "choices": [
+        {
+          "type": "item",
+          "value": "cobblemon:rare_candy",
+          "count": 30,
+          "weight": 1
+        }
+      ]
+    },
+    "40": {
+      "enabled": true,
+      "description": "1 Master Ball + 10 Tokens + 5 Blocos de Diamante",
+      "setupNote": "",
+      "mode": "fixed",
+      "choices": [
+        {
+          "type": "item",
+          "value": "cobblemon:master_ball",
+          "count": 1,
+          "weight": 1
+        },
+        {
+          "type": "command",
+          "value": "eco deposit 10 impactor:tokens {player}",
+          "count": 1,
+          "weight": 1
+        },
+        {
+          "type": "item",
+          "value": "minecraft:diamond_block",
+          "count": 5,
+          "weight": 1
+        }
+      ]
+    },
+    "41": {
+      "enabled": true,
+      "description": "$180k",
+      "setupNote": "",
+      "mode": "fixed",
+      "choices": [
+        {
+          "type": "command",
+          "value": "eco deposit 180000 impactor:dollars {player}",
+          "count": 1,
+          "weight": 1
+        }
+      ]
+    },
+    "42": {
+      "enabled": true,
+      "description": "1 Caixa Ultra Beast",
+      "setupNote": "",
+      "mode": "fixed",
+      "choices": [
+        {
+          "type": "crate",
+          "value": "caixa_ultra_beasts",
+          "count": 1,
+          "weight": 1
+        }
+      ]
+    },
+    "43": {
+      "enabled": true,
+      "description": "5 Tokens",
+      "setupNote": "",
+      "mode": "fixed",
+      "choices": [
+        {
+          "type": "command",
+          "value": "eco deposit 5 impactor:tokens {player}",
+          "count": 1,
+          "weight": 1
+        }
+      ]
+    },
+    "44": {
+      "enabled": true,
+      "description": "2 Caixa Paradoxo + 5 Blocos de Ouro",
+      "setupNote": "",
+      "mode": "fixed",
+      "choices": [
+        {
+          "type": "crate",
+          "value": "caixa_paradoxo",
+          "count": 2,
+          "weight": 1
+        },
+        {
+          "type": "item",
+          "value": "minecraft:gold_block",
+          "count": 5,
+          "weight": 1
+        }
+      ]
+    },
+    "45": {
+      "enabled": true,
+      "description": "$200k",
+      "setupNote": "",
+      "mode": "fixed",
+      "choices": [
+        {
+          "type": "command",
+          "value": "eco deposit 200000 impactor:dollars {player}",
+          "count": 1,
+          "weight": 1
+        }
+      ]
+    },
+    "46": {
+      "enabled": true,
+      "description": "40 Rare Candy",
+      "setupNote": "",
+      "mode": "fixed",
+      "choices": [
+        {
+          "type": "item",
+          "value": "cobblemon:rare_candy",
+          "count": 40,
+          "weight": 1
+        }
+      ]
+    },
+    "47": {
+      "enabled": true,
+      "description": "1 Caixa Mítica",
+      "setupNote": "",
+      "mode": "fixed",
+      "choices": [
+        {
+          "type": "crate",
+          "value": "caixa_mitica",
+          "count": 1,
+          "weight": 1
+        }
+      ]
+    },
+    "48": {
+      "enabled": true,
+      "description": "6 Tokens + 6 Blocos de Diamante",
+      "setupNote": "",
+      "mode": "fixed",
+      "choices": [
+        {
+          "type": "command",
+          "value": "eco deposit 6 impactor:tokens {player}",
+          "count": 1,
+          "weight": 1
+        },
+        {
+          "type": "item",
+          "value": "minecraft:diamond_block",
+          "count": 6,
+          "weight": 1
+        }
+      ]
+    },
+    "49": {
+      "enabled": true,
+      "description": "2 Caixa Ultra Beast",
+      "setupNote": "",
+      "mode": "fixed",
+      "choices": [
+        {
+          "type": "crate",
+          "value": "caixa_ultra_beasts",
+          "count": 2,
+          "weight": 1
+        }
+      ]
+    },
+    "50": {
+      "enabled": false,
+      "description": "1 Dragonite + 1 Pokémon Shiny Aleatório + 15 Tokens + 8 Blocos de Diamante",
+      "setupNote": "Definir espécie/pool e propriedades: 1 Pokémon Shiny Aleatório",
+      "mode": "fixed",
+      "choices": [
+        {
+          "type": "pokemon",
+          "value": "dragonite",
+          "count": 1,
+          "weight": 1
+        },
+        {
+          "type": "command",
+          "value": "eco deposit 15 impactor:tokens {player}",
+          "count": 1,
+          "weight": 1
+        },
+        {
+          "type": "item",
+          "value": "minecraft:diamond_block",
+          "count": 8,
+          "weight": 1
+        }
+      ]
+    },
+    "51": {
+      "enabled": true,
+      "description": "$250k",
+      "setupNote": "",
+      "mode": "fixed",
+      "choices": [
+        {
+          "type": "command",
+          "value": "eco deposit 250000 impactor:dollars {player}",
+          "count": 1,
+          "weight": 1
+        }
+      ]
+    },
+    "52": {
+      "enabled": true,
+      "description": "1 Caixa Mítica",
+      "setupNote": "",
+      "mode": "fixed",
+      "choices": [
+        {
+          "type": "crate",
+          "value": "caixa_mitica",
+          "count": 1,
+          "weight": 1
+        }
+      ]
+    },
+    "53": {
+      "enabled": true,
+      "description": "8 Tokens",
+      "setupNote": "",
+      "mode": "fixed",
+      "choices": [
+        {
+          "type": "command",
+          "value": "eco deposit 8 impactor:tokens {player}",
+          "count": 1,
+          "weight": 1
+        }
+      ]
+    },
+    "54": {
+      "enabled": true,
+      "description": "50 Rare Candy + 5 Blocos de Esmeralda",
+      "setupNote": "",
+      "mode": "fixed",
+      "choices": [
+        {
+          "type": "item",
+          "value": "cobblemon:rare_candy",
+          "count": 50,
+          "weight": 1
+        },
+        {
+          "type": "item",
+          "value": "minecraft:emerald_block",
+          "count": 5,
+          "weight": 1
+        }
+      ]
+    },
+    "55": {
+      "enabled": true,
+      "description": "3 Caixa Paradoxo",
+      "setupNote": "",
+      "mode": "fixed",
+      "choices": [
+        {
+          "type": "crate",
+          "value": "caixa_paradoxo",
+          "count": 3,
+          "weight": 1
+        }
+      ]
+    },
+    "56": {
+      "enabled": true,
+      "description": "$300k",
+      "setupNote": "",
+      "mode": "fixed",
+      "choices": [
+        {
+          "type": "command",
+          "value": "eco deposit 300000 impactor:dollars {player}",
+          "count": 1,
+          "weight": 1
+        }
+      ]
+    },
+    "57": {
+      "enabled": true,
+      "description": "1 Caixa Lendária",
+      "setupNote": "",
+      "mode": "fixed",
+      "choices": [
+        {
+          "type": "crate",
+          "value": "caixa_lendaria",
+          "count": 1,
+          "weight": 1
+        }
+      ]
+    },
+    "58": {
+      "enabled": true,
+      "description": "10 Tokens + 8 Blocos de Diamante",
+      "setupNote": "",
+      "mode": "fixed",
+      "choices": [
+        {
+          "type": "command",
+          "value": "eco deposit 10 impactor:tokens {player}",
+          "count": 1,
+          "weight": 1
+        },
+        {
+          "type": "item",
+          "value": "minecraft:diamond_block",
+          "count": 8,
+          "weight": 1
+        }
+      ]
+    },
+    "59": {
+      "enabled": true,
+      "description": "2 Caixa Mítica",
+      "setupNote": "",
+      "mode": "fixed",
+      "choices": [
+        {
+          "type": "crate",
+          "value": "caixa_mitica",
+          "count": 2,
+          "weight": 1
+        }
+      ]
+    },
+    "60": {
+      "enabled": true,
+      "description": "1 Caixa Lendária + 20 Tokens + 10 Blocos de Diamante",
+      "setupNote": "",
+      "mode": "fixed",
+      "choices": [
+        {
+          "type": "crate",
+          "value": "caixa_lendaria",
+          "count": 1,
+          "weight": 1
+        },
+        {
+          "type": "command",
+          "value": "eco deposit 20 impactor:tokens {player}",
+          "count": 1,
+          "weight": 1
+        },
+        {
+          "type": "item",
+          "value": "minecraft:diamond_block",
+          "count": 10,
+          "weight": 1
+        }
+      ]
+    },
+    "61": {
+      "enabled": true,
+      "description": "$350k",
+      "setupNote": "",
+      "mode": "fixed",
+      "choices": [
+        {
+          "type": "command",
+          "value": "eco deposit 350000 impactor:dollars {player}",
+          "count": 1,
+          "weight": 1
+        }
+      ]
+    },
+    "62": {
+      "enabled": true,
+      "description": "60 Rare Candy",
+      "setupNote": "",
+      "mode": "fixed",
+      "choices": [
+        {
+          "type": "item",
+          "value": "cobblemon:rare_candy",
+          "count": 60,
+          "weight": 1
+        }
+      ]
+    },
+    "63": {
+      "enabled": true,
+      "description": "12 Tokens",
+      "setupNote": "",
+      "mode": "fixed",
+      "choices": [
+        {
+          "type": "command",
+          "value": "eco deposit 12 impactor:tokens {player}",
+          "count": 1,
+          "weight": 1
+        }
+      ]
+    },
+    "64": {
+      "enabled": true,
+      "description": "1 Caixa Shiny + 8 Blocos de Esmeralda",
+      "setupNote": "",
+      "mode": "fixed",
+      "choices": [
+        {
+          "type": "crate",
+          "value": "shiny",
+          "count": 1,
+          "weight": 1
+        },
+        {
+          "type": "item",
+          "value": "minecraft:emerald_block",
+          "count": 8,
+          "weight": 1
+        }
+      ]
+    },
+    "65": {
+      "enabled": true,
+      "description": "2 Caixa Ultra Beast + 1 Bagon",
+      "setupNote": "",
+      "mode": "fixed",
+      "choices": [
+        {
+          "type": "crate",
+          "value": "caixa_ultra_beasts",
+          "count": 2,
+          "weight": 1
+        },
+        {
+          "type": "pokemon",
+          "value": "bagon",
+          "count": 1,
+          "weight": 1
+        }
+      ]
+    },
+    "66": {
+      "enabled": true,
+      "description": "$400k",
+      "setupNote": "",
+      "mode": "fixed",
+      "choices": [
+        {
+          "type": "command",
+          "value": "eco deposit 400000 impactor:dollars {player}",
+          "count": 1,
+          "weight": 1
+        }
+      ]
+    },
+    "67": {
+      "enabled": true,
+      "description": "2 Caixa Lendária",
+      "setupNote": "",
+      "mode": "fixed",
+      "choices": [
+        {
+          "type": "crate",
+          "value": "caixa_lendaria",
+          "count": 2,
+          "weight": 1
+        }
+      ]
+    },
+    "68": {
+      "enabled": true,
+      "description": "15 Tokens + 10 Blocos de Ouro",
+      "setupNote": "",
+      "mode": "fixed",
+      "choices": [
+        {
+          "type": "command",
+          "value": "eco deposit 15 impactor:tokens {player}",
+          "count": 1,
+          "weight": 1
+        },
+        {
+          "type": "item",
+          "value": "minecraft:gold_block",
+          "count": 10,
+          "weight": 1
+        }
+      ]
+    },
+    "69": {
+      "enabled": true,
+      "description": "3 Caixa Mítica",
+      "setupNote": "",
+      "mode": "fixed",
+      "choices": [
+        {
+          "type": "crate",
+          "value": "caixa_mitica",
+          "count": 3,
+          "weight": 1
+        }
+      ]
+    },
+    "70": {
+      "enabled": true,
+      "description": "1 Caixa Shiny + 25 Tokens + 1 Beldum + 1 Bloco de Netherite",
+      "setupNote": "",
+      "mode": "fixed",
+      "choices": [
+        {
+          "type": "crate",
+          "value": "shiny",
+          "count": 1,
+          "weight": 1
+        },
+        {
+          "type": "command",
+          "value": "eco deposit 25 impactor:tokens {player}",
+          "count": 1,
+          "weight": 1
+        },
+        {
+          "type": "pokemon",
+          "value": "beldum",
+          "count": 1,
+          "weight": 1
+        },
+        {
+          "type": "item",
+          "value": "minecraft:netherite_block",
+          "count": 1,
+          "weight": 1
+        }
+      ]
+    },
+    "71": {
+      "enabled": true,
+      "description": "$500k",
+      "setupNote": "",
+      "mode": "fixed",
+      "choices": [
+        {
+          "type": "command",
+          "value": "eco deposit 500000 impactor:dollars {player}",
+          "count": 1,
+          "weight": 1
+        }
+      ]
+    },
+    "72": {
+      "enabled": true,
+      "description": "80 Rare Candy",
+      "setupNote": "",
+      "mode": "fixed",
+      "choices": [
+        {
+          "type": "item",
+          "value": "cobblemon:rare_candy",
+          "count": 80,
+          "weight": 1
+        }
+      ]
+    },
+    "73": {
+      "enabled": true,
+      "description": "18 Tokens",
+      "setupNote": "",
+      "mode": "fixed",
+      "choices": [
+        {
+          "type": "command",
+          "value": "eco deposit 18 impactor:tokens {player}",
+          "count": 1,
+          "weight": 1
+        }
+      ]
+    },
+    "74": {
+      "enabled": true,
+      "description": "1 Caixa Lendária + 12 Blocos de Diamante",
+      "setupNote": "",
+      "mode": "fixed",
+      "choices": [
+        {
+          "type": "crate",
+          "value": "caixa_lendaria",
+          "count": 1,
+          "weight": 1
+        },
+        {
+          "type": "item",
+          "value": "minecraft:diamond_block",
+          "count": 12,
+          "weight": 1
+        }
+      ]
+    },
+    "75": {
+      "enabled": false,
+      "description": "1 Pokémon Shiny Aleatório",
+      "setupNote": "Definir espécie/pool e propriedades: 1 Pokémon Shiny Aleatório",
+      "mode": "fixed",
+      "choices": []
+    },
+    "76": {
+      "enabled": true,
+      "description": "3 Caixa Ultra Beast",
+      "setupNote": "",
+      "mode": "fixed",
+      "choices": [
+        {
+          "type": "crate",
+          "value": "caixa_ultra_beasts",
+          "count": 3,
+          "weight": 1
+        }
+      ]
+    },
+    "77": {
+      "enabled": true,
+      "description": "$600k",
+      "setupNote": "",
+      "mode": "fixed",
+      "choices": [
+        {
+          "type": "command",
+          "value": "eco deposit 600000 impactor:dollars {player}",
+          "count": 1,
+          "weight": 1
+        }
+      ]
+    },
+    "78": {
+      "enabled": true,
+      "description": "20 Tokens + 10 Blocos de Esmeralda",
+      "setupNote": "",
+      "mode": "fixed",
+      "choices": [
+        {
+          "type": "command",
+          "value": "eco deposit 20 impactor:tokens {player}",
+          "count": 1,
+          "weight": 1
+        },
+        {
+          "type": "item",
+          "value": "minecraft:emerald_block",
+          "count": 10,
+          "weight": 1
+        }
+      ]
+    },
+    "79": {
+      "enabled": true,
+      "description": "2 Caixa Lendária",
+      "setupNote": "",
+      "mode": "fixed",
+      "choices": [
+        {
+          "type": "crate",
+          "value": "caixa_lendaria",
+          "count": 2,
+          "weight": 1
+        }
+      ]
+    },
+    "80": {
+      "enabled": true,
+      "description": "1 Master Ball + 1 Caixa Shiny + 35 Tokens + 1 Garchomp + 2 Blocos de Netherite",
+      "setupNote": "",
+      "mode": "fixed",
+      "choices": [
+        {
+          "type": "item",
+          "value": "cobblemon:master_ball",
+          "count": 1,
+          "weight": 1
+        },
+        {
+          "type": "crate",
+          "value": "shiny",
+          "count": 1,
+          "weight": 1
+        },
+        {
+          "type": "command",
+          "value": "eco deposit 35 impactor:tokens {player}",
+          "count": 1,
+          "weight": 1
+        },
+        {
+          "type": "pokemon",
+          "value": "garchomp",
+          "count": 1,
+          "weight": 1
+        },
+        {
+          "type": "item",
+          "value": "minecraft:netherite_block",
+          "count": 2,
+          "weight": 1
+        }
+      ]
+    },
+    "81": {
+      "enabled": true,
+      "description": "$700k",
+      "setupNote": "",
+      "mode": "fixed",
+      "choices": [
+        {
+          "type": "command",
+          "value": "eco deposit 700000 impactor:dollars {player}",
+          "count": 1,
+          "weight": 1
+        }
+      ]
+    },
+    "82": {
+      "enabled": true,
+      "description": "100 Rare Candy",
+      "setupNote": "",
+      "mode": "fixed",
+      "choices": [
+        {
+          "type": "item",
+          "value": "cobblemon:rare_candy",
+          "count": 100,
+          "weight": 1
+        }
+      ]
+    },
+    "83": {
+      "enabled": true,
+      "description": "25 Tokens",
+      "setupNote": "",
+      "mode": "fixed",
+      "choices": [
+        {
+          "type": "command",
+          "value": "eco deposit 25 impactor:tokens {player}",
+          "count": 1,
+          "weight": 1
+        }
+      ]
+    },
+    "84": {
+      "enabled": true,
+      "description": "3 Caixa Lendária + 15 Blocos de Diamante",
+      "setupNote": "",
+      "mode": "fixed",
+      "choices": [
+        {
+          "type": "crate",
+          "value": "caixa_lendaria",
+          "count": 3,
+          "weight": 1
+        },
+        {
+          "type": "item",
+          "value": "minecraft:diamond_block",
+          "count": 15,
+          "weight": 1
+        }
+      ]
+    },
+    "85": {
+      "enabled": false,
+      "description": "VIP Médio (30 dias)",
+      "setupNote": "Configurar grupo e duração LuckPerms: VIP Médio (30 dias)",
+      "mode": "fixed",
+      "choices": []
+    },
+    "86": {
+      "enabled": true,
+      "description": "2 Caixa Shiny",
+      "setupNote": "",
+      "mode": "fixed",
+      "choices": [
+        {
+          "type": "crate",
+          "value": "shiny",
+          "count": 2,
+          "weight": 1
+        }
+      ]
+    },
+    "87": {
+      "enabled": true,
+      "description": "$800k",
+      "setupNote": "",
+      "mode": "fixed",
+      "choices": [
+        {
+          "type": "command",
+          "value": "eco deposit 800000 impactor:dollars {player}",
+          "count": 1,
+          "weight": 1
+        }
+      ]
+    },
+    "88": {
+      "enabled": true,
+      "description": "30 Tokens + 15 Blocos de Esmeralda",
+      "setupNote": "",
+      "mode": "fixed",
+      "choices": [
+        {
+          "type": "command",
+          "value": "eco deposit 30 impactor:tokens {player}",
+          "count": 1,
+          "weight": 1
+        },
+        {
+          "type": "item",
+          "value": "minecraft:emerald_block",
+          "count": 15,
+          "weight": 1
+        }
+      ]
+    },
+    "89": {
+      "enabled": true,
+      "description": "4 Caixa Mítica",
+      "setupNote": "",
+      "mode": "fixed",
+      "choices": [
+        {
+          "type": "crate",
+          "value": "caixa_mitica",
+          "count": 4,
+          "weight": 1
+        }
+      ]
+    },
+    "90": {
+      "enabled": true,
+      "description": "1 Caixa Lendária + 1 Caixa Shiny + 50 Tokens + 1 Tyranitar + 3 Blocos de Netherite",
+      "setupNote": "",
+      "mode": "fixed",
+      "choices": [
+        {
+          "type": "crate",
+          "value": "caixa_lendaria",
+          "count": 1,
+          "weight": 1
+        },
+        {
+          "type": "crate",
+          "value": "shiny",
+          "count": 1,
+          "weight": 1
+        },
+        {
+          "type": "command",
+          "value": "eco deposit 50 impactor:tokens {player}",
+          "count": 1,
+          "weight": 1
+        },
+        {
+          "type": "pokemon",
+          "value": "tyranitar",
+          "count": 1,
+          "weight": 1
+        },
+        {
+          "type": "item",
+          "value": "minecraft:netherite_block",
+          "count": 3,
+          "weight": 1
+        }
+      ]
+    },
+    "91": {
+      "enabled": true,
+      "description": "$1M",
+      "setupNote": "",
+      "mode": "fixed",
+      "choices": [
+        {
+          "type": "command",
+          "value": "eco deposit 1000000 impactor:dollars {player}",
+          "count": 1,
+          "weight": 1
+        }
+      ]
+    },
+    "92": {
+      "enabled": true,
+      "description": "150 Rare Candy",
+      "setupNote": "",
+      "mode": "fixed",
+      "choices": [
+        {
+          "type": "item",
+          "value": "cobblemon:rare_candy",
+          "count": 150,
+          "weight": 1
+        }
+      ]
+    },
+    "93": {
+      "enabled": true,
+      "description": "40 Tokens",
+      "setupNote": "",
+      "mode": "fixed",
+      "choices": [
+        {
+          "type": "command",
+          "value": "eco deposit 40 impactor:tokens {player}",
+          "count": 1,
+          "weight": 1
+        }
+      ]
+    },
+    "94": {
+      "enabled": true,
+      "description": "3 Caixa Lendária + 20 Blocos de Diamante",
+      "setupNote": "",
+      "mode": "fixed",
+      "choices": [
+        {
+          "type": "crate",
+          "value": "caixa_lendaria",
+          "count": 3,
+          "weight": 1
+        },
+        {
+          "type": "item",
+          "value": "minecraft:diamond_block",
+          "count": 20,
+          "weight": 1
+        }
+      ]
+    },
+    "95": {
+      "enabled": false,
+      "description": "VIP Top (30 dias) + 1 Salamence",
+      "setupNote": "Configurar grupo e duração LuckPerms: VIP Top (30 dias)",
+      "mode": "fixed",
+      "choices": [
+        {
+          "type": "pokemon",
+          "value": "salamence",
+          "count": 1,
+          "weight": 1
+        }
+      ]
+    },
+    "96": {
+      "enabled": true,
+      "description": "3 Caixa Shiny",
+      "setupNote": "",
+      "mode": "fixed",
+      "choices": [
+        {
+          "type": "crate",
+          "value": "shiny",
+          "count": 3,
+          "weight": 1
+        }
+      ]
+    },
+    "97": {
+      "enabled": true,
+      "description": "$1.5M",
+      "setupNote": "",
+      "mode": "fixed",
+      "choices": [
+        {
+          "type": "command",
+          "value": "eco deposit 1500000 impactor:dollars {player}",
+          "count": 1,
+          "weight": 1
+        }
+      ]
+    },
+    "98": {
+      "enabled": true,
+      "description": "60 Tokens + 20 Blocos de Esmeralda",
+      "setupNote": "",
+      "mode": "fixed",
+      "choices": [
+        {
+          "type": "command",
+          "value": "eco deposit 60 impactor:tokens {player}",
+          "count": 1,
+          "weight": 1
+        },
+        {
+          "type": "item",
+          "value": "minecraft:emerald_block",
+          "count": 20,
+          "weight": 1
+        }
+      ]
+    },
+    "99": {
+      "enabled": true,
+      "description": "5 Caixa Lendária",
+      "setupNote": "",
+      "mode": "fixed",
+      "choices": [
+        {
+          "type": "crate",
+          "value": "caixa_lendaria",
+          "count": 5,
+          "weight": 1
+        }
+      ]
+    },
+    "100": {
+      "enabled": false,
+      "description": "1 Lendário Shiny Perfeito (6IV) + 100 Tokens + VIP Top (60 dias) + 5 Blocos de Netherite",
+      "setupNote": "Definir espécie/pool e propriedades: 1 Lendário Shiny Perfeito (6IV); Configurar grupo e duração LuckPerms: VIP Top (60 dias)",
+      "mode": "fixed",
+      "choices": [
+        {
+          "type": "command",
+          "value": "eco deposit 100 impactor:tokens {player}",
+          "count": 1,
+          "weight": 1
+        },
+        {
+          "type": "item",
+          "value": "minecraft:netherite_block",
+          "count": 5,
+          "weight": 1
+        }
+      ]
+    }
+  }
+}

@@ -142,6 +142,34 @@ public final class PassService {
     return Store.JSON.fromJson(Store.JSON.toJson(s), Season.class);
   }
 
+  public synchronized void configure(PassDefinition definition,RewardBook book) {
+    definition.validate();var rewards=book.rewards();
+    if(!definition.autoStart)return;
+    edit(s->{
+      long now=clock.getAsLong();Season season=s.seasons.get(definition.id);
+      if(season==null){
+        Season previous=s.seasons.get(s.active);
+        if(previous!=null&&previous.earning(now)){
+          long grace=previous.graceEnd-previous.end;previous.end=now;previous.graceEnd=Math.addExact(now,grace);
+        }
+        season=new Season(definition.id,now,definition.duration(),definition.grace(),definition.baseXp,definition.incrementXp);
+        s.seasons.put(season.id,season);
+      }
+      boolean reset=!definition.timerRevision.equals(season.timerRevision);
+      boolean durationChanged=season.configuredDurationDays!=definition.durationDays;
+      boolean graceChanged=season.configuredGraceDays!=definition.graceDays;
+      if(reset)season.start=now;
+      if(reset||durationChanged)season.end=Math.addExact(season.start,definition.duration());
+      if(reset||durationChanged||graceChanged)season.graceEnd=Math.addExact(season.end,definition.grace());
+      season.timerRevision=definition.timerRevision;season.configuredDurationDays=definition.durationDays;
+      season.configuredGraceDays=definition.graceDays;season.name=definition.name;
+      season.baseXp=definition.baseXp;season.incrementXp=definition.incrementXp;season.rewards=rewards;
+      for(var entry:s.players.entrySet())if(entry.getKey().startsWith(season.id+"/")&&entry.getValue().xp>season.cap())
+        throw new IllegalArgumentException("A curva nova reduziria o progresso existente. Use outro id para iniciar um passe do zero.");
+      s.active=season.id;
+    });
+  }
+
   public synchronized void create(String id, long duration, long grace, Config config) {
     edit(
         s -> {

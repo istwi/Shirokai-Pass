@@ -10,8 +10,8 @@ final class RewardValidation {
     reward.validate();
     int totalSlots = 0;
     for (Choice choice : reward.choices) {
-      if (choice.type.equals("item")) {
-        int stackSize = RewardItems.stack(server, choice.value, 1).getMaxCount();
+      if (choice.type.equals("item")||choice.type.equals("crate")) {
+        int stackSize = (choice.type.equals("crate")?CrateRewards.prepare(choice.value):RewardItems.stack(server, choice.value, 1)).getMaxCount();
         int slots = (choice.count + stackSize - 1) / stackSize;
         if (slots > 36)
           throw new IllegalArgumentException(

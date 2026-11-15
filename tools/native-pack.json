@@ -1,0 +1,39 @@
+[
+  {
+    "project": "impactor",
+    "version": "5.3.5+1.21.1-Fabric",
+    "filename": "Impactor-Fabric-5.3.5+1.21.1.jar",
+    "url": "https://cdn.modrinth.com/data/LdBYVaPS/versions/KwNU9SQW/Impactor-Fabric-5.3.5%2B1.21.1.jar",
+    "sha512": "bfcec7e2a56b77fd874087a615aadaf71250a46dd29bf898ed0d1d280b807d4c5e34b700efe00a428067743dc672786e0467be01a1e30871a04bbf4dcf8b8020",
+    "sha256": "02312d1b101e67f9d2a0476ad6aafabb0b4cabab787f85ecf871ffce8d59f8a9"
+  },
+  {
+    "project": "luckperms",
+    "version": "v5.4.140-fabric",
+    "filename": "LuckPerms-Fabric-5.4.140.jar",
+    "url": "https://cdn.modrinth.com/data/Vebnzrzj/versions/l47d4ZWk/LuckPerms-Fabric-5.4.140.jar",
+    "sha512": "386ff4d18981c830d21ddaa599d70c1c5430c1475e2c5960275bad535cbd572c77e38b3841f0a71e3ea4a795c56d45ff8c4a8dba3799dae26bff5a382c6e0a64",
+    "sha256": "3e17d490f87761c174478f68860367610a473ff5c2a9a9daad608773bf0e81bc"
+  },
+  {
+    "project": "placeholder-api",
+    "version": "2.4.2+1.21",
+    "filename": "placeholder-api-2.4.2+1.21.jar",
+    "url": "https://github.com/Patbox/TextPlaceholderAPI/releases/download/2.4.2%2B1.21/placeholder-api-2.4.2%2B1.21.jar",
+    "sha256": "c0187ee299527ac7a3e0b1e83601dcdc0de631e286fe41e6be1a75958ea8e443"
+  },
+  {
+    "project": "cobblemon",
+    "version": "1.8.3+1.21.1",
+    "filename": "cobblemon-fabric-1.8.3+1.21.1.jar",
+    "url": "https://artefacts.cobblemon.com/releases/com/cobblemon/fabric/1.8.3+1.21.1/fabric-1.8.3+1.21.1.jar",
+    "sha256": "4bc3b09d25b93b74a5822dc35b06bd6f5fa8bae36ed43a8d2b3904156a61269c"
+  },
+  {
+    "project": "shirokaicrates",
+    "version": "0.2.1",
+    "filename": "shirokai-crates-0.2.1.jar",
+    "url": "https://api.github.com/repos/istwi/Shirokai-Crates/releases/assets/719854239",
+    "sha256": "49a82904ef3fa971c535191657a592b9ee5affad5577913f1bb537ca1274adfd"
+  }
+]

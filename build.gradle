@@ -1,5 +1,5 @@
-plugins { id 'fabric-loom' version '1.9.2' }
-version = '0.4.2'
+plugins { id 'fabric-loom' version '1.10.5'; id 'org.jetbrains.kotlin.jvm' version '2.2.20' }
+version = '0.5.0'
 group = 'br.com.shirokai'
 base { archivesName = 'shirokai-pass' }
 repositories { mavenCentral() }
@@ -82,4 +82,25 @@ tasks.register('remapIntegrationModJar', net.fabricmc.loom.task.RemapJarTask) {
  inputFile = tasks.named('integrationModJar', Jar).flatMap { it.archiveFile }
  archiveFileName = 'shirokai-pass-test-harness-intermediary.jar'
  destinationDirectory = layout.buildDirectory.dir('integration')
+}
+
+// Optional, checksum-pinned real pack for native crate-key delivery regression only.
+if (project.hasProperty('crateSmoke')) {
+ dependencies {
+  modLocalRuntime 'net.fabricmc:fabric-loader:0.17.2'
+  modLocalRuntime 'net.fabricmc.fabric-api:fabric-api:0.116.17+1.21.1'
+  modLocalRuntime fileTree(dir: 'build/integration-mods', include: '*.jar')
+  def manifest = file('build/integration-dependencies.json')
+  if (!manifest.exists()) throw new GradleException('Run python3 tools/prepare_native_pack.py first')
+  def nested = new groovy.json.JsonSlurper().parse(manifest)
+  modLocalRuntime files(nested.findAll { it.selected && it.mod_id }.collect { file("build/${it.directory}/${it.file}") })
+  runtimeOnly files(nested.findAll { it.selected && !it.mod_id }.collect { file("build/${it.directory}/${it.file}") })
+  minecraftServerLibraries 'com.ibm.icu:icu4j:71.1'
+ }
+ tasks.withType(JavaExec).configureEach {
+  ['http.proxyHost','http.proxyPort','https.proxyHost','https.proxyPort','http.nonProxyHosts','javax.net.ssl.trustStore'].each { key ->
+   def value = System.getProperty(key)
+   if (value != null) systemProperty(key,value)
+  }
+ }
 }

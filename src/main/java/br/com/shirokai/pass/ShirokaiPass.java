@@ -43,8 +43,19 @@ public final class ShirokaiPass implements ModInitializer {
     return server;
   }
 
+  public Path rootPath(){return server().getSavePath(net.minecraft.util.WorldSavePath.ROOT).resolve("shirokaipass");}
+  public void timer(String operation,int days)throws Exception {
+    PassDefinition definition=PassSetup.definition(rootPath());
+    if(!definition.autoStart)throw new IllegalStateException("Ative autoStart em passe.json para controlar o prazo por configuração.");
+    if(operation.equals("add"))definition.durationDays=Math.addExact(definition.durationDays,days);
+    else {if(days>0)definition.durationDays=days;definition.timerRevision=UUID.randomUUID().toString();}
+    definition.validate();
+    if(service==null||!service.available())throw new IllegalStateException("Passe indisponível");
+    Store.write(rootPath().resolve("passe.json"),Store.JSON.toJson(definition));reload();
+  }
+
   public Path configPath() {
-    return FabricLoader.getInstance().getConfigDir().resolve("shirokaipass.json");
+    return rootPath().resolve("config.json");
   }
 
   public void reload() throws Exception {
@@ -58,6 +69,9 @@ public final class ShirokaiPass implements ModInitializer {
         throw new IllegalArgumentException("Ícone desconhecido: " + icon);
     if (document == null) Store.write(configPath(), Store.JSON.toJson(candidate));
     else Store.finishPending(configPath());
+    PassDefinition definition=PassSetup.definition(rootPath());
+    RewardBook book=PassSetup.rewards(rootPath(),definition.id);
+    if(service!=null&&service.available())service.configure(definition,book);
     config = candidate;
   }
 
@@ -69,6 +83,7 @@ public final class ShirokaiPass implements ModInitializer {
         (dispatcher, access, environment) -> Commands.register(dispatcher, this));
     ServerLifecycleEvents.SERVER_STARTED.register(
         s -> {
+          service=null;
           server = s;
           try {
             reload();
@@ -80,11 +95,10 @@ public final class ShirokaiPass implements ModInitializer {
           }
           service =
               PassService.open(
-                  new Store(
-                      s.getSavePath(net.minecraft.util.WorldSavePath.ROOT)
-                          .resolve("shirokaipass/state.json")),
+                  Store.directory(rootPath()),
                   System::currentTimeMillis);
           if (service.available()) {
+            try{reload();}catch(Exception e){LOG.error("Não foi possível aplicar passe.json/rewards; estado ativo preservado",e);}
             rebuildPremiumDeadlines();
             LOG.info("Shirokai Pass iniciado: {} temporadas", service.snapshot().seasons.size());
           } else {
@@ -100,6 +114,7 @@ public final class ShirokaiPass implements ModInitializer {
           notices.clear();
           premiumDeadlines.clear();
           TextInput.clear();
+          service = null;
           server = null;
         });
     ServerPlayConnectionEvents.JOIN.register(
@@ -292,11 +307,13 @@ public final class ShirokaiPass implements ModInitializer {
         // Preflight all prizes before committing external side effects.
         int slots = 0;
         Map<Choice, String> prepared = new IdentityHashMap<>();
+        Map<Choice, ItemStack> items = new IdentityHashMap<>();
         Map<Choice, Object> pokemon = new IdentityHashMap<>();
         for (Choice c : d.prizes) {
           c.validate();
-          if (c.type.equals("item")) {
-            ItemStack sample = RewardItems.stack(server(), c.value, 1);
+          if (c.type.equals("item")||c.type.equals("crate")) {
+            ItemStack sample = c.type.equals("crate")?CrateRewards.prepare(c.value):RewardItems.stack(server(), c.value, 1);
+            items.put(c,sample);
             slots += (c.count + sample.getMaxCount() - 1) / sample.getMaxCount();
           }
           if (c.type.equals("pokemon"))
@@ -326,10 +343,10 @@ public final class ShirokaiPass implements ModInitializer {
         service.status(d.id, "READY", "DELIVERING", "");
         for (Choice c : d.prizes) {
           switch (c.type) {
-            case "item" -> {
+            case "item", "crate" -> {
               int remaining = c.count;
               while (remaining > 0) {
-                ItemStack sample = RewardItems.stack(server(), c.value, 1);
+                ItemStack sample = items.get(c);
                 ItemStack stack = sample.copyWithCount(Math.min(remaining, sample.getMaxCount()));
                 remaining -= stack.getCount();
                 if (!p.getInventory().insertStack(stack) || !stack.isEmpty())

@@ -1,0 +1,11 @@
+{
+  "schema": 1,
+  "autoStart": true,
+  "id": "shirokai_01",
+  "name": "Passe Shirokai — Temporada 1",
+  "durationDays": 90,
+  "graceDays": 7,
+  "timerRevision": "1",
+  "baseXp": 100,
+  "incrementXp": 25
+}

@@ -501,7 +501,7 @@ final class AdminGui {
             String item =
                 c.type.equals("item")
                     ? "minecraft:chest"
-                    : c.type.equals("pokemon") ? "minecraft:dragon_egg" : "minecraft:command_block";
+                    : c.type.equals("pokemon") ? "minecraft:dragon_egg" : c.type.equals("crate")?"minecraft:tripwire_hook":"minecraft:command_block";
             ItemStack display = new ItemStack(Registries.ITEM.get(Identifier.of(item)));
             if (c.type.equals("pokemon")) {
               try {
@@ -588,13 +588,14 @@ final class AdminGui {
               "Tipo: " + c.type,
               () -> {
                 d.check(p);
-                int next = (List.of("item", "command", "pokemon").indexOf(c.type) + 1) % 3;
-                c.type = List.of("item", "command", "pokemon").get(next);
+                int next = (List.of("item", "command", "pokemon", "crate").indexOf(c.type) + 1) % 4;
+                c.type = List.of("item", "command", "pokemon", "crate").get(next);
                 c.count = 1;
                 c.value =
                     switch (c.type) {
                       case "item" -> "minecraft:diamond";
                       case "pokemon" -> "pikachu level=10";
+                      case "crate" -> "inicial_rara";
                       default -> "give {player} minecraft:diamond 1";
                     };
                 choice(mod, p, d, index, page);
@@ -610,7 +611,7 @@ final class AdminGui {
                           ? "Item e componentes"
                           : c.type.equals("pokemon")
                               ? "Propriedades do Pokémon"
-                              : "Comando (sem barra)",
+                              : c.type.equals("crate")?"ID da caixa":"Comando (sem barra)",
                       c.value,
                       c.value.length() > 50 ? 4096 : 50,
                       v -> {
@@ -634,7 +635,7 @@ final class AdminGui {
                       v -> {
                         d.check(p);
                         int n = Integer.parseInt(v);
-                        if (n < 1 || n > 2304 || !c.type.equals("item") && n != 1)
+                        if (n < 1 || n > 2304 || !c.type.equals("item") && !c.type.equals("crate") && n != 1)
                           throw new IllegalArgumentException("Itens: 1–2304. Comando/Pokémon: 1.");
                         c.count = n;
                         choice(mod, p, d, index, page);
