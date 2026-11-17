@@ -1,0 +1,173 @@
+{
+  "source_commit": "f6c36c9fff9df3d11c7e217565557f9896fde071",
+  "remote_branches": {
+    "main": "f6c36c9fff9df3d11c7e217565557f9896fde071"
+  },
+  "base_sha256": "de29bb17af1ea9858505802e9f76ad74f7270fc45b705b098963ce9252e081d3",
+  "output_sha256": "d98cf601159041b2ce4fcf48c8548a28246cf7633924494f95983eb8d3b92a18",
+  "changed_entries": [
+    "br/com/shirokai/pass/AdminGui.class",
+    "br/com/shirokai/pass/CrateRewards.class",
+    "br/com/shirokai/pass/Menus$Menu.class",
+    "br/com/shirokai/pass/Menus.class",
+    "br/com/shirokai/pass/Model$Config.class",
+    "br/com/shirokai/pass/PassDefinition.class",
+    "br/com/shirokai/pass/ShirokaiPass.class",
+    "fabric.mod.json"
+  ],
+  "visual_string_changes": [
+    {
+      "entry": "br/com/shirokai/pass/AdminGui.class",
+      "constant": 149,
+      "before": "✦ Administração",
+      "after": "§f§l✦ ZORYKAI§r§b Administração"
+    },
+    {
+      "entry": "br/com/shirokai/pass/AdminGui.class",
+      "constant": 247,
+      "before": "✦ Anúncios",
+      "after": "§f§l✦ ZORYKAI§r§b Anúncios"
+    },
+    {
+      "entry": "br/com/shirokai/pass/AdminGui.class",
+      "constant": 258,
+      "before": "✦ Evento de XP",
+      "after": "§f§l✦ ZORYKAI§r§b Evento de XP"
+    },
+    {
+      "entry": "br/com/shirokai/pass/AdminGui.class",
+      "constant": 272,
+      "before": "✦ Temporadas",
+      "after": "§f§l✦ ZORYKAI§r§b Temporadas"
+    },
+    {
+      "entry": "br/com/shirokai/pass/AdminGui.class",
+      "constant": 285,
+      "before": "✦ Nova temporada",
+      "after": "§f§l✦ ZORYKAI§r§b Nova temporada"
+    },
+    {
+      "entry": "br/com/shirokai/pass/AdminGui.class",
+      "constant": 299,
+      "before": "✦ Temporada",
+      "after": "§f§l✦ ZORYKAI§r§b Temporada"
+    },
+    {
+      "entry": "br/com/shirokai/pass/AdminGui.class",
+      "constant": 330,
+      "before": "✦ Editar recompensa",
+      "after": "§f§l✦ ZORYKAI§r§b Editar recompensa"
+    },
+    {
+      "entry": "br/com/shirokai/pass/AdminGui.class",
+      "constant": 344,
+      "before": "✦ Prêmio \u0001",
+      "after": "§f§l✦ ZORYKAI§r§b Prêmio \u0001"
+    },
+    {
+      "entry": "br/com/shirokai/pass/AdminGui.class",
+      "constant": 359,
+      "before": "✦ Edição em lote",
+      "after": "§f§l✦ ZORYKAI§r§b Edição em lote"
+    },
+    {
+      "entry": "br/com/shirokai/pass/AdminGui.class",
+      "constant": 386,
+      "before": "✦ Confirmar recompensa",
+      "after": "§f§l✦ ZORYKAI§r§b Confirmar recompensa"
+    },
+    {
+      "entry": "br/com/shirokai/pass/AdminGui.class",
+      "constant": 1263,
+      "before": "✦ Confirmar encerramento",
+      "after": "§f§l✦ ZORYKAI§r§b Confirmar encerramento"
+    },
+    {
+      "entry": "br/com/shirokai/pass/CrateRewards.class",
+      "constant": 110,
+      "before": "Shirokai Crates indisponível",
+      "after": "Zorykai Crates indisponível"
+    },
+    {
+      "entry": "br/com/shirokai/pass/Menus$Menu.class",
+      "constant": 311,
+      "before": "✦ SUA JORNADA",
+      "after": "§f§l✦ ZORYKAI§r SUA JORNADA"
+    },
+    {
+      "entry": "br/com/shirokai/pass/Menus$Menu.class",
+      "constant": 385,
+      "before": "✦ SEU PASSE",
+      "after": "§f§l✦ ZORYKAI§r SEU PASSE"
+    },
+    {
+      "entry": "br/com/shirokai/pass/Menus$Menu.class",
+      "constant": 468,
+      "before": "Informações do passe",
+      "after": "§f§l✦ ZORYKAI§r§b Informações do passe"
+    },
+    {
+      "entry": "br/com/shirokai/pass/Menus$Menu.class",
+      "constant": 597,
+      "before": "✦ SORTEIO DE RECOMPENSAS",
+      "after": "§f§l✦ ZORYKAI§r SORTEIO DE RECOMPENSAS"
+    },
+    {
+      "entry": "br/com/shirokai/pass/Menus$Menu.class",
+      "constant": 599,
+      "before": "✦ SUAS RECOMPENSAS",
+      "after": "§f§l✦ ZORYKAI§r SUAS RECOMPENSAS"
+    },
+    {
+      "entry": "br/com/shirokai/pass/Menus.class",
+      "constant": 146,
+      "before": "✦ SHIROKAI PASS",
+      "after": "§f§l✦ ZORYKAI§r§b PASS"
+    },
+    {
+      "entry": "br/com/shirokai/pass/Model$Config.class",
+      "constant": 39,
+      "before": "✦ {player} alcançou o nível {level} no {season}!",
+      "after": "§f§l✦ ZORYKAI§r§7 {player} alcançou o nível {level} no {season}!"
+    },
+    {
+      "entry": "br/com/shirokai/pass/PassDefinition.class",
+      "constant": 41,
+      "before": "Passe Shirokai — Temporada 1",
+      "after": "Passe Zorykai — Temporada 1"
+    },
+    {
+      "entry": "br/com/shirokai/pass/ShirokaiPass.class",
+      "constant": 1068,
+      "before": "✦ A validade do seu Premium terminou.",
+      "after": "§f§l✦ ZORYKAI§r§7 A validade do seu Premium terminou."
+    },
+    {
+      "entry": "br/com/shirokai/pass/ShirokaiPass.class",
+      "constant": 1104,
+      "before": "✦ Você alcançou o nível \u0001 do passe!",
+      "after": "§f§l✦ ZORYKAI§r§7 Você alcançou o nível \u0001 do passe!"
+    },
+    {
+      "entry": "br/com/shirokai/pass/ShirokaiPass.class",
+      "constant": 1112,
+      "before": "✦ +\u0001 XP do passe\u0001",
+      "after": "§f§l✦ ZORYKAI§r§7 +\u0001 XP do passe\u0001"
+    },
+    {
+      "entry": "br/com/shirokai/pass/ShirokaiPass.class",
+      "constant": 1155,
+      "before": "✦ Passe temporariamente indisponível. Você pode continuar jogando.",
+      "after": "§f§l✦ ZORYKAI§r§7 Passe temporariamente indisponível. Você pode continuar jogando."
+    }
+  ],
+  "structural_checks": "All entry paths, nested jars, fields, methods, code attributes and JVM instruction bytes are unchanged. Only explicitly selected CONSTANT_String text payloads and the visual Fabric name differ. Placeholders and string-concatenation markers are identical.",
+  "validation": {
+    "baseline_unit_tests": 62,
+    "unit_failures": 0,
+    "patched_jar_gui_checks": 15,
+    "gui_passed": true,
+    "real_clients": 0,
+    "note": "Protocol clients, including title text and formatting-code assertions; no official-client visual review."
+  }
+}
